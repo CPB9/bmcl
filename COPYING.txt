@@ -1,0 +1,12 @@
+Copyright (c) 2014 CPB9 team
+    https://github.com/CPB9
+
+CPB9 team:
+    Artem Shein <metadeus@aisys.ru>
+    Daniel Zalevskiy <dndanik@gmail.com>
+    Sergey Kartashev <sergei.kartashev@yandex.ru>
+    Sergey Skorokhod <skorokhod.sergey@gmail.com>
+
+License:
+    LGPL-3.0 (see LGPL-3.0.txt)
+
