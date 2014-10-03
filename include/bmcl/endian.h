@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform.h"
+#include "bmcl/platform.h"
 
 #if defined(BMCL_PLATFORM_LINUX)
     #include <endian.h>
@@ -17,7 +17,7 @@
     #error "endian.h not implemented for this target"
 #endif
 
-// endian macros
+/* endian macros */
 
 #if defined(BMCL_PLATFORM_LINUX)
     #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -57,7 +57,7 @@
     #error "endian macros not implemented for this target"
 #endif
 
-// byteswap macros
+/* byteswap macros */
 
 #if defined(BMCL_PLATFORM_LINUX) || defined(BMCL_PLATFORM_BSD)
 
@@ -105,7 +105,7 @@
 
 #elif defined(BMCL_PLATFORM_APPLE)
 
-// TODO: ConstToInt
+/* TODO: ConstToInt */
 
 #define bmcl_htobe16(value) OSSwapHostToBigInt16(value)
 #define bmcl_htole16(value) OSSwapHostToLittleInt16(value)
@@ -122,6 +122,4 @@
 
 #else
 #error "byteswap not implemented for this target"
-#endif
-
 #endif

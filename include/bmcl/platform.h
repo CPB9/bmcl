@@ -40,5 +40,3 @@
 #else
     #error "unsupported platform"
 #endif
-
-#endif
