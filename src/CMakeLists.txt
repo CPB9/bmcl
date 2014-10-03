@@ -1,7 +1,9 @@
 add_definitions(-std=c89)
 
-add_library(bort
+include_directories(${BMCL_INCLUDE_DIRS})
+
+add_library(bmcl
     ringbuf.c
-    ringbuf.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/ringbuf.h
 )
 

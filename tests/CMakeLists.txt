@@ -1,7 +1,7 @@
 add_definitions(-std=c++11)
 
 include_directories(
-    ${BORT_INCLUDE_DIRS}
+    ${BMCL_INCLUDE_DIRS}
     SYSTEM
     ${GTEST_INCLUDE_DIRS}
 )
@@ -12,7 +12,7 @@ file(MAKE_DIRECTORY ${TESTS_DIR})
 macro(add_unit_test test)
     add_executable(${test} ${ARGN})
     target_link_libraries(${test}
-        bort
+        bmcl
         gtest
         gtest_main
     )

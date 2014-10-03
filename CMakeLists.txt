@@ -8,9 +8,9 @@ add_subdirectory(thirdparty)
 
 add_definitions(-Wall -Wextra -O0 -ggdb)
 
+set(BMCL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(src)
 
-set(BORT_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
 add_subdirectory(tests)
 

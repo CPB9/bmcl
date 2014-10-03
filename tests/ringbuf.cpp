@@ -1,4 +1,4 @@
-#include "ringbuf.h"
+#include "bmcl/ringbuf.h"
 
 #include "gtest/gtest.h"
 
