@@ -1,4 +1,4 @@
-add_definitions(-std=c89)
+add_definitions(-std=c99)
 
 include_directories(${BMCL_INCLUDE_DIRS})
 

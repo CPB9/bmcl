@@ -83,20 +83,20 @@ void memwriter_append_uint16(memwriter_t* self, uint16_t value)
 void memwriter_append_uint16be(memwriter_t* self, uint16_t value)
 {
     assert(memwriter_size_left(self) >= 2);
-    *(uint16_t*)self->current = bmcl_htobe16(value);
+    *(uint16_t*)self->current = htobe16(value);
     self->current += 2;
 }
 
 void memwriter_append_uint32be(memwriter_t* self, uint32_t value)
 {
     assert(memwriter_size_left(self) >= 4);
-    *(uint32_t*)self->current = bmcl_htobe32(value);
+    *(uint32_t*)self->current = htobe32(value);
     self->current += 4;
 }
 
 void memwriter_append_uint64be(memwriter_t* self, uint64_t value)
 {
     assert(memwriter_size_left(self) >= 8);
-    *(uint64_t*)self->current = bmcl_htobe64(value);
+    *(uint64_t*)self->current = htobe64(value);
     self->current += 8;
 }
