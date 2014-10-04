@@ -100,8 +100,8 @@ TEST_F(RingBufTest, init)
 
 TEST_F(RingBufTest, appendOneByte)
 {
-    uint data[1] = {0xaf};
-    uint8_t expected[3] = {0xaf};
+    uint8_t data[1] = {0xaf};
+    uint8_t expected[1] = {0xaf};
     initRingBuf(3);
     append(data, 1);
     expectFreeSpace(2);
