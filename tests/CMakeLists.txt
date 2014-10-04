@@ -24,5 +24,6 @@ macro(add_unit_test test)
     add_test(${test} ${TESTS_DIR}/${test})
 endmacro()
 
-add_unit_test(ringbuf ringbuf.cpp)
 add_unit_test(environment environment.cpp)
+add_unit_test(memwriter memwriter.cpp)
+add_unit_test(ringbuf ringbuf.cpp)
