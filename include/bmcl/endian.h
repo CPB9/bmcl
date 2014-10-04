@@ -3,7 +3,7 @@
 #include "bmcl/platform.h"
 
 #if defined(BMCL_PLATFORM_LINUX)
-    #define _BSD_SOURCE
+    #define _DEFAULT_SOURCE
     #include <endian.h>
 #elif defined(BMCL_PLATFORM_BSD)
     #include <sys/endian.h>
@@ -129,6 +129,7 @@
 #elif !defined(BMCL_PLATFORM_FREEBSD)
 
 /* from FreeBSD <sys/endian.h> */
+#include <stdint.h>
 
 static inline uint16_t be16dec(const void* pp)
 {
