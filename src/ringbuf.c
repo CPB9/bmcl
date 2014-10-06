@@ -54,7 +54,7 @@ void ringbuf_erase(ringbuf_t* self, size_t size)
     }
 }
 
-static void recalc_appended_data(ringbuf_t* self, size_t size)
+static void extend(ringbuf_t* self, size_t size)
 {
     self->write_offset += size;
     if (self->write_offset >= self->size) {
@@ -82,7 +82,7 @@ void ringbuf_append(ringbuf_t* self, const void* data, size_t size)
             memcpy(self->data, data + first_chunk_size, second_chunk_size);
         }
     }
-    recalc_appended_data(self, size);
+    extend(self, size);
 }
 
 void ringbuf_append_uint8(ringbuf_t* self, uint8_t byte)
@@ -92,7 +92,7 @@ void ringbuf_append_uint8(ringbuf_t* self, uint8_t byte)
     }
 
     *(self->data + self->write_offset) = byte;
-    recalc_appended_data(self, 1);
+    extend(self, 1);
 }
 
 void ringbuf_append_uint16(ringbuf_t* self, uint16_t data)
