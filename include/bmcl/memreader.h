@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     const uint8_t* start;
     const uint8_t* current;
@@ -41,3 +45,7 @@ uint16_t memreader_read_uint16be(memreader_t* self);
 uint32_t memreader_read_uint32be(memreader_t* self);
 
 uint64_t memreader_read_uint64be(memreader_t* self);
+
+#ifdef __cplusplus
+}
+#endif
