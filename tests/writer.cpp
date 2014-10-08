@@ -1,14 +1,22 @@
 #include "bmcl/writer.h"
 #include "bmcl/memwriter.h"
+#include "bmcl/ringbuf.h"
 
 #include "bmcl-test.h"
 
 class Writer {
 public:
+    virtual ~Writer()
+    {
+    }
     writer_t* get()
     {
         return _writer;
     }
+
+    virtual size_t dataSize() const = 0;
+
+    virtual void copyData(void* dest) const = 0;
 
 protected:
     writer_t* _writer;
@@ -46,6 +54,40 @@ public:
 private:
     uint8_t* _data;
     memwriter_t* _memwriter;
+};
+
+class RingBufWriter : public Writer {
+public:
+    RingBufWriter(size_t size)
+    {
+        _writer = new writer_t;
+        _ringbuf = new ringbuf_t;
+        _data = new uint8_t[size];
+        memset(_data, 0, size);
+        ringbuf_init(_ringbuf, _data, size);
+        ringbuf_init_writer(_ringbuf, _writer);
+    }
+
+    ~RingBufWriter()
+    {
+        delete _data;
+        delete _ringbuf;
+        delete _writer;
+    }
+
+    size_t dataSize() const
+    {
+        return ringbuf_get_used_space(_ringbuf);
+    }
+
+    void copyData(void* dest) const
+    {
+        ringbuf_peek(_ringbuf, dest, dataSize(), 0);
+    }
+
+private:
+    uint8_t* _data;
+    ringbuf_t* _ringbuf;
 };
 
 template <typename T>
@@ -87,7 +129,7 @@ private:
     T* _shell;
 };
 
-typedef ::testing::Types<MemWriter> WriterTypes;
+typedef ::testing::Types<MemWriter, RingBufWriter> WriterTypes;
 TYPED_TEST_CASE(WriterTest, WriterTypes);
 
 TYPED_TEST(WriterTest, write)
