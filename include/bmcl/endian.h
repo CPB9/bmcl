@@ -4,6 +4,7 @@
 
 #if defined(BMCL_PLATFORM_LINUX)
     #define _DEFAULT_SOURCE
+    #define _BSD_SOURCE
     #include <endian.h>
 #elif defined(BMCL_PLATFORM_BSD)
     #include <sys/endian.h>
