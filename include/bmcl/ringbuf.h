@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bmcl/writer.h"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -19,6 +21,8 @@ typedef struct
 
 void ringbuf_init(ringbuf_t* self, void* data, size_t size);
 
+void ringbuf_init_writer(ringbuf_t* self, writer_t* writer);
+
 void ringbuf_clear(ringbuf_t* self);
 
 size_t ringbuf_get_free_space(const ringbuf_t* self);
@@ -31,15 +35,21 @@ bool ringbuf_is_empty(const ringbuf_t* self);
 
 void ringbuf_erase(ringbuf_t* self, size_t size);
 
-void ringbuf_append(ringbuf_t* self, const void* data, size_t size);
+void ringbuf_write(ringbuf_t* self, const void* data, size_t size);
 
-void ringbuf_append_uint8(ringbuf_t* self, uint8_t byte);
+void ringbuf_write_uint8(ringbuf_t* self, uint8_t byte);
 
-void ringbuf_append_uint16(ringbuf_t* self, uint16_t data);
+void ringbuf_write_uint16le(ringbuf_t* self, uint16_t value);
 
-void ringbuf_append_uint32(ringbuf_t* self, uint32_t data);
+void ringbuf_write_uint32le(ringbuf_t* self, uint32_t value);
 
-void ringbuf_append_uint64(ringbuf_t* self, uint64_t data);
+void ringbuf_write_uint64le(ringbuf_t* self, uint64_t value);
+
+void ringbuf_write_uint16be(ringbuf_t* self, uint16_t value);
+
+void ringbuf_write_uint32be(ringbuf_t* self, uint32_t value);
+
+void ringbuf_write_uint64be(ringbuf_t* self, uint64_t value);
 
 void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset);
 

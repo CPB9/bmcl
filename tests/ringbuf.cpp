@@ -23,7 +23,7 @@ protected:
 
     void append(void* data, uint size)
     {
-        ringbuf_append(&_ringbuf, data, size);
+        ringbuf_write(&_ringbuf, data, size);
     }
 
     void erase(uint size)
@@ -33,7 +33,7 @@ protected:
 
     void appendByte(uint8_t byte)
     {
-        ringbuf_append_uint8(&_ringbuf, byte);
+        ringbuf_write_uint8(&_ringbuf, byte);
     }
 
     uint8_t readByte()
