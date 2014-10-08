@@ -26,5 +26,6 @@ endmacro()
 
 add_unit_test(environment environment.cpp)
 add_unit_test(ringbuf ringbuf.cpp)
+add_unit_test(writer writer.cpp)
 add_unit_test(memwriter memwriter.cpp)
 add_unit_test(memreader memreader.cpp)
