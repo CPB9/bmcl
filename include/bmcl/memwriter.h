@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bmcl/writer.h"
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -15,6 +17,8 @@ typedef struct {
 } memwriter_t;
 
 void memwriter_init(memwriter_t* self, void* dest, size_t max_size);
+
+void memwriter_init_writer(memwriter_t* self, writer_t* writer);
 
 const void* memwriter_ptr(const memwriter_t* self);
 
