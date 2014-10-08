@@ -1,3 +1,4 @@
+#include "bmcl/endian.h"
 #include "bmcl/writer.h"
 #include "bmcl/memwriter.h"
 #include "bmcl/ringbuf.h"
