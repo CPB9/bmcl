@@ -164,7 +164,7 @@ TEST_F(PackerTest, append_uint16__full)
 #ifdef BMCL_LITTLE_ENDIAN
     uint16_t expected_data[] = {0x1234, 0x7654, 0x0853, 0xcf41, 0xf017};
 #else
-    uint16_t expected_data[] = {0x3212, 0x5476, 0x5308, 0x41cf, 0x17f0};
+    uint16_t expected_data[] = {0x3412, 0x5476, 0x5308, 0x41cf, 0x17f0};
 #endif
     initWriter(10);
     appendUint16le(0x1234);

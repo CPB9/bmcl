@@ -157,7 +157,7 @@ TYPED_TEST(WriterTest, write_uint8)
 
 TYPED_TEST(WriterTest, write_uint16le)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint16_t expected[4] = {0x1234, 0x5678, 0x90ab, 0xcdef};
 #else
     uint16_t expected[4] = {0x3412, 0x7856, 0xab90, 0xefcd};
@@ -172,7 +172,7 @@ TYPED_TEST(WriterTest, write_uint16le)
 
 TYPED_TEST(WriterTest, write_uint32le)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint32_t expected[4] = {0x12345678, 0x90abcdef, 0x10293847, 0x56473829};
 #else
     uint32_t expected[4] = {0x78563412, 0xefcdab90, 0x47382910, 0x29384756};
@@ -187,7 +187,7 @@ TYPED_TEST(WriterTest, write_uint32le)
 
 TYPED_TEST(WriterTest, write_uint64le)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint64_t expected[2] = {0x1234567890abcdef, 0x1029384756473829};
 #else
     uint64_t expected[2] = {0xefcdab9078563412, 0x2938475647382910};
@@ -200,7 +200,7 @@ TYPED_TEST(WriterTest, write_uint64le)
 
 TYPED_TEST(WriterTest, write_uint16be)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint16_t expected[3] = {0x9584, 0x1876, 0x0573};
 #else
     uint16_t expected[3] = {0x8495, 0x7618, 0x7305};
@@ -214,7 +214,7 @@ TYPED_TEST(WriterTest, write_uint16be)
 
 TYPED_TEST(WriterTest, write_uint32be)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint32_t expected[4] = {0x05846377, 0x07594412, 0x09876543};
 #else
     uint32_t expected[4] = {0x77638405, 0x12445907, 0x43658709};
@@ -228,7 +228,7 @@ TYPED_TEST(WriterTest, write_uint32be)
 
 TYPED_TEST(WriterTest, write_uint64be)
 {
-#ifndef BMCL_LITTLE_ENDIAN
+#ifdef BMCL_LITTLE_ENDIAN
     uint64_t expected[2] = {0x97a950b1047331fc, 0xdc784f398623ac09};
 #else
     uint64_t expected[2] = {0xfc317304b150a997, 0x09ac2386394f78dc};
