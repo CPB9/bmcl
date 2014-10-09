@@ -1,3 +1,8 @@
 language: c
-env: CC=clang CXX=clang++
-script: mkdir build && cd build && cmake ../ && make
+compiler: clang
+env: 
+  global: CXX=clang++
+  matrix:
+      - SANITIZER_FLAGS="-DSANITIZE_ADDRESS=1"
+      - SANITIZER_FLAGS=""
+script: mkdir build && cd build && cmake $SANITIZER_FLAGS ../ && make && ctest
