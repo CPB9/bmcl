@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 2.8.7)
 
 enable_testing()
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 if(SANITIZE_MEMORY)
     add_definitions(-fPIC -fno-omit-frame-pointer)
 elseif(SANITIZE_THREAD)
