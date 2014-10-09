@@ -1,0 +1,3 @@
+language: c
+env: CC=clang CXX=clang++
+script: mkdir build && cd build && cmake ../ && make
