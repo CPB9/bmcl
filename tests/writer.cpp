@@ -5,11 +5,14 @@
 
 #include "bmcl-test.h"
 
+#include <memory>
+
 class Writer {
 public:
     virtual ~Writer()
     {
     }
+
     writer_t* get()
     {
         return _writer;
@@ -37,7 +40,7 @@ public:
 
     ~MemWriter()
     {
-        delete _data;
+        delete [] _data;
         delete _memwriter;
         delete _writer;
     }
@@ -71,7 +74,7 @@ public:
 
     ~RingBufWriter()
     {
-        delete _data;
+        delete [] _data;
         delete _ringbuf;
         delete _writer;
     }
