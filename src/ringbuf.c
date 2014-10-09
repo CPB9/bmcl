@@ -97,7 +97,7 @@ void ringbuf_write(ringbuf_t* self, const void* data, size_t size)
         memcpy(self->data + self->write_offset, data, first_chunk_size);
         if (size > first_chunk_size) {
             size_t second_chunk_size = size - first_chunk_size;
-            memcpy(self->data, data + first_chunk_size, second_chunk_size);
+            memcpy(self->data, (const uint8_t*)data + first_chunk_size, second_chunk_size);
         }
     }
     extend(self, size);
@@ -165,7 +165,7 @@ void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset)
         memcpy(dest, self->data + read_offset, first_chunk_size);
         if (size > first_chunk_size) {
             size_t second_chunk_size = size - first_chunk_size;
-            memcpy(dest + first_chunk_size, self->data, second_chunk_size);
+            memcpy((uint8_t*)dest + first_chunk_size, self->data, second_chunk_size);
         }
     }
 }
