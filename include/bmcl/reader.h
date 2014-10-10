@@ -5,7 +5,7 @@
 
 typedef struct {
     void* data;
-    struct reader_impl_s* impl;
+    const struct reader_impl_s* impl;
 } reader_t;
 
 typedef struct reader_impl_s {

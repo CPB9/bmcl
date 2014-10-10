@@ -5,7 +5,7 @@
 
 typedef struct {
     void* data;
-    struct writer_impl_s* impl;
+    const struct writer_impl_s* impl;
 } writer_t;
 
 typedef struct writer_impl_s {

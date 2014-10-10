@@ -7,7 +7,7 @@
 #include <string.h>
 #include <assert.h>
 
-static writer_impl_t memwriter_impl = {
+static const writer_impl_t memwriter_impl = {
     (void (*)(void*, const void*, size_t))memwriter_write,
     (void (*)(void*, uint8_t))memwriter_write_uint8,
     (void (*)(void*, uint16_t))memwriter_write_uint16le,

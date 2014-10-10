@@ -8,7 +8,7 @@
 
 #define Sys_MIN(a, b) (((a) > (b)) ? (b) : (a))
 
-static reader_impl_t ringbuf_reader_impl = {
+static const reader_impl_t ringbuf_reader_impl = {
     (void (*)(void*, const void*, size_t))ringbuf_read,
     (uint8_t (*)(void*))ringbuf_read_uint8,
     (uint16_t (*)(void*))ringbuf_read_uint16le,
@@ -19,7 +19,7 @@ static reader_impl_t ringbuf_reader_impl = {
     (uint64_t (*)(void*))ringbuf_read_uint64le,
 };
 
-static writer_impl_t ringbuf_writer_impl = {
+static const writer_impl_t ringbuf_writer_impl = {
     (void (*)(void*, const void*, size_t))ringbuf_write,
     (void (*)(void*, uint8_t))ringbuf_write_uint8,
     (void (*)(void*, uint16_t))ringbuf_write_uint16le,

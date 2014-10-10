@@ -7,7 +7,7 @@
 #include <string.h>
 #include <assert.h>
 
-static reader_impl_t memreader_impl = {
+static const reader_impl_t memreader_impl = {
     (void (*)(void*, const void*, size_t))memreader_read,
     (uint8_t (*)(void*))memreader_read_uint8,
     (uint16_t (*)(void*))memreader_read_uint16le,
