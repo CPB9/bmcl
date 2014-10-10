@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bmcl/reader.h"
 #include "bmcl/writer.h"
 
 #include <stdint.h>
@@ -22,6 +23,8 @@ typedef struct
 void ringbuf_init(ringbuf_t* self, void* data, size_t size);
 
 void ringbuf_init_writer(ringbuf_t* self, writer_t* writer);
+
+void ringbuf_init_reader(ringbuf_t* self, reader_t* reader);
 
 void ringbuf_clear(ringbuf_t* self);
 

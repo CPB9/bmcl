@@ -8,6 +8,17 @@
 
 #define Sys_MIN(a, b) (((a) > (b)) ? (b) : (a))
 
+static reader_impl_t ringbuf_reader_impl = {
+    (void (*)(void*, const void*, size_t))ringbuf_read,
+    (uint8_t (*)(void*))ringbuf_read_uint8,
+    (uint16_t (*)(void*))ringbuf_read_uint16le,
+    (uint32_t (*)(void*))ringbuf_read_uint32le,
+    (uint64_t (*)(void*))ringbuf_read_uint64le,
+    (uint16_t (*)(void*))ringbuf_read_uint16le,
+    (uint32_t (*)(void*))ringbuf_read_uint32le,
+    (uint64_t (*)(void*))ringbuf_read_uint64le,
+};
+
 static writer_impl_t ringbuf_writer_impl = {
     (void (*)(void*, const void*, size_t))ringbuf_write,
     (void (*)(void*, uint8_t))ringbuf_write_uint8,
@@ -27,6 +38,12 @@ void ringbuf_init(ringbuf_t* self, void* data, size_t size)
     self->free_space = size;
     self->read_offset = 0;
     self->write_offset = 0;
+}
+
+void ringbuf_init_reader(ringbuf_t* self, reader_t* reader)
+{
+    reader->data = self;
+    reader->impl = &ringbuf_reader_impl;
 }
 
 void ringbuf_init_writer(ringbuf_t* self, writer_t* writer)
