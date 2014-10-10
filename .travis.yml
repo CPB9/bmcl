@@ -6,3 +6,15 @@ env:
       - SANITIZER_FLAGS="-DSANITIZE_ADDRESS=1"
       - SANITIZER_FLAGS=""
 script: mkdir build && cd build && cmake $SANITIZER_FLAGS ../ && make && ctest
+
+addons:
+  coverity_scan:
+    project:
+      name: CPB9/bmcl
+      version: 0.1
+      description: bmcl
+    notification_email: dndanik@gmail.com
+    build_command_prepend: mkdir build && cd build && cmake ..
+    build_command: make
+    branch_pattern: coverity_scan
+
