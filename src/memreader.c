@@ -7,11 +7,28 @@
 #include <string.h>
 #include <assert.h>
 
+static reader_impl_t memreader_impl = {
+    (void (*)(void*, const void*, size_t))memreader_read,
+    (uint8_t (*)(void*))memreader_read_uint8,
+    (uint16_t (*)(void*))memreader_read_uint16le,
+    (uint32_t (*)(void*))memreader_read_uint32le,
+    (uint64_t (*)(void*))memreader_read_uint64le,
+    (uint16_t (*)(void*))memreader_read_uint16le,
+    (uint32_t (*)(void*))memreader_read_uint32le,
+    (uint64_t (*)(void*))memreader_read_uint64le,
+};
+
 void memreader_init(memreader_t* self, const void* ptr, size_t size)
 {
     self->start = (uint8_t*)ptr;
     self->current = self->start;
     self->end = self->start + size;
+}
+
+void memreader_init_reader(memreader_t* self, reader_t* reader)
+{
+    reader->data = self;
+    reader->impl = &memreader_impl;
 }
 
 const uint8_t* memreader_current_ptr(const memreader_t* self)

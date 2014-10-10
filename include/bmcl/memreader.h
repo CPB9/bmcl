@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bmcl/reader.h"
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -15,6 +17,8 @@ typedef struct {
 } memreader_t;
 
 void memreader_init(memreader_t* self, const void* ptr, size_t size);
+
+void memreader_init_reader(memreader_t* self, reader_t* reader);
 
 const uint8_t* memreader_current_ptr(const memreader_t* self);
 
