@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct
 {
     void* data;
@@ -30,3 +34,7 @@ size_t ringarray_element_size(const ringarray_t* self);
 void ringarray_copy_first(const ringarray_t* self, void* dest);
 
 void ringarray_remove_first(ringarray_t* self);
+
+#ifdef __cplusplus
+}
+#endif

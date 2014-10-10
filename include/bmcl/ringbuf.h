@@ -53,23 +53,21 @@ void ringbuf_write_uint64be(ringbuf_t* self, uint64_t value);
 
 void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset);
 
-uint8_t ringbuf_peek_uint8(const ringbuf_t* self);
-
-uint16_t ringbuf_peek_uint16(const ringbuf_t* self);
-
-uint32_t ringbuf_peek_uint32(const ringbuf_t* self);
-
-uint64_t ringbuf_peek_uint64(const ringbuf_t* self);
-
 void ringbuf_read(ringbuf_t* self, void* dest, size_t size);
 
 uint8_t ringbuf_read_uint8(ringbuf_t* self);
 
-uint16_t ringbuf_read_uint16(ringbuf_t* self);
+uint16_t ringbuf_read_uint16le(ringbuf_t* self);
 
-uint32_t ringbuf_read_uint32(ringbuf_t* self);
+uint32_t ringbuf_read_uint32le(ringbuf_t* self);
 
-uint64_t ringbuf_read_uint64(ringbuf_t* self);
+uint64_t ringbuf_read_uint64le(ringbuf_t* self);
+
+uint16_t ringbuf_read_uint16be(ringbuf_t* self);
+
+uint32_t ringbuf_read_uint32be(ringbuf_t* self);
+
+uint64_t ringbuf_read_uint64be(ringbuf_t* self);
 
 void ringbuf_rewind(ringbuf_t* self, size_t size);
 

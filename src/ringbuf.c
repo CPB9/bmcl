@@ -170,33 +170,6 @@ void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset)
     }
 }
 
-uint8_t ringbuf_peek_uint8(const ringbuf_t* self)
-{
-    assert(!ringbuf_is_empty(self));
-    return *(self->data + self->read_offset);
-}
-
-uint16_t ringbuf_peek_uint16(const ringbuf_t* self)
-{
-    uint16_t data;
-    ringbuf_peek(self, &data, 2, 0);
-    return data;
-}
-
-uint32_t ringbuf_peek_uint32(const ringbuf_t* self)
-{
-    uint32_t data;
-    ringbuf_peek(self, &data, 4, 0);
-    return data;
-}
-
-uint64_t ringbuf_peek_uint64(const ringbuf_t* self)
-{
-    uint64_t data;
-    ringbuf_peek(self, &data, 8, 0);
-    return data;
-}
-
 void ringbuf_read(ringbuf_t* self, void* dest, size_t size)
 {
     ringbuf_peek(self, dest, size, 0);
@@ -205,34 +178,59 @@ void ringbuf_read(ringbuf_t* self, void* dest, size_t size)
 
 uint8_t ringbuf_read_uint8(ringbuf_t* self)
 {
-    uint8_t byte = ringbuf_peek_uint8(self);
+    uint8_t byte = *(self->data + self->read_offset);
     ringbuf_erase(self, 1);
     return byte;
 }
 
-uint16_t ringbuf_read_uint16(ringbuf_t* self)
+uint16_t ringbuf_read_uint16le(ringbuf_t* self)
 {
     uint16_t data;
     ringbuf_peek(self, &data, 2, 0);
     ringbuf_erase(self, 2);
-    return data;
+    return le16toh(data);
 }
 
-uint32_t ringbuf_read_uint32(ringbuf_t* self)
+uint32_t ringbuf_read_uint32le(ringbuf_t* self)
 {
     uint32_t data;
     ringbuf_peek(self, &data, 4, 0);
     ringbuf_erase(self, 4);
-    return data;
+    return le32toh(data);
 }
 
-uint64_t ringbuf_read_uint64(ringbuf_t* self)
+uint64_t ringbuf_read_uint64le(ringbuf_t* self)
 {
     uint64_t data;
     ringbuf_peek(self, &data, 8, 0);
     ringbuf_erase(self, 8);
-    return data;
+    return le64toh(data);
 }
+
+uint16_t ringbuf_read_uint16be(ringbuf_t* self)
+{
+    uint16_t data;
+    ringbuf_peek(self, &data, 2, 0);
+    ringbuf_erase(self, 2);
+    return be16toh(data);
+}
+
+uint32_t ringbuf_read_uint32be(ringbuf_t* self)
+{
+    uint32_t data;
+    ringbuf_peek(self, &data, 4, 0);
+    ringbuf_erase(self, 4);
+    return be32toh(data);
+}
+
+uint64_t ringbuf_read_uint64be(ringbuf_t* self)
+{
+    uint64_t data;
+    ringbuf_peek(self, &data, 8, 0);
+    ringbuf_erase(self, 8);
+    return be64toh(data);
+}
+
 
 void ringbuf_rewind(ringbuf_t* self, size_t size)
 {

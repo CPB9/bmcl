@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef size_t ringbucket_size_t;
 
 typedef struct
@@ -30,3 +34,7 @@ ringbucket_size_t ringbucket_first_size(const ringbucket_t* self);
 void ringbucket_copy_first(const ringbucket_t* self, void* dest);
 
 void ringbucket_remove_first(ringbucket_t* self);
+
+#ifdef __cplusplus
+}
+#endif
