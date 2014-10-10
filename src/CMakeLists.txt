@@ -2,7 +2,7 @@ add_definitions(-std=c99)
 
 include_directories(${BMCL_INCLUDE_DIRS})
 
-add_library(bmcl
+add_library(bmcl STATIC
     memreader.c
     memwriter.c
     ringarray.c

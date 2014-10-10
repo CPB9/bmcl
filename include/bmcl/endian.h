@@ -15,6 +15,7 @@
     #include <machine/endian.h>
 #elif defined(BMCL_PLATFORM_SOLARIS)
     #include <sys/isa_defs.h>
+#elif defined(__GNUC__)
 #else
     #error "endian.h not implemented for this target"
 #endif
@@ -106,6 +107,42 @@
 #define le16toh(value) OSSwapLittleToHostInt16(value)
 #define le32toh(value) OSSwapLittleToHostInt32(value)
 #define le64toh(value) OSSwapLittleToHostInt64(value)
+
+#elif defined(__GNUC__)
+
+#ifdef BMCL_LITTLE_ENDIAN
+
+#define htobe16(value) __builtin_bswap16(value)
+#define htobe32(value) __builtin_bswap32(value)
+#define htobe64(value) __builtin_bswap64(value)
+#define htole16(value) value
+#define htole32(value) value
+#define htole64(value) value
+
+#define be16toh(value) __builtin_bswap16(value)
+#define be32toh(value) __builtin_bswap32(value)
+#define be64toh(value) __builtin_bswap64(value)
+#define le16toh(value) value
+#define le32toh(value) value
+#define le64toh(value) value
+
+#else
+
+#define htobe16(value) value
+#define htobe32(value) value
+#define htobe64(value) value
+#define htole16(value) __builtin_bswap16(value)
+#define htole32(value) __builtin_bswap32(value)
+#define htole64(value) __builtin_bswap64(value)
+
+#define be16toh(value) value
+#define be32toh(value) value
+#define be64toh(value) value
+#define le16toh(value) __builtin_bswap16(value)
+#define le32toh(value) __builtin_bswap32(value)
+#define le64toh(value) __builtin_bswap64(value)
+
+#endif
 
 #else
 #error "byteswap not implemented for this target"
