@@ -7,6 +7,10 @@
     #define _BSD_SOURCE
     #include <endian.h>
 #elif defined(BMCL_PLATFORM_BSD)
+    #ifdef BMCL_PLATFORM_OPENBSD
+        #include <sys/types.h>
+        #include <machine/endian.h>
+    #endif
     #include <sys/endian.h>
 #elif defined(BMCL_PLATFORM_MSVC)
     #include <stdlib.h>
