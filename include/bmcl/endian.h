@@ -168,7 +168,7 @@
 #define le32enc(ptr, value) OSWriteLittleInt32(ptr, 0, value)
 #define le64enc(ptr, value) OSWriteLittleInt64(ptr, 0, value)
 
-#elif !defined(BMCL_PLATFORM_FREEBSD)
+#elif !defined(BMCL_PLATFORM_FREEBSD) && !defined(BMCL_PLATFORM_NETBSD)
 
 /* from FreeBSD <sys/endian.h> */
 #include <stdint.h>
