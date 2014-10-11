@@ -58,10 +58,11 @@ protected:
 
     void expectData(void* expected, size_t size)
     {
-        uint8_t temp[size];
+        uint8_t* temp = new uint8_t[size];
         ringbuf_peek(&_ringbuf, temp, size, 0);
         EXPECT_EQ(size, ringbuf_get_used_space(&_ringbuf));
         EXPECT_EQ_MEM(expected, temp, size);
+        delete [] temp;
     }
 
 private:

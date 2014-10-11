@@ -5,8 +5,6 @@
 
 #include "bmcl-test.h"
 
-#include <memory>
-
 class Writer {
 public:
     virtual ~Writer()
@@ -117,9 +115,10 @@ protected:
     void expectData(void* data, size_t size)
     {
         ASSERT_EQ(size, _shell->dataSize());
-        uint8_t tmp[_shell->dataSize()];
+        uint8_t* tmp = new uint8_t[_shell->dataSize()];
         _shell->copyData(tmp);
         EXPECT_EQ_MEM(data, tmp, size);
+        delete [] tmp;
     }
 
     void TearDown()

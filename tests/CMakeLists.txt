@@ -1,4 +1,6 @@
-add_definitions(-std=c++11)
+if(NOT MSVC)
+    add_definitions(-std=c++11)
+endif()
 
 include_directories(
     ${BMCL_INCLUDE_DIRS}

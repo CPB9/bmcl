@@ -14,7 +14,15 @@ endif()
 
 add_subdirectory(thirdparty)
 
-add_definitions(-Wall -Wextra -O0 -ggdb)
+if(MSVC)
+    foreach (flag_var
+             CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+             CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        string(REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
+    endforeach()
+else()
+    add_definitions(-Wall -Wextra -O0 -ggdb)
+endif()
 
 macro(enable_sanitizer name)
     add_definitions(
