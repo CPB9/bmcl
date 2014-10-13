@@ -27,11 +27,11 @@ bool ringbucket_is_empty(const ringbucket_t* self);
 
 void ringbucket_reset(ringbucket_t* self);
 
-void ringbucket_append(ringbucket_t* self, const void* element, ringbucket_size_t size);
+void ringbucket_append(ringbucket_t* self, const void* element, size_t size);
 
 size_t ringbucket_count(const ringbucket_t* self);
 
-ringbucket_size_t ringbucket_first_size(const ringbucket_t* self);
+size_t ringbucket_first_size(const ringbucket_t* self);
 
 void ringbucket_copy_first(const ringbucket_t* self, void* dest);
 

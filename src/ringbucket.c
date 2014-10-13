@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+typedef size_t ringbucket_size_t;
+
 static const queue_impl_t ringbucket_queue_impl = {
     (void (*)(void*, const void*, size_t))ringbucket_append,
     (size_t (*)(const void*))ringbucket_count,
@@ -80,7 +82,7 @@ static void prepare_for_append(ringbucket_t* self, size_t data_size)
     ringbuf_write(&self->ringbuf, &data_size, sizeof(data_size));
 }
 
-void ringbucket_append(ringbucket_t* self, const void* data, ringbucket_size_t data_size)
+void ringbucket_append(ringbucket_t* self, const void* data, size_t data_size)
 {
     prepare_for_append(self, data_size);
     ringbuf_write(&self->ringbuf, data, data_size);
@@ -88,7 +90,7 @@ void ringbucket_append(ringbucket_t* self, const void* data, ringbucket_size_t d
     self->count++;
 }
 
-ringbucket_size_t ringbucket_first_size(const ringbucket_t* self)
+size_t ringbucket_first_size(const ringbucket_t* self)
 {
     assert(!ringbucket_is_empty(self));
     ringbucket_size_t size;
