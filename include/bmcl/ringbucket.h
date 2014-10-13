@@ -10,8 +10,6 @@
 extern "C" {
 #endif
 
-typedef size_t ringbucket_size_t;
-
 typedef struct {
     ringbuf_t ringbuf;
     size_t count;

@@ -60,6 +60,14 @@
     #else
         #error "unsupported endianness"
     #endif
+#elif defined(BMCL_PLATFORM_AVR)
+    #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        #define BMCL_LITTLE_ENDIAN
+    #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        #define BMCL_BIG_ENDIAN
+    #else
+        #error "unsupported endianness"
+    #endif
 #else
     #error "endian macros not implemented for this target"
 #endif

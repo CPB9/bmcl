@@ -37,6 +37,8 @@
     #endif
 #elif defined(__APPLE__)
     #define BMCL_PLATFORM_APPLE
+#elif defined(__AVR__)
+    #define BMCL_PLATFORM_AVR
 #else
     #error "unsupported platform"
 #endif
