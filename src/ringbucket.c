@@ -2,6 +2,28 @@
 
 #include <assert.h>
 
+static const queue_impl_t ringbucket_queue_impl = {
+    (void (*)(void*, const void*, size_t))ringbucket_append,
+    (size_t (*)(const void*))ringbucket_count,
+    (size_t (*)(const void*))ringbucket_first_size,
+    (void (*)(const void* data, void* dest))ringbucket_copy_first,
+    (void (*)(void* data))ringbucket_remove_first
+};
+
+void ringbucket_init(ringbucket_t* self, void* data, size_t size)
+{
+    assert(data != 0);
+    assert(size != 0);
+    ringbuf_init(&self->ringbuf, data, size);
+    self->count = 0;
+}
+
+void ringbucket_init_queue(ringbucket_t* self, queue_t* queue)
+{
+    queue->data = self;
+    queue->impl = &ringbucket_queue_impl;
+}
+
 static size_t erase_element(ringbucket_t* self)
 {
     ringbucket_size_t element_size;
@@ -44,14 +66,6 @@ void ringbucket_remove_first(ringbucket_t* self)
 {
     assert(!ringbucket_is_empty(self));
     erase_element(self);
-}
-
-void ringbucket_init(ringbucket_t* self, void* data, size_t size)
-{
-    assert(data != 0);
-    assert(size != 0);
-    ringbuf_init(&self->ringbuf, data, size);
-    self->count = 0;
 }
 
 static void prepare_for_append(ringbucket_t* self, size_t data_size)

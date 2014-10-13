@@ -1,9 +1,10 @@
 #pragma once
 
+#include "bmcl/queue.h"
 #include "bmcl/ringbuf.h"
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,17 +12,18 @@ extern "C" {
 
 typedef size_t ringbucket_size_t;
 
-typedef struct
-{
+typedef struct {
     ringbuf_t ringbuf;
     size_t count;
 } ringbucket_t;
 
+void ringbucket_init(ringbucket_t* self, void* data, size_t size);
+
+void ringbucket_init_queue(ringbucket_t* self, queue_t* queue);
+
 size_t ringbucket_get_free_space(const ringbucket_t* self);
 
 bool ringbucket_is_empty(const ringbucket_t* self);
-
-void ringbucket_init(ringbucket_t* self, void* data, size_t size);
 
 void ringbucket_reset(ringbucket_t* self);
 
