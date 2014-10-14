@@ -1,6 +1,6 @@
-[submodule "arduino-cmake"]
-	path = arduino-cmake
-	url = https://github.com/CPB9/arduino-cmake.git
 [submodule "thirdparty/gtest"]
 	path = thirdparty/gtest
 	url = https://github.com/CPB9/gtest.git
+[submodule "thirdparty/arduino-cmake"]
+	path = thirdparty/arduino-cmake
+	url = https://github.com/CPB9/arduino-cmake.git

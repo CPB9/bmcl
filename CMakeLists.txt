@@ -1,5 +1,5 @@
 if(ARDUINO_BOARD)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/arduino-cmake/cmake/ArduinoToolchain.cmake)
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/arduino-cmake/cmake/ArduinoToolchain.cmake)
 endif()
 
 project(bmcl)
