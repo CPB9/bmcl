@@ -30,12 +30,6 @@ if(ARDUINO_BOARD)
         HDRS ${BMCL_HDR}
         BOARD ${ARDUINO_BOARD}
     )
-
-    generate_arduino_firmware(ardu-test
-        SRCS ardu-test.cpp
-        LIBS bmcl
-        BOARD ${ARDUINO_BOARD}
-    )
 else()
     add_library(bmcl STATIC ${BMCL_SRC})
 endif()
