@@ -192,7 +192,7 @@ static inline uint32_t be32dec(const void* pp)
 {
     const uint8_t* p = (const uint8_t*)pp;
 
-    return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]);
+    return (((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) | ((uint32_t)p[2] << 8) | (uint32_t)p[3]);
 }
 
 static inline uint64_t be64dec(const void* pp)
@@ -213,7 +213,7 @@ static inline uint32_t le32dec(const void* pp)
 {
     const uint8_t* p = (const uint8_t*)pp;
 
-    return ((p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0]);
+    return (((uint32_t)p[3] << 24) | ((uint32_t)p[2] << 16) | ((uint32_t)p[1] << 8) | (uint32_t)p[0]);
 }
 
 static inline uint64_t le64dec(const void* pp)
