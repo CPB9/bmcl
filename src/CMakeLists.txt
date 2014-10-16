@@ -12,6 +12,7 @@ set(BMCL_SRC
     ringarray.c
     ringbucket.c
     ringbuf.c
+    sched.c
 )
 
 set(BMCL_HDR
@@ -22,6 +23,7 @@ set(BMCL_HDR
     ${BMCL_INCLUDE_DIRS}/bmcl/ringarray.h
     ${BMCL_INCLUDE_DIRS}/bmcl/ringbucket.h
     ${BMCL_INCLUDE_DIRS}/bmcl/ringbuf.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/sched.h
 )
 
 if(ARDUINO_BOARD)
