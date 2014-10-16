@@ -8,7 +8,11 @@ void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size
 {
     assert(task_num > 0);
     assert(task_num <= UINT_MAX / sizeof(task_data_t));
-    memset(task_data, 0, sizeof(task_data_t) * task_num);
+//     memset(task_data, 0, sizeof(task_data_t) * task_num);
+    for (size_t i = 0; i < task_num; i++) {
+        task_data[i].is_enabled = true;
+        task_data[i].weight = 0;
+    }
     self->tasks = tasks;
     self->task_data = task_data;
     self->task_num = task_num;

@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /* O(n) */
 
 typedef bool (*task_executor_t)(void* task, void* user_data);
@@ -29,3 +32,7 @@ void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size
 bool sched_exec_next(sched_t* self, void* user_data);
 
 void sched_exec_while_possible(sched_t* self, void* user_data);
+
+#ifdef __cplusplus
+}
+#endif
