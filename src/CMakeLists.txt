@@ -7,4 +7,4 @@ endif()
 include_directories(${BMCL_INCLUDE_DIRS})
 
 add_subdirectory(core)
-
+add_subdirectory(tm)
