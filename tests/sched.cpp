@@ -1,4 +1,4 @@
-#include "bmcl/sched.h"
+#include "bmcl/core/sched.h"
 
 #include "bmcl-test.h"
 

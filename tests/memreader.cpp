@@ -1,4 +1,4 @@
-#include "bmcl/memreader.h"
+#include "bmcl/core/memreader.h"
 
 #include <gtest/gtest.h>
 

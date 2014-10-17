@@ -1,4 +1,4 @@
-#include "bmcl/ringbuf.h"
+#include "bmcl/core/ringbuf.h"
 
 #include "bmcl-test.h"
 

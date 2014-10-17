@@ -1,5 +1,5 @@
-#include "bmcl/endian.h"
-#include "bmcl/memwriter.h"
+#include "bmcl/core/endian.h"
+#include "bmcl/core/memwriter.h"
 
 #include <gtest/gtest.h>
 

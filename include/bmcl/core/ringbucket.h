@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bmcl/queue.h"
-#include "bmcl/ringbuf.h"
+#include "bmcl/core/queue.h"
+#include "bmcl/core/ringbuf.h"
 
 #include <stdbool.h>
 #include <stddef.h>

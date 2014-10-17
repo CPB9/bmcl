@@ -14,7 +14,7 @@ file(MAKE_DIRECTORY ${TESTS_DIR})
 macro(add_unit_test test)
     add_executable(${test} ${ARGN})
     target_link_libraries(${test}
-        bmcl
+        bmclcore
         gtest
         gtest_main
     )

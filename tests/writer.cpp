@@ -1,7 +1,7 @@
-#include "bmcl/endian.h"
-#include "bmcl/writer.h"
-#include "bmcl/memwriter.h"
-#include "bmcl/ringbuf.h"
+#include "bmcl/core/endian.h"
+#include "bmcl/core/writer.h"
+#include "bmcl/core/memwriter.h"
+#include "bmcl/core/ringbuf.h"
 
 #include "bmcl-test.h"
 

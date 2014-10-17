@@ -1,5 +1,5 @@
-#include "bmcl/endian.h"
-#include "bmcl/ringbuf.h"
+#include "bmcl/core/endian.h"
+#include "bmcl/core/ringbuf.h"
 
 #include <assert.h>
 #include <stdbool.h>

@@ -1,4 +1,4 @@
-#include "bmcl/ringbucket.h"
+#include "bmcl/core/ringbucket.h"
 
 #include <assert.h>
 

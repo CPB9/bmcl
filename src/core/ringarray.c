@@ -1,4 +1,4 @@
-#include "bmcl/ringarray.h"
+#include "bmcl/core/ringarray.h"
 
 #include <assert.h>
 #include <stdbool.h>

@@ -6,33 +6,5 @@ endif()
 
 include_directories(${BMCL_INCLUDE_DIRS})
 
-set(BMCL_SRC
-    memreader.c
-    memwriter.c
-    ringarray.c
-    ringbucket.c
-    ringbuf.c
-    sched.c
-)
-
-set(BMCL_HDR
-    ${BMCL_INCLUDE_DIRS}/bmcl/endian.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/memreader.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/memwriter.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/platform.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringarray.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringbucket.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringbuf.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/sched.h
-)
-
-if(ARDUINO_BOARD)
-    generate_arduino_library(bmcl
-        SRCS ${BMCL_SRC}
-        HDRS ${BMCL_HDR}
-        BOARD ${ARDUINO_BOARD}
-    )
-else()
-    add_library(bmcl STATIC ${BMCL_SRC})
-endif()
+add_subdirectory(core)
 

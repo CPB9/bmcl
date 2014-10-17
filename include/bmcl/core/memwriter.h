@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bmcl/writer.h"
+#include "bmcl/core/writer.h"
 
 #include <stdint.h>
 #include <stddef.h>

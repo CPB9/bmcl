@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bmcl/platform.h"
+#include "bmcl/core/platform.h"
 
 #if defined(BMCL_PLATFORM_LINUX)
     #define _DEFAULT_SOURCE

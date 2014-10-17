@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bmcl/reader.h"
+#include "bmcl/core/reader.h"
 
 #include <stddef.h>
 #include <stdbool.h>

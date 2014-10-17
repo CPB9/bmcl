@@ -1,5 +1,5 @@
-#include "bmcl/endian.h"
-#include "bmcl/memreader.h"
+#include "bmcl/core/endian.h"
+#include "bmcl/core/memreader.h"
 
 #include <stddef.h>
 #include <stdint.h>
