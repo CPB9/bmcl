@@ -1,4 +1,4 @@
-set(BMCL_CORE_SRC
+set(BMCL_CORE_SRCS
     memreader.c
     memwriter.c
     ringarray.c
@@ -7,7 +7,7 @@ set(BMCL_CORE_SRC
     sched.c
 )
 
-set(BMCL_CORE_HDR
+set(BMCL_CORE_HDRS
     ${BMCL_INCLUDE_DIRS}/bmcl/core/endian.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/memreader.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/memwriter.h
@@ -21,17 +21,4 @@ set(BMCL_CORE_HDR
     ${BMCL_INCLUDE_DIRS}/bmcl/core/writer.h
 )
 
-if(ARDUINO_BOARD)
-    generate_arduino_library(bmclcore
-        SRCS ${BMCL_CORE_SRC}
-        HDRS ${BMCL_CORE_HDR}
-        BOARD ${ARDUINO_BOARD}
-    )
-else()
-    add_library(bmclcore
-        STATIC
-        ${BMCL_CORE_SRC}
-        ${BMCL_CORE_HDR}
-    )
-endif()
-
+add_bmcl_library(bmclcore SRCS ${BMCL_CORE_SRCS} HDRS ${BMCL_CORE_HDRS})
