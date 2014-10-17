@@ -8,14 +8,17 @@ set(BMCL_CORE_SRC
 )
 
 set(BMCL_CORE_HDR
-    ${BMCL_INCLUDE_DIRS}/bmcl/endian.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/memreader.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/memwriter.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/platform.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringarray.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringbucket.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/ringbuf.h
-    ${BMCL_INCLUDE_DIRS}/bmcl/sched.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/endian.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/memreader.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/memwriter.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/platform.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/queue.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/reader.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/ringarray.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbucket.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbuf.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/sched.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/writer.h
 )
 
 if(ARDUINO_BOARD)
