@@ -44,22 +44,15 @@ static void inc4(size_t* counter)
 TEST_F(SchedTest, test1)
 {
     sched_t sched;
-    const task_t tasks[4] = {{(void*)inc1, 3}, {(void*)inc2, 11}, {(void*)inc3, 101}, {(void*)inc4, 202}};
+    const task_t tasks[4] = {{(void*)inc1, 3}, {(void*)inc2, 11}, {(void*)inc3, 101}, {(void*)inc4, 211}};
     task_data_t taskData[4];
     sched_init(&sched, tasks, taskData, 4, executor1);
     size_t userData[4] = {0, 0, 0, 0};
-    for (int i = 0; i < 295627; i++) {
+    for (int i = 0; i < 11 * 101 * 211 + 3 * 101 * 211 + 3 * 11 * 211 + 3 * 11 * 101; i++) {
         sched_exec_next(&sched, userData);
     }
-//     EXPECT_EQ(5, userData[0]);
-//     EXPECT_EQ(2, userData[1]);
-//     EXPECT_EQ(1, userData[2]);
-    std::cout << userData[0] << std::endl;
-    std::cout << userData[1] << std::endl;
-    std::cout << userData[2] << std::endl;
-    std::cout << userData[3] << std::endl;
-    std::cout << taskData[0].weight << std::endl;
-    std::cout << taskData[1].weight << std::endl;
-    std::cout << taskData[2].weight << std::endl;
-    std::cout << taskData[3].weight << std::endl;
+    EXPECT_EQ(11 * 101 * 211, userData[0]);
+    EXPECT_EQ(3 * 101 * 211, userData[1]);
+    EXPECT_EQ(3 * 11 * 211, userData[2]);
+    EXPECT_EQ(3 * 11 * 101, userData[3]);
 }
