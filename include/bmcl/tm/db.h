@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+typedef bool (*tm_frame_serializer_t)(size_t frame, writer_t* dest, void* user_data);
+
 typedef struct {
     void* ptr;
     size_t size;
@@ -25,7 +27,13 @@ typedef struct {
     size_t var_count;
     tm_frame_t* frames;
     size_t frame_count;
+    tm_frame_serializer_t serializer;
 } tm_db_t;
+
+void tm_db_init(tm_var_t* vars, size_t var_count, tm_frame_t* frames, size_t frame_count,
+                tm_frame_serializer_t serializer);
+
+bool tm_db_serialize_frame(size_t frame_num, writer_t* dest, void* user_data);
 
 void tm_db_copy_frame(size_t frame_num, writer_t* dest);
 

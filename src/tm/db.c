@@ -3,7 +3,22 @@
 
 #include <assert.h>
 
-extern tm_db_t tm_global_db;
+static tm_db_t tm_global_db;
+
+void tm_db_init(tm_var_t* vars, size_t var_count, tm_frame_t* frames, size_t frame_count,
+                tm_frame_serializer_t serializer)
+{
+    tm_global_db.vars = vars;
+    tm_global_db.var_count = var_count;
+    tm_global_db.frames = frames;
+    tm_global_db.frame_count = frame_count;
+    tm_global_db.serializer = serializer;
+}
+
+bool tm_db_serialize_frame(size_t frame_num, writer_t* dest, void* user_data)
+{
+    return tm_global_db.serializer(frame_num, dest, user_data);
+}
 
 void tm_db_copy_frame(size_t frame_num, writer_t* dest)
 {
