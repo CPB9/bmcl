@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gtest/gtest.h"
+#include <cstdint>
 
 static inline void print_mem(const void* mem, std::size_t size)
 {
