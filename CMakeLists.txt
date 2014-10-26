@@ -27,6 +27,7 @@ if(NOT ARDUINO_BOARD)
         endforeach()
     else()
         add_definitions(-Wall -Wextra -O0 -ggdb)
+        add_definitions(-DBMCL_HAVE_MALLOC=1) # temp
     endif()
 
     macro(enable_sanitizer name)

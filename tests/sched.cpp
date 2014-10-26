@@ -43,16 +43,16 @@ static void inc4(size_t* counter)
 
 TEST_F(SchedTest, test1)
 {
-    sched_t sched;
+    sched_t* sched;
     const task_t tasks[4] = {{(void*)inc1, 3}, {(void*)inc2, 11}, {(void*)inc3, 101}, {(void*)inc4, 211}};
-    task_data_t taskData[4];
-    sched_init(&sched, tasks, taskData, 4, executor1);
+    sched = sched_create(tasks, 4, executor1);
     size_t userData[4] = {0, 0, 0, 0};
     for (int i = 0; i < 11 * 101 * 211 + 3 * 101 * 211 + 3 * 11 * 211 + 3 * 11 * 101; i++) {
-        sched_exec_next(&sched, userData);
+        sched_exec_next(sched, userData);
     }
     EXPECT_EQ(11 * 101 * 211, userData[0]);
     EXPECT_EQ(3 * 101 * 211, userData[1]);
     EXPECT_EQ(3 * 11 * 211, userData[2]);
     EXPECT_EQ(3 * 11 * 101, userData[3]);
+    sched_destroy(sched);
 }

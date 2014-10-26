@@ -20,6 +20,16 @@ void memreader_init(memreader_t* self, const void* ptr, size_t size);
 
 void memreader_init_reader(memreader_t* self, reader_t* reader);
 
+#if BMCL_HAVE_MALLOC
+
+memreader_t* memreader_create(const void* ptr, size_t size);
+
+void memreader_destroy(memreader_t* self);
+
+reader_t* memreader_create_reader(memreader_t* self);
+
+#endif
+
 const uint8_t* memreader_current_ptr(const memreader_t* self);
 
 size_t memreader_size(const memreader_t* self);

@@ -28,19 +28,14 @@ class MemWriter : public Writer {
 public:
     MemWriter(size_t size)
     {
-        _writer = new writer_t;
-        _memwriter = new memwriter_t;
-        _data = new uint8_t[size];
-        memset(_data, 0, size);
-        memwriter_init(_memwriter, _data, size);
-        memwriter_init_writer(_memwriter, _writer);
+        _memwriter = memwriter_create(size);
+        _writer = memwriter_create_writer(_memwriter);
     }
 
     ~MemWriter()
     {
-        delete [] _data;
-        delete _memwriter;
-        delete _writer;
+        writer_destroy(_writer);
+        memwriter_destroy(_memwriter);
     }
 
     size_t dataSize() const
@@ -54,7 +49,6 @@ public:
     }
 
 private:
-    uint8_t* _data;
     memwriter_t* _memwriter;
 };
 
@@ -62,19 +56,14 @@ class RingBufWriter : public Writer {
 public:
     RingBufWriter(size_t size)
     {
-        _writer = new writer_t;
-        _ringbuf = new ringbuf_t;
-        _data = new uint8_t[size];
-        memset(_data, 0, size);
-        ringbuf_init(_ringbuf, _data, size);
-        ringbuf_init_writer(_ringbuf, _writer);
+        _ringbuf = ringbuf_create(size);
+        _writer = ringbuf_create_writer(_ringbuf);
     }
 
     ~RingBufWriter()
     {
-        delete [] _data;
-        delete _ringbuf;
-        delete _writer;
+        writer_destroy(_writer);
+        ringbuf_destroy(_ringbuf);
     }
 
     size_t dataSize() const
@@ -88,7 +77,6 @@ public:
     }
 
 private:
-    uint8_t* _data;
     ringbuf_t* _ringbuf;
 };
 
@@ -118,7 +106,7 @@ protected:
         uint8_t* tmp = new uint8_t[_shell->dataSize()];
         _shell->copyData(tmp);
         EXPECT_EQ_MEM(data, tmp, size);
-        delete [] tmp;
+        delete[] tmp;
     }
 
     void TearDown()

@@ -8,14 +8,10 @@
 #include <assert.h>
 
 static const writer_impl_t memwriter_impl = {
-    (void (*)(void*, const void*, size_t))memwriter_write,
-    (void (*)(void*, uint8_t))memwriter_write_uint8,
-    (void (*)(void*, uint16_t))memwriter_write_uint16le,
-    (void (*)(void*, uint32_t))memwriter_write_uint32le,
-    (void (*)(void*, uint64_t))memwriter_write_uint64le,
-    (void (*)(void*, uint16_t))memwriter_write_uint16be,
-    (void (*)(void*, uint32_t))memwriter_write_uint32be,
-    (void (*)(void*, uint64_t))memwriter_write_uint64be,
+    (void (*)(void*, const void*, size_t))memwriter_write, (void (*)(void*, uint8_t))memwriter_write_uint8,
+    (void (*)(void*, uint16_t))memwriter_write_uint16le,   (void (*)(void*, uint32_t))memwriter_write_uint32le,
+    (void (*)(void*, uint64_t))memwriter_write_uint64le,   (void (*)(void*, uint16_t))memwriter_write_uint16be,
+    (void (*)(void*, uint32_t))memwriter_write_uint32be,   (void (*)(void*, uint64_t))memwriter_write_uint64be,
 };
 
 void memwriter_init(memwriter_t* self, void* dest, size_t max_size)
@@ -30,6 +26,37 @@ void memwriter_init_writer(memwriter_t* self, writer_t* writer)
     writer->data = self;
     writer->impl = &memwriter_impl;
 }
+
+#if BMCL_HAVE_MALLOC
+
+memwriter_t* memwriter_create(size_t max_size)
+{
+    uint8_t* data = malloc(sizeof(memwriter_t) + max_size);
+    memwriter_t* self = (memwriter_t*)data;
+    memwriter_init(self, data + sizeof(memwriter_t), max_size);
+    return self;
+}
+
+memwriter_t* memwriter_create_with_dest(void* dest, size_t max_size)
+{
+    memwriter_t* self = malloc(sizeof(memwriter_t));
+    memwriter_init(self, dest, max_size);
+    return self;
+}
+
+void memwriter_destroy(memwriter_t* self)
+{
+    free(self);
+}
+
+writer_t* memwriter_create_writer(memwriter_t* self)
+{
+    writer_t* writer = malloc(sizeof(writer_t));
+    memwriter_init_writer(self, writer);
+    return writer;
+}
+
+#endif
 
 const void* memwriter_ptr(const memwriter_t* self)
 {

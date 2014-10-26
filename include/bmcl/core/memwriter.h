@@ -20,6 +20,18 @@ void memwriter_init(memwriter_t* self, void* dest, size_t max_size);
 
 void memwriter_init_writer(memwriter_t* self, writer_t* writer);
 
+#if BMCL_HAVE_MALLOC
+
+memwriter_t* memwriter_create(size_t max_size);
+
+memwriter_t* memwriter_create_with_dest(void* dest, size_t max_size);
+
+void memwriter_destroy(memwriter_t* self);
+
+writer_t* memwriter_create_writer(memwriter_t* self);
+
+#endif
+
 const void* memwriter_ptr(const memwriter_t* self);
 
 const void* memwriter_current_ptr(const memwriter_t* self);

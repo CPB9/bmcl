@@ -29,6 +29,14 @@ typedef struct {
 
 void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size_t task_num, task_executor_t executor);
 
+#if BMCL_HAVE_MALLOC
+
+sched_t* sched_create(const task_t* tasks, size_t task_num, task_executor_t executor);
+
+void sched_destroy(sched_t* self);
+
+#endif
+
 bool sched_exec_next(sched_t* self, void* user_data);
 
 void sched_exec_while_possible(sched_t* self, void* user_data);

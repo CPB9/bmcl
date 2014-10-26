@@ -1,21 +1,17 @@
 #include "bmcl/core/endian.h"
 #include "bmcl/core/memreader.h"
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 static const reader_impl_t memreader_impl = {
-    (void (*)(void*, const void*, size_t))memreader_read,
-    (uint8_t (*)(void*))memreader_read_uint8,
-    (uint16_t (*)(void*))memreader_read_uint16le,
-    (uint32_t (*)(void*))memreader_read_uint32le,
-    (uint64_t (*)(void*))memreader_read_uint64le,
-    (uint16_t (*)(void*))memreader_read_uint16le,
-    (uint32_t (*)(void*))memreader_read_uint32le,
-    (uint64_t (*)(void*))memreader_read_uint64le,
+    (void (*)(void*, const void*, size_t))memreader_read, (uint8_t (*)(void*))memreader_read_uint8,
+    (uint16_t (*)(void*))memreader_read_uint16le,         (uint32_t (*)(void*))memreader_read_uint32le,
+    (uint64_t (*)(void*))memreader_read_uint64le,         (uint16_t (*)(void*))memreader_read_uint16le,
+    (uint32_t (*)(void*))memreader_read_uint32le,         (uint64_t (*)(void*))memreader_read_uint64le,
 };
 
 void memreader_init(memreader_t* self, const void* ptr, size_t size)
@@ -30,6 +26,29 @@ void memreader_init_reader(memreader_t* self, reader_t* reader)
     reader->data = self;
     reader->impl = &memreader_impl;
 }
+
+#if BMCL_HAVE_MALLOC
+
+memreader_t* memreader_create(const void* ptr, size_t size)
+{
+    memreader_t* self = malloc(sizeof(memreader_t));
+    memreader_init(self, ptr, size);
+    return self;
+}
+
+void memreader_destroy(memreader_t* self)
+{
+    free(self);
+}
+
+reader_t* memreader_create_reader(memreader_t* self)
+{
+    reader_t* reader = malloc(sizeof(reader_t));
+    memreader_init_reader(self, reader);
+    return reader;
+}
+
+#endif
 
 const uint8_t* memreader_current_ptr(const memreader_t* self)
 {

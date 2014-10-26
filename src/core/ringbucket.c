@@ -4,13 +4,10 @@
 
 typedef size_t ringbucket_size_t;
 
-static const queue_impl_t ringbucket_queue_impl = {
-    (void (*)(void*, const void*, size_t))ringbucket_append,
-    (size_t (*)(const void*))ringbucket_count,
-    (size_t (*)(const void*))ringbucket_first_size,
-    (void (*)(const void* data, void* dest))ringbucket_copy_first,
-    (void (*)(void* data))ringbucket_remove_first
-};
+static const queue_impl_t ringbucket_queue_impl
+    = {(void (*)(void*, const void*, size_t))ringbucket_append, (size_t (*)(const void*))ringbucket_count,
+       (size_t (*)(const void*))ringbucket_first_size, (void (*)(const void* data, void* dest))ringbucket_copy_first,
+       (void (*)(void* data))ringbucket_remove_first};
 
 void ringbucket_init(ringbucket_t* self, void* data, size_t size)
 {
@@ -25,6 +22,23 @@ void ringbucket_init_queue(ringbucket_t* self, queue_t* queue)
     queue->data = self;
     queue->impl = &ringbucket_queue_impl;
 }
+
+#if BMCL_HAVE_MALLOC
+
+ringbucket_t* ringbucket_create(size_t size)
+{
+    uint8_t* data = malloc(sizeof(ringbucket_t) + size);
+    ringbucket_t* self = (ringbucket_t*)data;
+    ringbucket_init(self, data + sizeof(ringbucket_t), size);
+    return self;
+}
+
+void ringbucket_destroy(ringbucket_t* self)
+{
+    free(self);
+}
+
+#endif
 
 static size_t erase_element(ringbucket_t* self)
 {

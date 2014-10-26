@@ -19,6 +19,14 @@ void ringbucket_init(ringbucket_t* self, void* data, size_t size);
 
 void ringbucket_init_queue(ringbucket_t* self, queue_t* queue);
 
+#if BMCL_HAVE_MALLOC
+
+ringbucket_t* ringbucket_create(size_t size);
+
+void ringbucket_destroy(ringbucket_t* self);
+
+#endif
+
 size_t ringbucket_get_free_space(const ringbucket_t* self);
 
 bool ringbucket_is_empty(const ringbucket_t* self);

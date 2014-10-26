@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct {
     void* data;
@@ -18,6 +19,15 @@ typedef struct writer_impl_s {
     void (*write_uint32be)(void* self, uint32_t value);
     void (*write_uint64be)(void* self, uint64_t value);
 } writer_impl_t;
+
+#if BMCL_HAVE_MALLOC
+
+static inline void writer_destroy(writer_t* self)
+{
+    free(self);
+}
+
+#endif
 
 static inline void writer_write(writer_t* self, const void* data, size_t size)
 {

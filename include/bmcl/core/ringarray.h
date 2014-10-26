@@ -7,8 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct
-{
+typedef struct {
     void* data;
     size_t element_size;
     size_t size;
@@ -17,7 +16,15 @@ typedef struct
     size_t count;
 } ringarray_t;
 
-void ringarray_init(ringarray_t* self, void* data, size_t size, size_t element_size);
+void ringarray_init(ringarray_t* self, void* data, size_t buf_size, size_t element_size);
+
+#if BMCL_HAVE_MALLOC
+
+ringarray_t* ringarray_create(size_t element_num, size_t element_size);
+
+void ringarray_destroy(ringarray_t* self);
+
+#endif
 
 void ringarray_reset(ringarray_t* self);
 

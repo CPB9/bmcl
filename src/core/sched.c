@@ -2,6 +2,8 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size_t task_num, task_executor_t executor)
@@ -17,6 +19,23 @@ void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size
     self->task_num = task_num;
     self->executor = executor;
 }
+
+#if BMCL_HAVE_MALLOC
+
+sched_t* sched_create(const task_t* tasks, size_t task_num, task_executor_t executor)
+{
+    uint8_t* data = malloc(sizeof(sched_t) + sizeof(task_data_t) * task_num);
+    sched_t* self = (sched_t*)data;
+    sched_init(self, tasks, (task_data_t*)(data + sizeof(sched_t)), task_num, executor);
+    return self;
+}
+
+void sched_destroy(sched_t* self)
+{
+    free(self);
+}
+
+#endif
 
 bool sched_exec_next(sched_t* self, void* user_data)
 {

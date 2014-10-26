@@ -9,25 +9,17 @@
 #define Sys_MIN(a, b) (((a) > (b)) ? (b) : (a))
 
 static const reader_impl_t ringbuf_reader_impl = {
-    (void (*)(void*, const void*, size_t))ringbuf_read,
-    (uint8_t (*)(void*))ringbuf_read_uint8,
-    (uint16_t (*)(void*))ringbuf_read_uint16le,
-    (uint32_t (*)(void*))ringbuf_read_uint32le,
-    (uint64_t (*)(void*))ringbuf_read_uint64le,
-    (uint16_t (*)(void*))ringbuf_read_uint16le,
-    (uint32_t (*)(void*))ringbuf_read_uint32le,
-    (uint64_t (*)(void*))ringbuf_read_uint64le,
+    (void (*)(void*, const void*, size_t))ringbuf_read, (uint8_t (*)(void*))ringbuf_read_uint8,
+    (uint16_t (*)(void*))ringbuf_read_uint16le,         (uint32_t (*)(void*))ringbuf_read_uint32le,
+    (uint64_t (*)(void*))ringbuf_read_uint64le,         (uint16_t (*)(void*))ringbuf_read_uint16le,
+    (uint32_t (*)(void*))ringbuf_read_uint32le,         (uint64_t (*)(void*))ringbuf_read_uint64le,
 };
 
 static const writer_impl_t ringbuf_writer_impl = {
-    (void (*)(void*, const void*, size_t))ringbuf_write,
-    (void (*)(void*, uint8_t))ringbuf_write_uint8,
-    (void (*)(void*, uint16_t))ringbuf_write_uint16le,
-    (void (*)(void*, uint32_t))ringbuf_write_uint32le,
-    (void (*)(void*, uint64_t))ringbuf_write_uint64le,
-    (void (*)(void*, uint16_t))ringbuf_write_uint16be,
-    (void (*)(void*, uint32_t))ringbuf_write_uint32be,
-    (void (*)(void*, uint64_t))ringbuf_write_uint64be,
+    (void (*)(void*, const void*, size_t))ringbuf_write, (void (*)(void*, uint8_t))ringbuf_write_uint8,
+    (void (*)(void*, uint16_t))ringbuf_write_uint16le,   (void (*)(void*, uint32_t))ringbuf_write_uint32le,
+    (void (*)(void*, uint64_t))ringbuf_write_uint64le,   (void (*)(void*, uint16_t))ringbuf_write_uint16be,
+    (void (*)(void*, uint32_t))ringbuf_write_uint32be,   (void (*)(void*, uint64_t))ringbuf_write_uint64be,
 };
 
 void ringbuf_init(ringbuf_t* self, void* data, size_t size)
@@ -51,6 +43,37 @@ void ringbuf_init_writer(ringbuf_t* self, writer_t* writer)
     writer->data = self;
     writer->impl = &ringbuf_writer_impl;
 }
+
+#if BMCL_HAVE_MALLOC
+
+ringbuf_t* ringbuf_create(size_t size)
+{
+    uint8_t* data = malloc(sizeof(ringbuf_t) + size);
+    ringbuf_t* self = (ringbuf_t*)data;
+    ringbuf_init(self, data + sizeof(ringbuf_t), size);
+    return self;
+}
+
+void ringbuf_destroy(ringbuf_t* self)
+{
+    free(self);
+}
+
+writer_t* ringbuf_create_writer(ringbuf_t* self)
+{
+    writer_t* writer = malloc(sizeof(writer_t));
+    ringbuf_init_writer(self, writer);
+    return writer;
+}
+
+reader_t* ringbuf_create_reader(ringbuf_t* self)
+{
+    reader_t* reader = malloc(sizeof(writer_t));
+    ringbuf_init_reader(self, reader);
+    return reader;
+}
+
+#endif
 
 void ringbuf_clear(ringbuf_t* self)
 {

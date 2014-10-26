@@ -7,41 +7,49 @@ class ReaderTest: public ::testing::Test
 protected:
     void SetUp()
     {
-        memset(&_reader, 0, sizeof(_reader));
+        _reader = 0;
+    }
+
+    void TearDown()
+    {
+        if (_reader) {
+            memreader_destroy(_reader);
+        }
     }
 
     void initReader(const void* data, size_t size)
     {
-        memreader_init(&_reader, data, size);
+        assert(_reader == 0);
+        _reader = memreader_create(data, size);
     }
 
     void expectParams(size_t read, size_t left, void* data)
     {
 
-        EXPECT_EQ(read, memreader_size_read(&_reader));
-        EXPECT_EQ(left, memreader_size_left(&_reader));
-        EXPECT_EQ(read + left, memreader_size(&_reader));
-        bool isEmpty = read == memreader_size(&_reader);
-        EXPECT_EQ(isEmpty, memreader_is_empty(&_reader));
-        EXPECT_EQ((uint8_t*)data, memreader_current_ptr(&_reader));
+        EXPECT_EQ(read, memreader_size_read(_reader));
+        EXPECT_EQ(left, memreader_size_left(_reader));
+        EXPECT_EQ(read + left, memreader_size(_reader));
+        bool isEmpty = read == memreader_size(_reader);
+        EXPECT_EQ(isEmpty, memreader_is_empty(_reader));
+        EXPECT_EQ((uint8_t*)data, memreader_current_ptr(_reader));
     }
 
     void skip(size_t size)
     {
-        memreader_skip(&_reader, size);
+        memreader_skip(_reader, size);
     }
 
     void peek(void* dest, size_t size, size_t offset)
     {
-        memreader_peek(&_reader, dest, size, offset);
+        memreader_peek(_reader, dest, size, offset);
     }
 
     uint8_t readUint8()
     {
-        return memreader_read_uint8(&_reader);
+        return memreader_read_uint8(_reader);
     }
 
-    memreader_t _reader;
+    memreader_t* _reader;
 };
 
 TEST_F(ReaderTest, init)

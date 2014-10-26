@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct {
     void* data;
@@ -18,6 +19,15 @@ typedef struct reader_impl_s {
     uint32_t (*read_uint32be)(void* self);
     uint64_t (*read_uint64be)(void* self);
 } reader_impl_t;
+
+#if BMCL_HAVE_MALLOC
+
+static inline void reader_destroy(reader_t* self)
+{
+    free(self);
+}
+
+#endif
 
 static inline void reader_read(reader_t* self, const void* dest, size_t size)
 {

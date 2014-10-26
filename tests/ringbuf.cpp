@@ -6,68 +6,68 @@ class RingBufTest : public ::testing::Test {
 protected:
     void SetUp()
     {
-        ringbuf_clear(&_ringbuf);
+        _ringbuf = 0;
     }
 
     void TearDown()
     {
-        delete[] buffer;
+        if (_ringbuf) {
+            ringbuf_destroy(_ringbuf);
+        }
     }
 
     void initRingBuf(size_t size)
     {
-        buffer = new uint8_t[size + 10];
-        memset(buffer, 0, size + 10);
-        ringbuf_init(&_ringbuf, buffer + 5, size);
+        assert(_ringbuf == 0);
+        _ringbuf = ringbuf_create(size);
     }
 
     void append(void* data, size_t size)
     {
-        ringbuf_write(&_ringbuf, data, size);
+        ringbuf_write(_ringbuf, data, size);
     }
 
     void erase(size_t size)
     {
-        ringbuf_erase(&_ringbuf, size);
+        ringbuf_erase(_ringbuf, size);
     }
 
     void appendByte(uint8_t byte)
     {
-        ringbuf_write_uint8(&_ringbuf, byte);
+        ringbuf_write_uint8(_ringbuf, byte);
     }
 
     uint8_t readByte()
     {
-        return ringbuf_read_uint8(&_ringbuf);
+        return ringbuf_read_uint8(_ringbuf);
     }
 
     void expectFreeSpace(size_t freeSpace)
     {
-        EXPECT_EQ(ringbuf_get_free_space(&_ringbuf), freeSpace);
+        EXPECT_EQ(ringbuf_get_free_space(_ringbuf), freeSpace);
     }
 
     void expectFull()
     {
-        EXPECT_TRUE(ringbuf_is_full(&_ringbuf));
+        EXPECT_TRUE(ringbuf_is_full(_ringbuf));
     }
 
     void expectEmpty()
     {
-        EXPECT_TRUE(ringbuf_is_empty(&_ringbuf));
+        EXPECT_TRUE(ringbuf_is_empty(_ringbuf));
     }
 
     void expectData(void* expected, size_t size)
     {
         uint8_t* temp = new uint8_t[size];
-        ringbuf_peek(&_ringbuf, temp, size, 0);
-        EXPECT_EQ(size, ringbuf_get_used_space(&_ringbuf));
+        ringbuf_peek(_ringbuf, temp, size, 0);
+        EXPECT_EQ(size, ringbuf_get_used_space(_ringbuf));
         EXPECT_EQ_MEM(expected, temp, size);
         delete [] temp;
     }
 
 private:
-    ringbuf_t _ringbuf;
-    uint8_t* buffer;
+    ringbuf_t* _ringbuf;
 };
 
 TEST_F(RingBufTest, init)

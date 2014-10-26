@@ -8,77 +8,74 @@ class PackerTest: public ::testing::Test
 protected:
     void SetUp()
     {
-        memset(&_writer, 0, sizeof(_writer));
-        memset(_data, 0, sizeof(_data));
+        _writer = 0;
+    }
+
+    void TearDown()
+    {
+        if (_writer) {
+            memwriter_destroy(_writer);
+        }
     }
 
     void initWriter(size_t size)
     {
-        assert(size <= 10000);
-        memwriter_init(&_writer, _data, size);
-    }
-
-    memwriter_t* newPacker(size_t size)
-    {
-        memwriter_t* w = new memwriter_t;
-        uint8_t* data = new uint8_t[size];
-        memwriter_init(w, data, size);
-        return w;
+        assert(_writer == 0);
+        _writer = memwriter_create(size);
     }
 
     void expectData(void* expected, size_t size)
     {
-        EXPECT_EQ(0, memcmp(memwriter_ptr(&_writer), expected, size));
+        EXPECT_EQ(0, memcmp(memwriter_ptr(_writer), expected, size));
     }
 
     void expectSizes(size_t used, size_t left)
     {
 
-        EXPECT_EQ(used, memwriter_size(&_writer));
-        EXPECT_EQ(left, memwriter_size_left(&_writer));
-        EXPECT_EQ(used + left, memwriter_max_size(&_writer));
-        bool isFull = used == memwriter_max_size(&_writer);
-        EXPECT_EQ(isFull, memwriter_is_full(&_writer));
+        EXPECT_EQ(used, memwriter_size(_writer));
+        EXPECT_EQ(left, memwriter_size_left(_writer));
+        EXPECT_EQ(used + left, memwriter_max_size(_writer));
+        bool isFull = used == memwriter_max_size(_writer);
+        EXPECT_EQ(isFull, memwriter_is_full(_writer));
     }
 
     void append(const void* data, size_t size)
     {
-        memwriter_write(&_writer, data, size);
+        memwriter_write(_writer, data, size);
     }
 
     void appendUint8(uint8_t data)
     {
-        memwriter_write_uint8(&_writer, data);
+        memwriter_write_uint8(_writer, data);
     }
 
     void appendUint16le(uint16_t data)
     {
-        memwriter_write_uint16le(&_writer, data);
+        memwriter_write_uint16le(_writer, data);
     }
 
     void appendUint16be(uint16_t data)
     {
-        memwriter_write_uint16be(&_writer, data);
+        memwriter_write_uint16be(_writer, data);
     }
 
     void appendUint32be(uint32_t data)
     {
-        memwriter_write_uint32be(&_writer, data);
+        memwriter_write_uint32be(_writer, data);
     }
 
     void appendUint64be(uint64_t data)
     {
-        memwriter_write_uint64be(&_writer, data);
+        memwriter_write_uint64be(_writer, data);
     }
 
     void fillUp(int8_t data)
     {
-        memwriter_fillup(&_writer, data);
+        memwriter_fillup(_writer, data);
     }
 
 private:
-    memwriter_t _writer;
-    uint8_t _data[10000];
+    memwriter_t* _writer;
 };
 
 TEST_F(PackerTest, init)

@@ -11,8 +11,7 @@
 extern "C" {
 #endif
 
-typedef struct
-{
+typedef struct {
     size_t read_offset;
     size_t write_offset;
     size_t size;
@@ -25,6 +24,18 @@ void ringbuf_init(ringbuf_t* self, void* data, size_t size);
 void ringbuf_init_writer(ringbuf_t* self, writer_t* writer);
 
 void ringbuf_init_reader(ringbuf_t* self, reader_t* reader);
+
+#if BMCL_HAVE_MALLOC
+
+ringbuf_t* ringbuf_create(size_t size);
+
+void ringbuf_destroy(ringbuf_t* self);
+
+writer_t* ringbuf_create_writer(ringbuf_t* self);
+
+reader_t* ringbuf_create_reader(ringbuf_t* self);
+
+#endif
 
 void ringbuf_clear(ringbuf_t* self);
 
