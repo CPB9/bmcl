@@ -40,6 +40,13 @@ if(NOT ARDUINO_BOARD)
         SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${name} -fsanitize=integer -fsanitize=undefined")
     endmacro()
 
+    if(TEST_COVERAGE)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/test-coverage.sh.in ${CMAKE_BINARY_DIR}/test-coverage.sh)
+        execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/test-coverage.sh)
+        add_definitions(-fprofile-arcs -ftest-coverage)
+        SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+    endif()
+
     if(SANITIZE_ADDRESS)
         enable_sanitizer(address)
     elseif(SANITIZE_MEMORY) # instrumented libc++ required
