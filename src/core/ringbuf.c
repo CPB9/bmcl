@@ -270,15 +270,3 @@ uint64_t ringbuf_read_uint64be(ringbuf_t* self)
     ringbuf_erase(self, 8);
     return be64toh(data);
 }
-
-void ringbuf_rewind(ringbuf_t* self, size_t size)
-{
-    assert(ringbuf_get_used_space(self) >= size);
-    self->free_space += size;
-
-    if (self->write_offset < size) {
-        self->write_offset = self->size - (size - self->write_offset);
-    } else {
-        self->write_offset -= size;
-    }
-}

@@ -1,7 +1,7 @@
 #include "bmcl/core/endian.h"
 #include "bmcl/core/memwriter.h"
 
-#include <gtest/gtest.h>
+#include "bmcl-test.h"
 
 class PackerTest: public ::testing::Test
 {
@@ -18,6 +18,12 @@ protected:
         }
     }
 
+    void initWriterWithDest(void* dest, size_t size)
+    {
+        assert(_writer == 0);
+        _writer = memwriter_create_with_dest(dest, size);
+    }
+
     void initWriter(size_t size)
     {
         assert(_writer == 0);
@@ -31,12 +37,12 @@ protected:
 
     void expectSizes(size_t used, size_t left)
     {
-
         EXPECT_EQ(used, memwriter_size(_writer));
         EXPECT_EQ(left, memwriter_size_left(_writer));
         EXPECT_EQ(used + left, memwriter_max_size(_writer));
         bool isFull = used == memwriter_max_size(_writer);
         EXPECT_EQ(isFull, memwriter_is_full(_writer));
+        EXPECT_EQ((uint8_t*)memwriter_ptr(_writer) + used, memwriter_current_ptr(_writer));
     }
 
     void append(const void* data, size_t size)
@@ -69,9 +75,14 @@ protected:
         memwriter_write_uint64be(_writer, data);
     }
 
-    void fillUp(int8_t data)
+    void fillUp(uint8_t data)
     {
         memwriter_fillup(_writer, data);
+    }
+
+    void fill(uint8_t data, size_t size)
+    {
+        memwriter_fill(_writer, data, size);
     }
 
 private:
@@ -82,6 +93,16 @@ TEST_F(PackerTest, init)
 {
     initWriter(100);
     expectSizes(0, 100);
+}
+
+TEST_F(PackerTest, with_dest)
+{
+    uint8_t data[5] = {0xaa, 0x11, 0x22, 0xbb, 0xff};
+    uint8_t dest[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t expected[5] = {0xaa, 0x11, 0x22, 0xbb, 0xff};
+    initWriterWithDest(dest, 5);
+    append(data, 5);
+    EXPECT_EQ_MEM(expected, dest, 5);
 }
 
 TEST_F(PackerTest, append)
@@ -107,6 +128,17 @@ TEST_F(PackerTest, fill_up)
     fillUp(0x11);
     expectData(expected, 8);
     expectSizes(8, 0);
+}
+
+TEST_F(PackerTest, fill)
+{
+    uint8_t expected[6] = {0xaa, 0xaa, 0xcc, 0xbb, 0xbb, 0xbb};
+    initWriter(6);
+    fill(0xaa, 2);
+    fill(0xcc, 1);
+    fill(0xbb, 3);
+    expectData(expected, 6);
+    expectSizes(6, 0);
 }
 
 TEST_F(PackerTest, append_uint8__one)

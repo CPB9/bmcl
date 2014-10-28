@@ -1,6 +1,6 @@
 #include "bmcl/core/memreader.h"
 
-#include <gtest/gtest.h>
+#include "bmcl-test.h"
 
 class ReaderTest: public ::testing::Test
 {
@@ -25,7 +25,6 @@ protected:
 
     void expectParams(size_t read, size_t left, void* data)
     {
-
         EXPECT_EQ(read, memreader_size_read(_reader));
         EXPECT_EQ(left, memreader_size_left(_reader));
         EXPECT_EQ(read + left, memreader_size(_reader));
@@ -42,6 +41,11 @@ protected:
     void peek(void* dest, size_t size, size_t offset)
     {
         memreader_peek(_reader, dest, size, offset);
+    }
+
+    void read(void* dest, size_t size)
+    {
+        memreader_read(_reader, dest, size);
     }
 
     uint8_t readUint8()
@@ -109,4 +113,15 @@ TEST_F(ReaderTest, peek_one)
     initReader(data, 4);
     peek(dest, 4, 0);
     expectParams(0, 4, data);
+}
+
+TEST_F(ReaderTest, read)
+{
+    uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    uint8_t dest[4] = {0x00, 0x00, 0x00, 0x00};
+    uint8_t expected[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    initReader(data, 4);
+    read(dest, 4);
+    expectParams(4, 0, data + 4);
+    EXPECT_EQ_MEM(expected, dest, 4);
 }

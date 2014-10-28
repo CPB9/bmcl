@@ -83,8 +83,6 @@ uint32_t ringbuf_read_uint32be(ringbuf_t* self);
 
 uint64_t ringbuf_read_uint64be(ringbuf_t* self);
 
-void ringbuf_rewind(ringbuf_t* self, size_t size);
-
 #ifdef __cplusplus
 }
 #endif
