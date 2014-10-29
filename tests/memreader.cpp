@@ -2,8 +2,7 @@
 
 #include "bmcl-test.h"
 
-class ReaderTest: public ::testing::Test
-{
+class MemReaderTest : public ::testing::Test {
 protected:
     void SetUp()
     {
@@ -17,10 +16,11 @@ protected:
         }
     }
 
-    void initReader(const void* data, size_t size)
+    template <std::size_t n, typename R>
+    void initReader(const R (&array)[n])
     {
         assert(_reader == 0);
-        _reader = memreader_create(data, size);
+        _reader = memreader_create(array, sizeof(R) * n);
     }
 
     void expectParams(size_t read, size_t left, void* data)
@@ -48,80 +48,89 @@ protected:
         memreader_read(_reader, dest, size);
     }
 
-    uint8_t readUint8()
+    void expectNextUint8(uint8_t value)
     {
-        return memreader_read_uint8(_reader);
+        EXPECT_EQ(value, memreader_read_uint8(_reader));
+    }
+
+    template <std::size_t n, typename R>
+    void expectNextData(const R (&array)[n])
+    {
+        size_t dataSize = sizeof(R) * n;
+        uint8_t temp[dataSize];
+        memreader_read(_reader, temp, dataSize);
+        EXPECT_EQ_MEM(array, temp, dataSize);
     }
 
     memreader_t* _reader;
 };
 
-TEST_F(ReaderTest, init)
+TEST_F(MemReaderTest, init)
 {
     uint8_t data[2] = {0xff, 0xff};
-    initReader(data, 2);
+    initReader(data);
     expectParams(0, 2, data);
 }
 
-TEST_F(ReaderTest, current_ptr__after_read)
+TEST_F(MemReaderTest, current_ptr_after_read)
 {
-    uint8_t data[4] = {0xff, 0xff, 0xff, 0xff};
-    initReader(data, 4);
-    readUint8();
+    uint8_t data[4] = {0x22, 0xff, 0xff, 0xff};
+    initReader(data);
+    expectNextUint8(0x22);
     expectParams(1, 3, data + 1);
 }
 
-TEST_F(ReaderTest, current_ptr__after_full_read)
+TEST_F(MemReaderTest, current_ptr_after_full_read)
 {
-    uint8_t data[4] = {0xff, 0xff, 0xff, 0xff};
-    initReader(data, 4);
-    readUint8();
-    readUint8();
-    readUint8();
-    readUint8();
+    uint8_t data[4] = {0xff, 0xaa, 0x11, 0x55};
+    initReader(data);
+    expectNextUint8(0xff);
+    expectNextUint8(0xaa);
+    expectNextUint8(0x11);
+    expectNextUint8(0x55);
     expectParams(4, 0, data + 4);
 }
 
-TEST_F(ReaderTest, skip__zero)
+TEST_F(MemReaderTest, skip_zero)
 {
     uint8_t data[4] = {0xff, 0xff, 0xff, 0xff};
-    initReader(data, 4);
+    initReader(data);
     skip(0);
     expectParams(0, 4, data);
 }
 
-TEST_F(ReaderTest, skip__several)
+TEST_F(MemReaderTest, skip_several)
 {
     uint8_t data[4] = {0xff, 0xff, 0xff, 0xff};
-    initReader(data, 4);
+    initReader(data);
     skip(2);
     expectParams(2, 2, data + 2);
 }
 
-TEST_F(ReaderTest, skip__all)
+TEST_F(MemReaderTest, skip_all)
 {
     uint8_t data[4] = {0xff, 0xff, 0xff, 0xff};
-    initReader(data, 4);
+    initReader(data);
     skip(4);
     expectParams(4, 0, data + 4);
 }
 
-TEST_F(ReaderTest, peek_one)
-{
-    uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
-    uint8_t dest[4] = {0x00, 0x00, 0x00, 0x00};
-    initReader(data, 4);
-    peek(dest, 4, 0);
-    expectParams(0, 4, data);
-}
-
-TEST_F(ReaderTest, read)
+TEST_F(MemReaderTest, peek)
 {
     uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
     uint8_t dest[4] = {0x00, 0x00, 0x00, 0x00};
     uint8_t expected[4] = {0xaa, 0xbb, 0xcc, 0xdd};
-    initReader(data, 4);
-    read(dest, 4);
+    initReader(data);
+    peek(dest, 4, 0);
+    expectParams(0, 4, data);
+    EXPECT_EQ_ARRAYS(expected, dest);
+}
+
+TEST_F(MemReaderTest, read)
+{
+    uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    uint8_t expected[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    initReader(data);
+    expectNextData(expected);
     expectParams(4, 0, data + 4);
-    EXPECT_EQ_MEM(expected, dest, 4);
 }

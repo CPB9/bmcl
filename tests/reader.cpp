@@ -43,9 +43,9 @@ public:
     RingBufReader(const void* ptr, size_t size)
     {
         _ringbuf = ringbuf_create(size);
-        size_t filler_size = size / 2 + 1;
-        uint8_t* filler = new uint8_t[filler_size];
-        ringbuf_write(_ringbuf, filler, filler_size);
+        size_t fillerSize = size / 2 + 1;
+        uint8_t* filler = new uint8_t[fillerSize];
+        ringbuf_write(_ringbuf, filler, fillerSize);
         ringbuf_write(_ringbuf, ptr, size);
         _reader = ringbuf_create_reader(_ringbuf);
         delete[] filler;
@@ -85,10 +85,9 @@ protected:
     void expectNextData(const R (&array)[n])
     {
         size_t size = sizeof(R) * n;
-        uint8_t* tmp = new uint8_t[size];
+        uint8_t tmp[size];
         reader_read(_reader, tmp, size);
         EXPECT_EQ_MEM(array, tmp, size);
-        delete[] tmp;
     }
 
     template <typename R, typename F>

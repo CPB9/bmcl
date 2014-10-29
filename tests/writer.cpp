@@ -106,10 +106,9 @@ protected:
     {
         size_t size = sizeof(R) * n;
         ASSERT_EQ(size, _shell->dataSize());
-        uint8_t* tmp = new uint8_t[_shell->dataSize()];
+        uint8_t tmp[_shell->dataSize()];
         _shell->copyData(tmp);
         EXPECT_EQ_MEM(array, tmp, size);
-        delete[] tmp;
     }
 
     template <size_t n, typename R>

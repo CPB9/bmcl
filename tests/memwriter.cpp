@@ -3,7 +3,7 @@
 
 #include "bmcl-test.h"
 
-class PackerTest: public ::testing::Test
+class MemWriterTest: public ::testing::Test
 {
 protected:
     void SetUp()
@@ -18,21 +18,31 @@ protected:
         }
     }
 
-    void initWriterWithDest(void* dest, size_t size)
+    template <std::size_t n, typename R>
+    void initWriter(R (&array)[n])
     {
         assert(_writer == 0);
-        _writer = memwriter_create_with_dest(dest, size);
+        _writer = memwriter_create_with_dest(array, sizeof(R) * n);
     }
 
-    void initWriter(size_t size)
+    template <std::size_t n, typename R>
+    void initWriterWithSizeOf(const R (&array)[n])
+    {
+        (void)array;
+        assert(_writer == 0);
+        _writer = memwriter_create(sizeof(R) * n);
+    }
+
+    void initWriterWithSize(size_t size)
     {
         assert(_writer == 0);
         _writer = memwriter_create(size);
     }
 
-    void expectData(void* expected, size_t size)
+    template <std::size_t n, typename R>
+    void expect(const R (&array)[n])
     {
-        EXPECT_EQ(0, memcmp(memwriter_ptr(_writer), expected, size));
+        EXPECT_EQ_MEM(array, memwriter_ptr(_writer), sizeof(R) * n);
     }
 
     void expectSizes(size_t used, size_t left)
@@ -45,34 +55,15 @@ protected:
         EXPECT_EQ((uint8_t*)memwriter_ptr(_writer) + used, memwriter_current_ptr(_writer));
     }
 
-    void append(const void* data, size_t size)
+    template <std::size_t n, typename R>
+    void append(const R (&array)[n])
     {
-        memwriter_write(_writer, data, size);
+        memwriter_write(_writer, array, sizeof(R) * n);
     }
 
     void appendUint8(uint8_t data)
     {
         memwriter_write_uint8(_writer, data);
-    }
-
-    void appendUint16le(uint16_t data)
-    {
-        memwriter_write_uint16le(_writer, data);
-    }
-
-    void appendUint16be(uint16_t data)
-    {
-        memwriter_write_uint16be(_writer, data);
-    }
-
-    void appendUint32be(uint32_t data)
-    {
-        memwriter_write_uint32be(_writer, data);
-    }
-
-    void appendUint64be(uint64_t data)
-    {
-        memwriter_write_uint64be(_writer, data);
     }
 
     void fillUp(uint8_t data)
@@ -89,204 +80,77 @@ private:
     memwriter_t* _writer;
 };
 
-TEST_F(PackerTest, init)
+TEST_F(MemWriterTest, init)
 {
-    initWriter(100);
+    initWriterWithSize(100);
     expectSizes(0, 100);
 }
 
-TEST_F(PackerTest, with_dest)
+TEST_F(MemWriterTest, with_dest)
 {
     uint8_t data[5] = {0xaa, 0x11, 0x22, 0xbb, 0xff};
     uint8_t dest[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
     uint8_t expected[5] = {0xaa, 0x11, 0x22, 0xbb, 0xff};
-    initWriterWithDest(dest, 5);
-    append(data, 5);
-    EXPECT_EQ_MEM(expected, dest, 5);
+    initWriter(dest);
+    append(data);
+    EXPECT_EQ_ARRAYS(expected, dest);
 }
 
-TEST_F(PackerTest, append)
+TEST_F(MemWriterTest, append)
+{
+    uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    uint8_t expected[4] = {0xaa, 0xbb, 0xcc, 0xdd};
+    initWriterWithSize(7);
+    append(data);
+    expect(expected);
+    expectSizes(4, 3);
+}
+
+TEST_F(MemWriterTest, append_full)
 {
     uint8_t data1[4] = {0xaa, 0xbb, 0xcc, 0xdd};
     uint8_t data2[4] = {0x11, 0x22, 0x33, 0x44};
-    uint8_t expected_data[8] = {0xaa, 0xbb, 0xcc, 0xdd, 0x11, 0x22, 0x33, 0x44};
-    initWriter(8);
-    append(data1, 4);
-    append(data2, 4);
-    expectData(expected_data, 8);
+    uint8_t expected[8] = {0xaa, 0xbb, 0xcc, 0xdd, 0x11, 0x22, 0x33, 0x44};
+    initWriterWithSizeOf(expected);
+    append(data1);
+    append(data2);
+    expect(expected);
     expectSizes(8, 0);
 }
 
-TEST_F(PackerTest, fill_up)
+TEST_F(MemWriterTest, fill_up)
 {
     uint8_t expected[8] = {0xaa, 0xff, 0xcc, 0xdd, 0x11, 0x11, 0x11, 0x11};
-    initWriter(8);
+    initWriterWithSizeOf(expected);
     appendUint8(0xaa);
     appendUint8(0xff);
     appendUint8(0xcc);
     appendUint8(0xdd);
     fillUp(0x11);
-    expectData(expected, 8);
+    expect(expected);
     expectSizes(8, 0);
 }
 
-TEST_F(PackerTest, fill)
+TEST_F(MemWriterTest, fill)
 {
     uint8_t expected[6] = {0xaa, 0xaa, 0xcc, 0xbb, 0xbb, 0xbb};
-    initWriter(6);
+    initWriterWithSizeOf(expected);
     fill(0xaa, 2);
     fill(0xcc, 1);
     fill(0xbb, 3);
-    expectData(expected, 6);
+    expect(expected);
     expectSizes(6, 0);
 }
 
-TEST_F(PackerTest, append_uint8__one)
+TEST_F(MemWriterTest, append_uint8)
 {
-    uint8_t expected_data[] = {0xa1};
-    initWriter(20);
-    appendUint8(0xa1);
-    expectData(expected_data, 1);
-    expectSizes(1, 19);
-}
-
-TEST_F(PackerTest, append_uint8__several)
-{
-    uint8_t expected_data[] = {0xff, 0xaa, 0x12, 0x15};
-    initWriter(100);
-    appendUint8(0xff);
-    appendUint8(0xaa);
-    appendUint8(0x12);
-    appendUint8(0x15);
-    expectData(expected_data, 4);
-    expectSizes(4, 96);
-}
-
-TEST_F(PackerTest, append_uint8__full)
-{
-    uint8_t expected_data[] = {0x11, 0x22, 0x33, 0x44, 0x55};
-    initWriter(5);
+    uint8_t expected[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    initWriterWithSizeOf(expected);
     appendUint8(0x11);
     appendUint8(0x22);
     appendUint8(0x33);
     appendUint8(0x44);
     appendUint8(0x55);
-    expectData(expected_data, 5);
+    expect(expected);
     expectSizes(5, 0);
-}
-
-TEST_F(PackerTest, append_uint16__one)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint16_t expected_data[] = {0x5847};
-#else
-    uint16_t expected_data[] = {0x4758};
-#endif
-    initWriter(20);
-    appendUint16le(0x5847);
-    expectData(expected_data, 2);
-    expectSizes(2, 18);
-}
-
-TEST_F(PackerTest, append_uint16__full)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint16_t expected_data[] = {0x1234, 0x7654, 0x0853, 0xcf41, 0xf017};
-#else
-    uint16_t expected_data[] = {0x3412, 0x5476, 0x5308, 0x41cf, 0x17f0};
-#endif
-    initWriter(10);
-    appendUint16le(0x1234);
-    appendUint16le(0x7654);
-    appendUint16le(0x0853);
-    appendUint16le(0xcf41);
-    appendUint16le(0xf017);
-    expectData(expected_data, 10);
-    expectSizes(10, 0);
-}
-
-TEST_F(PackerTest, append_uint16be__one)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint16_t expected_data[] = {0xaa55};
-#else
-    uint16_t expected_data[] = {0x55aa};
-#endif
-    initWriter(20);
-    appendUint16be(0x55aa);
-    expectData(expected_data, 2);
-    expectSizes(2, 18);
-}
-
-TEST_F(PackerTest, append_uint16be__full)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint16_t expected_data[] = {0xaa55, 0x1234, 0x5467, 0x0987, 0x10cc};
-#else
-    uint16_t expected_data[] = {0x55aa, 0x3412, 0x6754, 0x8709, 0xcc10};
-#endif
-    initWriter(10);
-    appendUint16be(0x55aa);
-    appendUint16be(0x3412);
-    appendUint16be(0x6754);
-    appendUint16be(0x8709);
-    appendUint16be(0xcc10);
-    expectData(expected_data, 10);
-    expectSizes(10, 0);
-}
-
-TEST_F(PackerTest, append_uint32be__one)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint32_t expected_data[] = {0x78563412};
-#else
-    uint32_t expected_data[] = {0x12345678};
-#endif
-    initWriter(20);
-    appendUint32be(0x12345678);
-    expectData(expected_data, 4);
-    expectSizes(4, 16);
-}
-
-TEST_F(PackerTest, append_uint32be__full)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint32_t expected_data[] = {0x78563412, 0xddccbbaa, 0x44332211, 0x21436587};
-#else
-    uint32_t expected_data[] = {0x12345678, 0xaabbccdd, 0x11223344, 0x87654321};
-#endif
-    initWriter(16);
-    appendUint32be(0x12345678);
-    appendUint32be(0xaabbccdd);
-    appendUint32be(0x11223344);
-    appendUint32be(0x87654321);
-    expectData(expected_data, 16);
-    expectSizes(16, 0);
-}
-
-TEST_F(PackerTest, append_uint64be__one)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint64_t expected_data[] = {0xefcdab9078563412};
-#else
-    uint64_t expected_data[] = {0x1234567890abcdef};
-#endif
-    initWriter(20);
-    appendUint64be(0x1234567890abcdef);
-    expectData(expected_data, 8);
-    expectSizes(8, 12);
-}
-
-TEST_F(PackerTest, append_uint64be__full)
-{
-#ifdef BMCL_LITTLE_ENDIAN
-    uint64_t expected_data[] = {0x2222222211111111, 0x4444444433333333};
-#else
-    uint64_t expected_data[] = {0x1111111122222222, 0x3333333344444444};
-#endif
-    initWriter(16);
-    appendUint64be(0x1111111122222222);
-    appendUint64be(0x3333333344444444);
-    expectData(expected_data, 16);
-    expectSizes(16, 0);
 }
