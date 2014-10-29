@@ -31,6 +31,7 @@ macro(add_unit_test test)
 endmacro()
 
 add_unit_test(environment environment.cpp)
+add_unit_test(reader reader.cpp)
 add_unit_test(ringbuf ringbuf.cpp)
 add_unit_test(writer writer.cpp)
 add_unit_test(memwriter memwriter.cpp)
