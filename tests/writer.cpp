@@ -82,15 +82,16 @@ private:
 
 template <typename T>
 class WriterTest : public ::testing::Test {
-public:
-    writer_t* newWriter(size_t size)
+protected:
+    template <size_t n, typename R>
+    void newWriterWithSizeOf(const R (&array)[n])
     {
+        (void)array;
         assert(_shell == 0);
-        _shell = new T(size);
-        return _shell->get();
+        _shell = new T(sizeof(R) * n);
+        _writer = _shell->get();
     }
 
-protected:
     WriterTest()
         : _shell(0)
     {
@@ -100,13 +101,56 @@ protected:
     {
     }
 
-    void expectData(void* data, size_t size)
+    template <size_t n, typename R>
+    void expectData(const R (&array)[n])
     {
+        size_t size = sizeof(R) * n;
         ASSERT_EQ(size, _shell->dataSize());
         uint8_t* tmp = new uint8_t[_shell->dataSize()];
         _shell->copyData(tmp);
-        EXPECT_EQ_MEM(data, tmp, size);
+        EXPECT_EQ_MEM(array, tmp, size);
         delete[] tmp;
+    }
+
+    template <size_t n, typename R>
+    void writeData(const R (&array)[n])
+    {
+        writer_write(_writer, array, sizeof(R) * n);
+    }
+
+    void writeUint8(uint8_t value)
+    {
+        writer_write_uint8(_writer, value);
+    }
+
+    void writeUint16le(uint16_t value)
+    {
+        writer_write_uint16le(_writer, value);
+    }
+
+    void writeUint32le(uint32_t value)
+    {
+        writer_write_uint32le(_writer, value);
+    }
+
+    void writeUint64le(uint64_t value)
+    {
+        writer_write_uint64le(_writer, value);
+    }
+
+    void writeUint16be(uint16_t value)
+    {
+        writer_write_uint16be(_writer, value);
+    }
+
+    void writeUint32be(uint32_t value)
+    {
+        writer_write_uint32be(_writer, value);
+    }
+
+    void writeUint64be(uint64_t value)
+    {
+        writer_write_uint64be(_writer, value);
     }
 
     void TearDown()
@@ -118,6 +162,7 @@ protected:
 
 private:
     T* _shell;
+    writer_t* _writer;
 };
 
 typedef ::testing::Types<MemWriter, RingBufWriter> WriterTypes;
@@ -128,22 +173,22 @@ TYPED_TEST(WriterTest, write)
     uint8_t expected[7] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77};
     uint8_t chunk1[4] = {0x11, 0x22, 0x33, 0x44};
     uint8_t chunk2[3] = {0x55, 0x66, 0x77};
-    auto writer = this->newWriter(7);
-    writer_write(writer, chunk1, 4);
-    writer_write(writer, chunk2, 3);
-    this->expectData(expected, 7);
+    this->newWriterWithSizeOf(expected);
+    this->writeData(chunk1);
+    this->writeData(chunk2);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint8)
 {
     uint8_t expected[5] = {0xab, 0x12, 0x53, 0x98, 0xfa};
-    auto writer = this->newWriter(5);
-    writer_write_uint8(writer, 0xab);
-    writer_write_uint8(writer, 0x12);
-    writer_write_uint8(writer, 0x53);
-    writer_write_uint8(writer, 0x98);
-    writer_write_uint8(writer, 0xfa);
-    this->expectData(expected, 5);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint8(0xab);
+    this->writeUint8(0x12);
+    this->writeUint8(0x53);
+    this->writeUint8(0x98);
+    this->writeUint8(0xfa);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint16le)
@@ -153,12 +198,12 @@ TYPED_TEST(WriterTest, write_uint16le)
 #else
     uint16_t expected[4] = {0x3412, 0x7856, 0xab90, 0xefcd};
 #endif
-    auto writer = this->newWriter(8);
-    writer_write_uint16le(writer, 0x1234);
-    writer_write_uint16le(writer, 0x5678);
-    writer_write_uint16le(writer, 0x90ab);
-    writer_write_uint16le(writer, 0xcdef);
-    this->expectData(expected, 8);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint16le(0x1234);
+    this->writeUint16le(0x5678);
+    this->writeUint16le(0x90ab);
+    this->writeUint16le(0xcdef);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint32le)
@@ -168,12 +213,12 @@ TYPED_TEST(WriterTest, write_uint32le)
 #else
     uint32_t expected[4] = {0x78563412, 0xefcdab90, 0x47382910, 0x29384756};
 #endif
-    auto writer = this->newWriter(16);
-    writer_write_uint32le(writer, 0x12345678);
-    writer_write_uint32le(writer, 0x90abcdef);
-    writer_write_uint32le(writer, 0x10293847);
-    writer_write_uint32le(writer, 0x56473829);
-    this->expectData(expected, 16);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint32le(0x12345678);
+    this->writeUint32le(0x90abcdef);
+    this->writeUint32le(0x10293847);
+    this->writeUint32le(0x56473829);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint64le)
@@ -183,10 +228,10 @@ TYPED_TEST(WriterTest, write_uint64le)
 #else
     uint64_t expected[2] = {0xefcdab9078563412, 0x2938475647382910};
 #endif
-    auto writer = this->newWriter(16);
-    writer_write_uint64le(writer, 0x1234567890abcdef);
-    writer_write_uint64le(writer, 0x1029384756473829);
-    this->expectData(expected, 16);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint64le(0x1234567890abcdef);
+    this->writeUint64le(0x1029384756473829);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint16be)
@@ -196,25 +241,25 @@ TYPED_TEST(WriterTest, write_uint16be)
 #else
     uint16_t expected[3] = {0x8495, 0x7618, 0x7305};
 #endif
-    auto writer = this->newWriter(6);
-    writer_write_uint16be(writer, 0x8495);
-    writer_write_uint16be(writer, 0x7618);
-    writer_write_uint16be(writer, 0x7305);
-    this->expectData(expected, 6);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint16be(0x8495);
+    this->writeUint16be(0x7618);
+    this->writeUint16be(0x7305);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint32be)
 {
 #ifdef BMCL_LITTLE_ENDIAN
-    uint32_t expected[4] = {0x05846377, 0x07594412, 0x09876543};
+    uint32_t expected[3] = {0x05846377, 0x07594412, 0x09876543};
 #else
-    uint32_t expected[4] = {0x77638405, 0x12445907, 0x43658709};
+    uint32_t expected[3] = {0x77638405, 0x12445907, 0x43658709};
 #endif
-    auto writer = this->newWriter(12);
-    writer_write_uint32be(writer, 0x77638405);
-    writer_write_uint32be(writer, 0x12445907);
-    writer_write_uint32be(writer, 0x43658709);
-    this->expectData(expected, 12);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint32be(0x77638405);
+    this->writeUint32be(0x12445907);
+    this->writeUint32be(0x43658709);
+    this->expectData(expected);
 }
 
 TYPED_TEST(WriterTest, write_uint64be)
@@ -224,8 +269,8 @@ TYPED_TEST(WriterTest, write_uint64be)
 #else
     uint64_t expected[2] = {0xfc317304b150a997, 0x09ac2386394f78dc};
 #endif
-    auto writer = this->newWriter(16);
-    writer_write_uint64be(writer, 0xfc317304b150a997);
-    writer_write_uint64be(writer, 0x09ac2386394f78dc);
-    this->expectData(expected, 16);
+    this->newWriterWithSizeOf(expected);
+    this->writeUint64be(0xfc317304b150a997);
+    this->writeUint64be(0x09ac2386394f78dc);
+    this->expectData(expected);
 }
