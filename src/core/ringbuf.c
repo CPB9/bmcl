@@ -11,8 +11,8 @@
 static const reader_impl_t ringbuf_reader_impl = {
     (void (*)(void*, const void*, size_t))ringbuf_read, (uint8_t (*)(void*))ringbuf_read_uint8,
     (uint16_t (*)(void*))ringbuf_read_uint16le,         (uint32_t (*)(void*))ringbuf_read_uint32le,
-    (uint64_t (*)(void*))ringbuf_read_uint64le,         (uint16_t (*)(void*))ringbuf_read_uint16le,
-    (uint32_t (*)(void*))ringbuf_read_uint32le,         (uint64_t (*)(void*))ringbuf_read_uint64le,
+    (uint64_t (*)(void*))ringbuf_read_uint64le,         (uint16_t (*)(void*))ringbuf_read_uint16be,
+    (uint32_t (*)(void*))ringbuf_read_uint32be,         (uint64_t (*)(void*))ringbuf_read_uint64be,
 };
 
 static const writer_impl_t ringbuf_writer_impl = {

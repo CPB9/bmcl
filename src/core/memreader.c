@@ -10,8 +10,8 @@
 static const reader_impl_t memreader_impl = {
     (void (*)(void*, const void*, size_t))memreader_read, (uint8_t (*)(void*))memreader_read_uint8,
     (uint16_t (*)(void*))memreader_read_uint16le,         (uint32_t (*)(void*))memreader_read_uint32le,
-    (uint64_t (*)(void*))memreader_read_uint64le,         (uint16_t (*)(void*))memreader_read_uint16le,
-    (uint32_t (*)(void*))memreader_read_uint32le,         (uint64_t (*)(void*))memreader_read_uint64le,
+    (uint64_t (*)(void*))memreader_read_uint64le,         (uint16_t (*)(void*))memreader_read_uint16be,
+    (uint32_t (*)(void*))memreader_read_uint32be,         (uint64_t (*)(void*))memreader_read_uint64be,
 };
 
 void memreader_init(memreader_t* self, const void* ptr, size_t size)
