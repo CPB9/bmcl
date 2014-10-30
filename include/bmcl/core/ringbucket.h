@@ -29,6 +29,8 @@ void ringbucket_destroy(ringbucket_t* self);
 
 size_t ringbucket_get_free_space(const ringbucket_t* self);
 
+size_t ringbucket_header_size();
+
 bool ringbucket_is_empty(const ringbucket_t* self);
 
 void ringbucket_reset(ringbucket_t* self);

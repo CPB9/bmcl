@@ -1,6 +1,7 @@
 #include "bmcl/core/ringbucket.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 typedef size_t ringbucket_size_t;
 
@@ -60,6 +61,11 @@ static void erase_elements_to_fit_size(ringbucket_t* self, size_t size)
 size_t ringbucket_get_free_space(const ringbucket_t* self)
 {
     return ringbuf_get_free_space(&self->ringbuf);
+}
+
+size_t ringbucket_header_size()
+{
+    return sizeof(ringbucket_size_t);
 }
 
 bool ringbucket_is_empty(const ringbucket_t* self)
