@@ -36,6 +36,8 @@ void ringarray_append(ringarray_t* self, const void* element);
 
 size_t ringarray_count(const ringarray_t* self);
 
+size_t ringarray_size(const ringarray_t* self);
+
 size_t ringarray_element_size(const ringarray_t* self);
 
 void ringarray_copy_first(const ringarray_t* self, void* dest);

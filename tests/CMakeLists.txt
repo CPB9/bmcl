@@ -31,12 +31,13 @@ macro(add_unit_test test)
 endmacro()
 
 add_unit_test(environment environment.cpp)
-add_unit_test(reader reader.cpp)
-add_unit_test(ringbuf ringbuf.cpp)
-add_unit_test(writer writer.cpp)
-add_unit_test(memwriter memwriter.cpp)
 add_unit_test(memreader memreader.cpp)
+add_unit_test(memwriter memwriter.cpp)
+add_unit_test(reader reader.cpp)
+add_unit_test(ringarray ringarray.cpp)
+add_unit_test(ringbuf ringbuf.cpp)
 add_unit_test(sched sched.cpp)
+add_unit_test(writer writer.cpp)
 
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})

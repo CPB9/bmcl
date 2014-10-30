@@ -92,6 +92,11 @@ size_t ringarray_count(const ringarray_t* self)
     return self->count;
 }
 
+size_t ringarray_size(const ringarray_t* self)
+{
+    return self->size;
+}
+
 bool ringarray_is_empty(const ringarray_t* self)
 {
     return self->count == 0;
@@ -104,7 +109,6 @@ bool ringarray_is_full(const ringarray_t* self)
 
 size_t ringarray_element_size(const ringarray_t* self)
 {
-    assert(!ringarray_is_empty(self));
     return self->element_size;
 }
 
