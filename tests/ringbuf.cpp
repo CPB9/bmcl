@@ -24,7 +24,7 @@ protected:
         _ringbuf = ringbuf_create(sizeof(R) * n);
     }
 
-    void initRingBufWithSize(size_t size)
+    void initRingBufWithSize(std::size_t size)
     {
         assert(_ringbuf == 0);
         _ringbuf = ringbuf_create(size);
@@ -36,7 +36,7 @@ protected:
         ringbuf_write(_ringbuf, array, sizeof(R) * n);
     }
 
-    void erase(size_t size)
+    void erase(std::size_t size)
     {
         ringbuf_erase(_ringbuf, size);
     }
@@ -56,17 +56,17 @@ protected:
         return ringbuf_read_uint8(_ringbuf);
     }
 
-    void peek(void* dest, size_t size, size_t offset = 0)
+    void peek(void* dest, std::size_t size, std::size_t offset = 0)
     {
         ringbuf_peek(_ringbuf, dest, size, offset);
     }
 
-    void read(void* dest, size_t size)
+    void read(void* dest, std::size_t size)
     {
         ringbuf_read(_ringbuf, dest, size);
     }
 
-    void expectFreeSpace(size_t freeSpace)
+    void expectFreeSpace(std::size_t freeSpace)
     {
         EXPECT_EQ(ringbuf_get_free_space(_ringbuf), freeSpace);
     }
@@ -84,7 +84,7 @@ protected:
     template <std::size_t n, typename R>
     void expect(const R (&array)[n])
     {
-        size_t dataSize = sizeof(R) * n;
+        std::size_t dataSize = sizeof(R) * n;
         uint8_t temp[dataSize];
         ringbuf_peek(_ringbuf, temp, dataSize, 0);
         EXPECT_EQ(dataSize, ringbuf_get_used_space(_ringbuf));

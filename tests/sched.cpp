@@ -16,34 +16,34 @@ protected:
 struct UserData {
     uint64_t maxCount;
     uint64_t execCount;
-    size_t counters[4];
+    std::size_t counters[4];
 };
 
 static bool executor1(void* fp, void* userData)
 {
     UserData* data = (UserData*)userData;
-    void (*func)(size_t*) = (void (*)(size_t*))fp;
+    void (*func)(std::size_t*) = (void (*)(std::size_t*))fp;
     func(data->counters);
     data->execCount++;
     return data->execCount < data->maxCount;
 }
 
-static void inc1(size_t* counter)
+static void inc1(std::size_t* counter)
 {
     counter[0] += 1;
 }
 
-static void inc2(size_t* counter)
+static void inc2(std::size_t* counter)
 {
     counter[1] += 1;
 }
 
-static void inc3(size_t* counter)
+static void inc3(std::size_t* counter)
 {
     counter[2] += 1;
 }
 
-static void inc4(size_t* counter)
+static void inc4(std::size_t* counter)
 {
     counter[3] += 1;
 }

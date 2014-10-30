@@ -22,7 +22,7 @@ protected:
 
 class MemReader : public Reader {
 public:
-    MemReader(const void* ptr, size_t size)
+    MemReader(const void* ptr, std::size_t size)
     {
         _memreader = memreader_create(ptr, size);
         _reader = memreader_create_reader(_memreader);
@@ -40,10 +40,10 @@ private:
 
 class RingBufReader : public Reader {
 public:
-    RingBufReader(const void* ptr, size_t size)
+    RingBufReader(const void* ptr, std::size_t size)
     {
         _ringbuf = ringbuf_create(size);
-        size_t fillerSize = size / 2 + 1;
+        std::size_t fillerSize = size / 2 + 1;
         uint8_t* filler = new uint8_t[fillerSize];
         ringbuf_write(_ringbuf, filler, fillerSize);
         ringbuf_write(_ringbuf, ptr, size);
@@ -64,7 +64,7 @@ private:
 template <typename T>
 class ReaderTest : public ::testing::Test {
 protected:
-    template <size_t n, typename R>
+    template <std::size_t n, typename R>
     void newReader(const R (&array)[n])
     {
         assert(_shell == 0);
@@ -81,10 +81,10 @@ protected:
     {
     }
 
-    template <size_t n, typename R>
+    template <std::size_t n, typename R>
     void expectNextData(const R (&array)[n])
     {
-        size_t size = sizeof(R) * n;
+        std::size_t size = sizeof(R) * n;
         uint8_t tmp[size];
         reader_read(_reader, tmp, size);
         EXPECT_EQ_MEM(array, tmp, size);

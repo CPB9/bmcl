@@ -33,7 +33,7 @@ protected:
         _writer = memwriter_create(sizeof(R) * n);
     }
 
-    void initWriterWithSize(size_t size)
+    void initWriterWithSize(std::size_t size)
     {
         assert(_writer == 0);
         _writer = memwriter_create(size);
@@ -45,7 +45,7 @@ protected:
         EXPECT_EQ_MEM(array, memwriter_ptr(_writer), sizeof(R) * n);
     }
 
-    void expectSizes(size_t used, size_t left)
+    void expectSizes(std::size_t used, std::size_t left)
     {
         EXPECT_EQ(used, memwriter_size(_writer));
         EXPECT_EQ(left, memwriter_size_left(_writer));
@@ -71,7 +71,7 @@ protected:
         memwriter_fillup(_writer, data);
     }
 
-    void fill(uint8_t data, size_t size)
+    void fill(uint8_t data, std::size_t size)
     {
         memwriter_fill(_writer, data, size);
     }

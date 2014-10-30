@@ -23,7 +23,7 @@ protected:
         _reader = memreader_create(array, sizeof(R) * n);
     }
 
-    void expectParams(size_t read, size_t left, void* data)
+    void expectParams(std::size_t read, std::size_t left, void* data)
     {
         EXPECT_EQ(read, memreader_size_read(_reader));
         EXPECT_EQ(left, memreader_size_left(_reader));
@@ -33,17 +33,17 @@ protected:
         EXPECT_EQ((uint8_t*)data, memreader_current_ptr(_reader));
     }
 
-    void skip(size_t size)
+    void skip(std::size_t size)
     {
         memreader_skip(_reader, size);
     }
 
-    void peek(void* dest, size_t size, size_t offset)
+    void peek(void* dest, std::size_t size, std::size_t offset)
     {
         memreader_peek(_reader, dest, size, offset);
     }
 
-    void read(void* dest, size_t size)
+    void read(void* dest, std::size_t size)
     {
         memreader_read(_reader, dest, size);
     }
@@ -56,7 +56,7 @@ protected:
     template <std::size_t n, typename R>
     void expectNextData(const R (&array)[n])
     {
-        size_t dataSize = sizeof(R) * n;
+        std::size_t dataSize = sizeof(R) * n;
         uint8_t temp[dataSize];
         memreader_read(_reader, temp, dataSize);
         EXPECT_EQ_MEM(array, temp, dataSize);

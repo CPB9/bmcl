@@ -16,7 +16,7 @@ public:
         return _writer;
     }
 
-    virtual size_t dataSize() const = 0;
+    virtual std::size_t dataSize() const = 0;
 
     virtual void copyData(void* dest) const = 0;
 
@@ -26,7 +26,7 @@ protected:
 
 class MemWriter : public Writer {
 public:
-    MemWriter(size_t size)
+    MemWriter(std::size_t size)
     {
         _memwriter = memwriter_create(size);
         _writer = memwriter_create_writer(_memwriter);
@@ -38,7 +38,7 @@ public:
         memwriter_destroy(_memwriter);
     }
 
-    size_t dataSize() const
+    std::size_t dataSize() const
     {
         return memwriter_size(_memwriter);
     }
@@ -54,7 +54,7 @@ private:
 
 class RingBufWriter : public Writer {
 public:
-    RingBufWriter(size_t size)
+    RingBufWriter(std::size_t size)
     {
         _ringbuf = ringbuf_create(size);
         _writer = ringbuf_create_writer(_ringbuf);
@@ -66,7 +66,7 @@ public:
         ringbuf_destroy(_ringbuf);
     }
 
-    size_t dataSize() const
+    std::size_t dataSize() const
     {
         return ringbuf_get_used_space(_ringbuf);
     }
@@ -83,7 +83,7 @@ private:
 template <typename T>
 class WriterTest : public ::testing::Test {
 protected:
-    template <size_t n, typename R>
+    template <std::size_t n, typename R>
     void newWriterWithSizeOf(const R (&array)[n])
     {
         (void)array;
@@ -101,17 +101,17 @@ protected:
     {
     }
 
-    template <size_t n, typename R>
+    template <std::size_t n, typename R>
     void expectData(const R (&array)[n])
     {
-        size_t size = sizeof(R) * n;
+        std::size_t size = sizeof(R) * n;
         ASSERT_EQ(size, _shell->dataSize());
         uint8_t tmp[_shell->dataSize()];
         _shell->copyData(tmp);
         EXPECT_EQ_MEM(array, tmp, size);
     }
 
-    template <size_t n, typename R>
+    template <std::size_t n, typename R>
     void writeData(const R (&array)[n])
     {
         writer_write(_writer, array, sizeof(R) * n);
