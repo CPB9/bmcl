@@ -176,7 +176,7 @@ TYPED_TEST(ReaderTest, read_uint16le)
 #ifdef BMCL_LITTLE_ENDIAN
     uint16_t data[4] = {0x1234, 0x5678, 0xaabb, 0xccdd};
 #else
-    uint16_t data[4] = {0x3212, 0x7856, 0xbbaa, 0xddcc};
+    uint16_t data[4] = {0x3412, 0x7856, 0xbbaa, 0xddcc};
 #endif
     this->newReader(data);
     this->expectNextUint16le(0x1234);
