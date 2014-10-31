@@ -68,7 +68,7 @@ writer_t* ringbuf_create_writer(ringbuf_t* self)
 
 reader_t* ringbuf_create_reader(ringbuf_t* self)
 {
-    reader_t* reader = malloc(sizeof(writer_t));
+    reader_t* reader = malloc(sizeof(reader_t));
     ringbuf_init_reader(self, reader);
     return reader;
 }
