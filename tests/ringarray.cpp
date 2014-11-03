@@ -145,3 +145,14 @@ TEST_F(RingArrayTest, overwrite_one)
     expectNextElement(element2);
     expectNextElement(element3);
 }
+
+TEST_F(RingArrayTest, queue_el_size)
+{
+    ringarray_t* array = ringarray_create(100, 17);
+    queue_t* queue = ringarray_create_queue(array);
+    std::size_t size = 0;
+    EXPECT_TRUE(queue_const_el_size(queue, &size));
+    EXPECT_EQ(size, 17);
+    queue_destroy(queue);
+    ringarray_destroy(array);
+}

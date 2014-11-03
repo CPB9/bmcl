@@ -140,3 +140,12 @@ TEST_F(RingBucketTest, overwrite)
     expectNextElement(element3);
     expectNextElement(element4);
 }
+
+TEST_F(RingBucketTest, queue_el_size)
+{
+    ringbucket_t* bucket = ringbucket_create(100);
+    queue_t* queue = ringbucket_create_queue(bucket);
+    EXPECT_FALSE(queue_const_el_size(queue, 0));
+    queue_destroy(queue);
+    ringbucket_destroy(bucket);
+}
