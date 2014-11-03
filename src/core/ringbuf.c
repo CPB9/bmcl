@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#define Sys_MIN(a, b) (((a) > (b)) ? (b) : (a))
+#define min(a, b) (((a) > (b)) ? (b) : (a))
 
 static const reader_impl_t ringbuf_reader_impl = {
     (void (*)(void*, const void*, size_t))ringbuf_read, (uint8_t (*)(void*))ringbuf_read_uint8,
@@ -133,7 +133,7 @@ void ringbuf_write(ringbuf_t* self, const void* data, size_t size)
         memcpy(self->data + self->write_offset, data, size);
     } else { /* ----------r**************w---------- */
         size_t right_data = self->size - self->write_offset;
-        size_t first_chunk_size = Sys_MIN(size, right_data);
+        size_t first_chunk_size = min(size, right_data);
         memcpy(self->data + self->write_offset, data, first_chunk_size);
         if (size > first_chunk_size) {
             size_t second_chunk_size = size - first_chunk_size;
@@ -201,7 +201,7 @@ void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset)
         memcpy(dest, self->data + read_offset, size);
     } else { /* *********w---------------r************ */
         size_t right_data = self->size - read_offset;
-        size_t first_chunk_size = Sys_MIN(size, right_data);
+        size_t first_chunk_size = min(size, right_data);
         memcpy(dest, self->data + read_offset, first_chunk_size);
         if (size > first_chunk_size) {
             size_t second_chunk_size = size - first_chunk_size;
