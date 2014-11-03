@@ -72,13 +72,9 @@ protected:
         _reader = _shell->get();
     }
 
-    ReaderTest()
-        : _shell(0)
-    {
-    }
-
     void SetUp()
     {
+        _shell = 0;
     }
 
     template <std::size_t n, typename R>

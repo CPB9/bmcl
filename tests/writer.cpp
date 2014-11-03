@@ -92,13 +92,9 @@ protected:
         _writer = _shell->get();
     }
 
-    WriterTest()
-        : _shell(0)
-    {
-    }
-
     void SetUp()
     {
+        _shell = 0;
     }
 
     template <std::size_t n, typename R>
@@ -106,7 +102,7 @@ protected:
     {
         std::size_t size = sizeof(R) * n;
         ASSERT_EQ(size, _shell->dataSize());
-        uint8_t tmp[_shell->dataSize()];
+        R tmp[n];
         _shell->copyData(tmp);
         EXPECT_EQ_MEM(array, tmp, size);
     }
