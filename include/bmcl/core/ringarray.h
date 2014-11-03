@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bmcl/core/queue.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -18,11 +20,15 @@ typedef struct {
 
 void ringarray_init(ringarray_t* self, void* data, size_t buf_size, size_t element_size);
 
+void ringarray_init_queue(ringarray_t* self, queue_t* queue);
+
 #if BMCL_HAVE_MALLOC
 
 ringarray_t* ringarray_create(size_t element_num, size_t element_size);
 
 void ringarray_destroy(ringarray_t* self);
+
+queue_t* ringarray_create_queue(ringarray_t* self);
 
 #endif
 

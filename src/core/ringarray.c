@@ -1,4 +1,5 @@
 #include "bmcl/core/ringarray.h"
+#include "bmcl/core/queue.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -6,6 +7,27 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+static void ringarray_append_with_size(ringarray_t* self, const void* element, size_t size)
+{
+    assert(ringarray_element_size(self) == size);
+    ringarray_append(self, element);
+}
+
+static bool constant_size(const ringarray_t* self, size_t* size)
+{
+    if (size) {
+        *size = ringarray_element_size(self);
+    }
+    return true;
+}
+
+static const queue_impl_t ringarray_queue_impl = {(void (*)(void*, const void*, size_t))ringarray_append_with_size,
+                                                  (size_t (*)(const void*))ringarray_count,
+                                                  (size_t (*)(const void*))ringarray_element_size,
+                                                  (void (*)(const void* data, void* dest))ringarray_copy_first,
+                                                  (void (*)(void* data))ringarray_remove_first,
+                                                  (bool (*)(const void* self, size_t* size))constant_size};
 
 static inline void* get_write_ptr(const ringarray_t* self)
 {
@@ -43,6 +65,12 @@ void ringarray_init(ringarray_t* self, void* ptr, size_t buf_size, size_t elemen
     self->size = buf_size / element_size;
 }
 
+void ringarray_init_queue(ringarray_t* self, queue_t* queue)
+{
+    queue->data = self;
+    queue->impl = &ringarray_queue_impl;
+}
+
 #if BMCL_HAVE_MALLOC
 
 ringarray_t* ringarray_create(size_t element_num, size_t element_size)
@@ -58,6 +86,13 @@ ringarray_t* ringarray_create(size_t element_num, size_t element_size)
 void ringarray_destroy(ringarray_t* self)
 {
     free(self);
+}
+
+queue_t* ringarray_create_queue(ringarray_t* self)
+{
+    queue_t* queue = malloc(sizeof(queue_t));
+    ringarray_init_queue(self, queue);
+    return queue;
 }
 
 #endif

@@ -5,10 +5,19 @@
 
 typedef size_t ringbucket_size_t;
 
-static const queue_impl_t ringbucket_queue_impl
-    = {(void (*)(void*, const void*, size_t))ringbucket_append, (size_t (*)(const void*))ringbucket_count,
-       (size_t (*)(const void*))ringbucket_first_size, (void (*)(const void* data, void* dest))ringbucket_copy_first,
-       (void (*)(void* data))ringbucket_remove_first};
+static bool constant_size(const ringbucket_t* self, size_t* size)
+{
+    (void)self;
+    (void)size;
+    return false;
+}
+
+static const queue_impl_t ringbucket_queue_impl = {(void (*)(void*, const void*, size_t))ringbucket_append,
+                                                   (size_t (*)(const void*))ringbucket_count,
+                                                   (size_t (*)(const void*))ringbucket_first_size,
+                                                   (void (*)(const void* data, void* dest))ringbucket_copy_first,
+                                                   (void (*)(void* data))ringbucket_remove_first,
+                                                   (bool (*)(const void* self, size_t* size))constant_size};
 
 void ringbucket_init(ringbucket_t* self, void* data, size_t size)
 {
@@ -37,6 +46,13 @@ ringbucket_t* ringbucket_create(size_t size)
 void ringbucket_destroy(ringbucket_t* self)
 {
     free(self);
+}
+
+queue_t* ringbucket_create_queue(ringbucket_t* self)
+{
+    queue_t* queue = malloc(sizeof(queue_t));
+    ringbucket_init_queue(self, queue);
+    return queue;
 }
 
 #endif

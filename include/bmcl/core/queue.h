@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 typedef struct {
     void* data;
@@ -11,10 +12,20 @@ typedef struct {
 typedef struct queue_impl_s {
     void (*append)(void* self, const void* element, size_t size);
     size_t (*count)(const void* self);
-    size_t (*first_size)(const void* data);
-    void (*copy_first)(const void* data, void* dest);
-    void (*remove_first)(void* data);
+    size_t (*first_size)(const void* self);
+    void (*copy_first)(const void* self, void* dest);
+    void (*remove_first)(void* self);
+    bool (*const_el_size)(const void* self, size_t* size);
 } queue_impl_t;
+
+#if BMCL_HAVE_MALLOC
+
+void queue_destroy(queue_t* self)
+{
+    free(self);
+}
+
+#endif
 
 static inline void queue_append(queue_t* self, const void* element, size_t size)
 {
@@ -44,4 +55,9 @@ static inline void queue_remove_first(queue_t* self)
 static inline bool queue_is_empty(const queue_t* self)
 {
     return queue_count(self) == 0;
+}
+
+static inline bool queue_const_el_size(const queue_t* self, size_t* size)
+{
+    return self->impl->const_el_size(self, size);
 }

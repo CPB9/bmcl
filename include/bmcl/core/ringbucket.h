@@ -25,6 +25,8 @@ ringbucket_t* ringbucket_create(size_t size);
 
 void ringbucket_destroy(ringbucket_t* self);
 
+queue_t* ringbucket_create_queue(ringbucket_t* self);
+
 #endif
 
 size_t ringbucket_get_free_space(const ringbucket_t* self);
