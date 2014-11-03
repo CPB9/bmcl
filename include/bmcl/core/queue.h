@@ -20,7 +20,7 @@ typedef struct {
 
 #if BMCL_HAVE_MALLOC
 
-void queue_destroy(queue_t* self)
+static inline void queue_destroy(queue_t* self)
 {
     free(self);
 }
@@ -34,12 +34,12 @@ static inline void queue_append(queue_t* self, const void* element, size_t size)
 
 static inline size_t queue_count(const queue_t* self)
 {
-    return self->impl->count(self);
+    return self->impl->count(self->data);
 }
 
 static inline size_t queue_first_size(const queue_t* self)
 {
-    return self->impl->first_size(self);
+    return self->impl->first_size(self->data);
 }
 
 static inline void queue_copy_first(const queue_t* self, void* dest)
@@ -59,5 +59,5 @@ static inline bool queue_is_empty(const queue_t* self)
 
 static inline bool queue_const_el_size(const queue_t* self, size_t* size)
 {
-    return self->impl->const_el_size(self, size);
+    return self->impl->const_el_size(self->data, size);
 }
