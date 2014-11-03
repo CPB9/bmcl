@@ -5,11 +5,6 @@
 #include <stdlib.h>
 
 typedef struct {
-    void* data;
-    const struct reader_impl_s* impl;
-} reader_t;
-
-typedef struct reader_impl_s {
     void (*read)(void* self, const void* dest, size_t size);
     uint8_t (*read_uint8)(void* self);
     uint16_t (*read_uint16le)(void* self);
@@ -19,6 +14,11 @@ typedef struct reader_impl_s {
     uint32_t (*read_uint32be)(void* self);
     uint64_t (*read_uint64be)(void* self);
 } reader_impl_t;
+
+typedef struct {
+    void* data;
+    const reader_impl_t* impl;
+} reader_t;
 
 #if BMCL_HAVE_MALLOC
 

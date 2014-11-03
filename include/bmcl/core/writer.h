@@ -5,11 +5,6 @@
 #include <stdlib.h>
 
 typedef struct {
-    void* data;
-    const struct writer_impl_s* impl;
-} writer_t;
-
-typedef struct writer_impl_s {
     void (*write)(void* self, const void* data, size_t size);
     void (*write_uint8)(void* self, uint8_t value);
     void (*write_uint16le)(void* self, uint16_t value);
@@ -19,6 +14,11 @@ typedef struct writer_impl_s {
     void (*write_uint32be)(void* self, uint32_t value);
     void (*write_uint64be)(void* self, uint64_t value);
 } writer_impl_t;
+
+typedef struct {
+    void* data;
+    const writer_impl_t* impl;
+} writer_t;
 
 #if BMCL_HAVE_MALLOC
 

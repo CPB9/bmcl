@@ -5,11 +5,6 @@
 #include <stdlib.h>
 
 typedef struct {
-    void* data;
-    const struct queue_impl_s* impl;
-} queue_t;
-
-typedef struct queue_impl_s {
     void (*append)(void* self, const void* element, size_t size);
     size_t (*count)(const void* self);
     size_t (*first_size)(const void* self);
@@ -17,6 +12,11 @@ typedef struct queue_impl_s {
     void (*remove_first)(void* self);
     bool (*const_el_size)(const void* self, size_t* size);
 } queue_impl_t;
+
+typedef struct {
+    void* data;
+    const queue_impl_t* impl;
+} queue_t;
 
 #if BMCL_HAVE_MALLOC
 
