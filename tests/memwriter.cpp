@@ -14,7 +14,7 @@ protected:
     void TearDown()
     {
         if (_writer) {
-            memwriter_destroy(_writer);
+            bmcl_memwriter_destroy(_writer);
         }
     }
 
@@ -22,7 +22,7 @@ protected:
     void initWriter(R (&array)[n])
     {
         assert(_writer == 0);
-        _writer = memwriter_create_with_dest(array, sizeof(R) * n);
+        _writer = bmcl_memwriter_create_with_dest(array, sizeof(R) * n);
     }
 
     template <std::size_t n, typename R>
@@ -30,54 +30,54 @@ protected:
     {
         (void)array;
         assert(_writer == 0);
-        _writer = memwriter_create(sizeof(R) * n);
+        _writer = bmcl_memwriter_create(sizeof(R) * n);
     }
 
     void initWriterWithSize(std::size_t size)
     {
         assert(_writer == 0);
-        _writer = memwriter_create(size);
+        _writer = bmcl_memwriter_create(size);
     }
 
     template <std::size_t n, typename R>
     void expect(const R (&array)[n])
     {
-        EXPECT_EQ_MEM(array, memwriter_ptr(_writer), sizeof(R) * n);
+        EXPECT_EQ_MEM(array, bmcl_memwriter_ptr(_writer), sizeof(R) * n);
     }
 
     void expectSizes(std::size_t used, std::size_t left)
     {
-        EXPECT_EQ(used, memwriter_size(_writer));
-        EXPECT_EQ(left, memwriter_size_left(_writer));
-        EXPECT_EQ(used + left, memwriter_max_size(_writer));
-        bool isFull = used == memwriter_max_size(_writer);
-        EXPECT_EQ(isFull, memwriter_is_full(_writer));
-        EXPECT_EQ((uint8_t*)memwriter_ptr(_writer) + used, memwriter_current_ptr(_writer));
+        EXPECT_EQ(used, bmcl_memwriter_size(_writer));
+        EXPECT_EQ(left, bmcl_memwriter_size_left(_writer));
+        EXPECT_EQ(used + left, bmcl_memwriter_max_size(_writer));
+        bool isFull = used == bmcl_memwriter_max_size(_writer);
+        EXPECT_EQ(isFull, bmcl_memwriter_is_full(_writer));
+        EXPECT_EQ((uint8_t*)bmcl_memwriter_ptr(_writer) + used, bmcl_memwriter_current_ptr(_writer));
     }
 
     template <std::size_t n, typename R>
     void append(const R (&array)[n])
     {
-        memwriter_write(_writer, array, sizeof(R) * n);
+        bmcl_memwriter_write(_writer, array, sizeof(R) * n);
     }
 
     void appendUint8(uint8_t data)
     {
-        memwriter_write_uint8(_writer, data);
+        bmcl_memwriter_write_uint8(_writer, data);
     }
 
     void fillUp(uint8_t data)
     {
-        memwriter_fillup(_writer, data);
+        bmcl_memwriter_fillup(_writer, data);
     }
 
     void fill(uint8_t data, std::size_t size)
     {
-        memwriter_fill(_writer, data, size);
+        bmcl_memwriter_fill(_writer, data, size);
     }
 
 private:
-    memwriter_t* _writer;
+    bmcl_memwriter_t* _writer;
 };
 
 TEST_F(MemWriterTest, init)

@@ -11,7 +11,7 @@ public:
     {
     }
 
-    writer_t* get()
+    bmcl_writer_t* get()
     {
         return _writer;
     }
@@ -21,63 +21,63 @@ public:
     virtual void copyData(void* dest) const = 0;
 
 protected:
-    writer_t* _writer;
+    bmcl_writer_t* _writer;
 };
 
 class MemWriter : public Writer {
 public:
     MemWriter(std::size_t size)
     {
-        _memwriter = memwriter_create(size);
-        _writer = memwriter_create_writer(_memwriter);
+        _memwriter = bmcl_memwriter_create(size);
+        _writer = bmcl_memwriter_create_writer(_memwriter);
     }
 
     ~MemWriter()
     {
-        writer_destroy(_writer);
-        memwriter_destroy(_memwriter);
+        bmcl_writer_destroy(_writer);
+        bmcl_memwriter_destroy(_memwriter);
     }
 
     std::size_t dataSize() const
     {
-        return memwriter_size(_memwriter);
+        return bmcl_memwriter_size(_memwriter);
     }
 
     void copyData(void* dest) const
     {
-        memcpy(dest, memwriter_ptr(_memwriter), memwriter_size(_memwriter));
+        memcpy(dest, bmcl_memwriter_ptr(_memwriter), bmcl_memwriter_size(_memwriter));
     }
 
 private:
-    memwriter_t* _memwriter;
+    bmcl_memwriter_t* _memwriter;
 };
 
 class RingBufWriter : public Writer {
 public:
     RingBufWriter(std::size_t size)
     {
-        _ringbuf = ringbuf_create(size);
-        _writer = ringbuf_create_writer(_ringbuf);
+        _ringbuf = bmcl_ringbuf_create(size);
+        _writer = bmcl_ringbuf_create_writer(_ringbuf);
     }
 
     ~RingBufWriter()
     {
-        writer_destroy(_writer);
-        ringbuf_destroy(_ringbuf);
+        bmcl_writer_destroy(_writer);
+        bmcl_ringbuf_destroy(_ringbuf);
     }
 
     std::size_t dataSize() const
     {
-        return ringbuf_get_used_space(_ringbuf);
+        return bmcl_ringbuf_get_used_space(_ringbuf);
     }
 
     void copyData(void* dest) const
     {
-        ringbuf_peek(_ringbuf, dest, dataSize(), 0);
+        bmcl_ringbuf_peek(_ringbuf, dest, dataSize(), 0);
     }
 
 private:
-    ringbuf_t* _ringbuf;
+    bmcl_ringbuf_t* _ringbuf;
 };
 
 template <typename T>
@@ -110,42 +110,42 @@ protected:
     template <std::size_t n, typename R>
     void writeData(const R (&array)[n])
     {
-        writer_write(_writer, array, sizeof(R) * n);
+        bmcl_writer_write(_writer, array, sizeof(R) * n);
     }
 
     void writeUint8(uint8_t value)
     {
-        writer_write_uint8(_writer, value);
+        bmcl_writer_write_uint8(_writer, value);
     }
 
     void writeUint16le(uint16_t value)
     {
-        writer_write_uint16le(_writer, value);
+        bmcl_writer_write_uint16le(_writer, value);
     }
 
     void writeUint32le(uint32_t value)
     {
-        writer_write_uint32le(_writer, value);
+        bmcl_writer_write_uint32le(_writer, value);
     }
 
     void writeUint64le(uint64_t value)
     {
-        writer_write_uint64le(_writer, value);
+        bmcl_writer_write_uint64le(_writer, value);
     }
 
     void writeUint16be(uint16_t value)
     {
-        writer_write_uint16be(_writer, value);
+        bmcl_writer_write_uint16be(_writer, value);
     }
 
     void writeUint32be(uint32_t value)
     {
-        writer_write_uint32be(_writer, value);
+        bmcl_writer_write_uint32be(_writer, value);
     }
 
     void writeUint64be(uint64_t value)
     {
-        writer_write_uint64be(_writer, value);
+        bmcl_writer_write_uint64be(_writer, value);
     }
 
     void TearDown()
@@ -157,7 +157,7 @@ protected:
 
 private:
     T* _shell;
-    writer_t* _writer;
+    bmcl_writer_t* _writer;
 };
 
 typedef ::testing::Types<MemWriter, RingBufWriter> WriterTypes;

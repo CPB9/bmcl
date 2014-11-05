@@ -12,7 +12,7 @@ protected:
     void TearDown()
     {
         if (_ringbuf) {
-            ringbuf_destroy(_ringbuf);
+            bmcl_ringbuf_destroy(_ringbuf);
         }
     }
 
@@ -21,64 +21,64 @@ protected:
     {
         (void)array;
         assert(_ringbuf == 0);
-        _ringbuf = ringbuf_create(sizeof(R) * n);
+        _ringbuf = bmcl_ringbuf_create(sizeof(R) * n);
     }
 
     void initRingBufWithSize(std::size_t size)
     {
         assert(_ringbuf == 0);
-        _ringbuf = ringbuf_create(size);
+        _ringbuf = bmcl_ringbuf_create(size);
     }
 
     template <std::size_t n, typename R>
     void append(const R (&array)[n])
     {
-        ringbuf_write(_ringbuf, array, sizeof(R) * n);
+        bmcl_ringbuf_write(_ringbuf, array, sizeof(R) * n);
     }
 
     void erase(std::size_t size)
     {
-        ringbuf_erase(_ringbuf, size);
+        bmcl_ringbuf_erase(_ringbuf, size);
     }
 
     void clear()
     {
-        ringbuf_clear(_ringbuf);
+        bmcl_ringbuf_clear(_ringbuf);
     }
 
     void appendByte(uint8_t byte)
     {
-        ringbuf_write_uint8(_ringbuf, byte);
+        bmcl_ringbuf_write_uint8(_ringbuf, byte);
     }
 
     uint8_t readByte()
     {
-        return ringbuf_read_uint8(_ringbuf);
+        return bmcl_ringbuf_read_uint8(_ringbuf);
     }
 
     void peek(void* dest, std::size_t size, std::size_t offset = 0)
     {
-        ringbuf_peek(_ringbuf, dest, size, offset);
+        bmcl_ringbuf_peek(_ringbuf, dest, size, offset);
     }
 
     void read(void* dest, std::size_t size)
     {
-        ringbuf_read(_ringbuf, dest, size);
+        bmcl_ringbuf_read(_ringbuf, dest, size);
     }
 
     void expectFreeSpace(std::size_t freeSpace)
     {
-        EXPECT_EQ(ringbuf_get_free_space(_ringbuf), freeSpace);
+        EXPECT_EQ(bmcl_ringbuf_get_free_space(_ringbuf), freeSpace);
     }
 
     void expectFull()
     {
-        EXPECT_TRUE(ringbuf_is_full(_ringbuf));
+        EXPECT_TRUE(bmcl_ringbuf_is_full(_ringbuf));
     }
 
     void expectEmpty()
     {
-        EXPECT_TRUE(ringbuf_is_empty(_ringbuf));
+        EXPECT_TRUE(bmcl_ringbuf_is_empty(_ringbuf));
     }
 
     template <std::size_t n, typename R>
@@ -86,13 +86,13 @@ protected:
     {
         std::size_t dataSize = sizeof(R) * n;
         uint8_t temp[dataSize];
-        ringbuf_peek(_ringbuf, temp, dataSize, 0);
-        EXPECT_EQ(dataSize, ringbuf_get_used_space(_ringbuf));
+        bmcl_ringbuf_peek(_ringbuf, temp, dataSize, 0);
+        EXPECT_EQ(dataSize, bmcl_ringbuf_get_used_space(_ringbuf));
         EXPECT_EQ_MEM(array, temp, dataSize);
     }
 
 private:
-    ringbuf_t* _ringbuf;
+    bmcl_ringbuf_t* _ringbuf;
 };
 
 TEST_F(RingBufTest, init)

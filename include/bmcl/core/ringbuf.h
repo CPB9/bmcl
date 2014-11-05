@@ -17,71 +17,71 @@ typedef struct {
     size_t size;
     size_t free_space;
     uint8_t* data;
-} ringbuf_t;
+} bmcl_ringbuf_t;
 
-void ringbuf_init(ringbuf_t* self, void* data, size_t size);
+void bmcl_ringbuf_init(bmcl_ringbuf_t* self, void* data, size_t size);
 
-void ringbuf_init_writer(ringbuf_t* self, writer_t* writer);
+void bmcl_ringbuf_init_writer(bmcl_ringbuf_t* self, bmcl_writer_t* writer);
 
-void ringbuf_init_reader(ringbuf_t* self, reader_t* reader);
+void bmcl_ringbuf_init_reader(bmcl_ringbuf_t* self, bmcl_reader_t* reader);
 
 #if BMCL_HAVE_MALLOC
 
-ringbuf_t* ringbuf_create(size_t size);
+bmcl_ringbuf_t* bmcl_ringbuf_create(size_t size);
 
-void ringbuf_destroy(ringbuf_t* self);
+void bmcl_ringbuf_destroy(bmcl_ringbuf_t* self);
 
-writer_t* ringbuf_create_writer(ringbuf_t* self);
+bmcl_writer_t* bmcl_ringbuf_create_writer(bmcl_ringbuf_t* self);
 
-reader_t* ringbuf_create_reader(ringbuf_t* self);
+bmcl_reader_t* bmcl_ringbuf_create_reader(bmcl_ringbuf_t* self);
 
 #endif
 
-void ringbuf_clear(ringbuf_t* self);
+void bmcl_ringbuf_clear(bmcl_ringbuf_t* self);
 
-size_t ringbuf_get_free_space(const ringbuf_t* self);
+size_t bmcl_ringbuf_get_free_space(const bmcl_ringbuf_t* self);
 
-size_t ringbuf_get_used_space(const ringbuf_t* self);
+size_t bmcl_ringbuf_get_used_space(const bmcl_ringbuf_t* self);
 
-bool ringbuf_is_full(const ringbuf_t* self);
+bool bmcl_ringbuf_is_full(const bmcl_ringbuf_t* self);
 
-bool ringbuf_is_empty(const ringbuf_t* self);
+bool bmcl_ringbuf_is_empty(const bmcl_ringbuf_t* self);
 
-void ringbuf_erase(ringbuf_t* self, size_t size);
+void bmcl_ringbuf_erase(bmcl_ringbuf_t* self, size_t size);
 
-void ringbuf_write(ringbuf_t* self, const void* data, size_t size);
+void bmcl_ringbuf_write(bmcl_ringbuf_t* self, const void* data, size_t size);
 
-void ringbuf_write_uint8(ringbuf_t* self, uint8_t byte);
+void bmcl_ringbuf_write_uint8(bmcl_ringbuf_t* self, uint8_t byte);
 
-void ringbuf_write_uint16le(ringbuf_t* self, uint16_t value);
+void bmcl_ringbuf_write_uint16le(bmcl_ringbuf_t* self, uint16_t value);
 
-void ringbuf_write_uint32le(ringbuf_t* self, uint32_t value);
+void bmcl_ringbuf_write_uint32le(bmcl_ringbuf_t* self, uint32_t value);
 
-void ringbuf_write_uint64le(ringbuf_t* self, uint64_t value);
+void bmcl_ringbuf_write_uint64le(bmcl_ringbuf_t* self, uint64_t value);
 
-void ringbuf_write_uint16be(ringbuf_t* self, uint16_t value);
+void bmcl_ringbuf_write_uint16be(bmcl_ringbuf_t* self, uint16_t value);
 
-void ringbuf_write_uint32be(ringbuf_t* self, uint32_t value);
+void bmcl_ringbuf_write_uint32be(bmcl_ringbuf_t* self, uint32_t value);
 
-void ringbuf_write_uint64be(ringbuf_t* self, uint64_t value);
+void bmcl_ringbuf_write_uint64be(bmcl_ringbuf_t* self, uint64_t value);
 
-void ringbuf_peek(const ringbuf_t* self, void* dest, size_t size, size_t offset);
+void bmcl_ringbuf_peek(const bmcl_ringbuf_t* self, void* dest, size_t size, size_t offset);
 
-void ringbuf_read(ringbuf_t* self, void* dest, size_t size);
+void bmcl_ringbuf_read(bmcl_ringbuf_t* self, void* dest, size_t size);
 
-uint8_t ringbuf_read_uint8(ringbuf_t* self);
+uint8_t bmcl_ringbuf_read_uint8(bmcl_ringbuf_t* self);
 
-uint16_t ringbuf_read_uint16le(ringbuf_t* self);
+uint16_t bmcl_ringbuf_read_uint16le(bmcl_ringbuf_t* self);
 
-uint32_t ringbuf_read_uint32le(ringbuf_t* self);
+uint32_t bmcl_ringbuf_read_uint32le(bmcl_ringbuf_t* self);
 
-uint64_t ringbuf_read_uint64le(ringbuf_t* self);
+uint64_t bmcl_ringbuf_read_uint64le(bmcl_ringbuf_t* self);
 
-uint16_t ringbuf_read_uint16be(ringbuf_t* self);
+uint16_t bmcl_ringbuf_read_uint16be(bmcl_ringbuf_t* self);
 
-uint32_t ringbuf_read_uint32be(ringbuf_t* self);
+uint32_t bmcl_ringbuf_read_uint32be(bmcl_ringbuf_t* self);
 
-uint64_t ringbuf_read_uint64be(ringbuf_t* self);
+uint64_t bmcl_ringbuf_read_uint64be(bmcl_ringbuf_t* self);
 
 #ifdef __cplusplus
 }

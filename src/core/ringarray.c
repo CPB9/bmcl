@@ -8,64 +8,65 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void ringarray_append_with_size(ringarray_t* self, const void* element, size_t size)
+static void bmcl_ringarray_append_with_size(bmcl_ringarray_t* self, const void* element, size_t size)
 {
-    assert(ringarray_element_size(self) == size);
-    ringarray_append(self, element);
+    assert(bmcl_ringarray_element_size(self) == size);
+    bmcl_ringarray_append(self, element);
 }
 
-static bool constant_size(const ringarray_t* self, size_t* size)
+static bool constant_size(const bmcl_ringarray_t* self, size_t* size)
 {
     if (size) {
-        *size = ringarray_element_size(self);
+        *size = bmcl_ringarray_element_size(self);
     }
     return true;
 }
 
-static const queue_impl_t ringarray_queue_impl = {(void (*)(void*, const void*, size_t))ringarray_append_with_size,
-                                                  (size_t (*)(const void*))ringarray_count,
-                                                  (size_t (*)(const void*))ringarray_element_size,
-                                                  (void (*)(const void* data, void* dest))ringarray_copy_first,
-                                                  (void (*)(void* data))ringarray_remove_first,
-                                                  (bool (*)(const void* self, size_t* size))constant_size};
+static const bmcl_queue_impl_t ringarray_queue_impl
+    = {(void (*)(void*, const void*, size_t))bmcl_ringarray_append_with_size,
+       (size_t (*)(const void*))bmcl_ringarray_count,
+       (size_t (*)(const void*))bmcl_ringarray_element_size,
+       (void (*)(const void* data, void* dest))bmcl_ringarray_copy_first,
+       (void (*)(void* data))bmcl_ringarray_remove_first,
+       (bool (*)(const void* self, size_t* size))constant_size};
 
-static inline void* get_write_ptr(const ringarray_t* self)
+static inline void* get_write_ptr(const bmcl_ringarray_t* self)
 {
     return (uint8_t*)self->data + self->write_offset * self->element_size;
 }
 
-static inline void* get_read_ptr(const ringarray_t* self)
+static inline void* get_read_ptr(const bmcl_ringarray_t* self)
 {
     return (uint8_t*)self->data + self->read_offset * self->element_size;
 }
 
-static void increment_read_ptr(ringarray_t* self)
+static void increment_read_ptr(bmcl_ringarray_t* self)
 {
     self->read_offset++;
     if (self->read_offset >= self->size)
         self->read_offset -= self->size;
 }
 
-static void increment_write_ptr(ringarray_t* self)
+static void increment_write_ptr(bmcl_ringarray_t* self)
 {
     self->write_offset++;
     if (self->write_offset >= self->size)
         self->write_offset -= self->size;
 }
 
-void ringarray_init(ringarray_t* self, void* ptr, size_t buf_size, size_t element_size)
+void bmcl_ringarray_init(bmcl_ringarray_t* self, void* ptr, size_t buf_size, size_t element_size)
 {
     assert(ptr != 0);
     assert(buf_size != 0);
     assert(element_size != 0);
     assert(element_size <= buf_size);
-    ringarray_reset(self);
+    bmcl_ringarray_reset(self);
     self->data = ptr;
     self->element_size = element_size;
     self->size = buf_size / element_size;
 }
 
-void ringarray_init_queue(ringarray_t* self, queue_t* queue)
+void bmcl_ringarray_init_queue(bmcl_ringarray_t* self, bmcl_queue_t* queue)
 {
     queue->data = self;
     queue->impl = &ringarray_queue_impl;
@@ -73,31 +74,31 @@ void ringarray_init_queue(ringarray_t* self, queue_t* queue)
 
 #if BMCL_HAVE_MALLOC
 
-ringarray_t* ringarray_create(size_t element_num, size_t element_size)
+bmcl_ringarray_t* bmcl_ringarray_create(size_t element_num, size_t element_size)
 {
     // FIXME: check overflow
     size_t buf_size = element_size * element_num;
-    uint8_t* data = malloc(sizeof(ringarray_t) + buf_size);
-    ringarray_t* self = (ringarray_t*)data;
-    ringarray_init(self, data + sizeof(ringarray_t), buf_size, element_size);
+    uint8_t* data = malloc(sizeof(bmcl_ringarray_t) + buf_size);
+    bmcl_ringarray_t* self = (bmcl_ringarray_t*)data;
+    bmcl_ringarray_init(self, data + sizeof(bmcl_ringarray_t), buf_size, element_size);
     return self;
 }
 
-void ringarray_destroy(ringarray_t* self)
+void bmcl_ringarray_destroy(bmcl_ringarray_t* self)
 {
     free(self);
 }
 
-queue_t* ringarray_create_queue(ringarray_t* self)
+bmcl_queue_t* bmcl_ringarray_create_queue(bmcl_ringarray_t* self)
 {
-    queue_t* queue = malloc(sizeof(queue_t));
-    ringarray_init_queue(self, queue);
+    bmcl_queue_t* queue = malloc(sizeof(bmcl_queue_t));
+    bmcl_ringarray_init_queue(self, queue);
     return queue;
 }
 
 #endif
 
-void ringarray_reset(ringarray_t* self)
+void bmcl_ringarray_reset(bmcl_ringarray_t* self)
 {
     self->data = (void*)0;
     self->read_offset = 0;
@@ -107,54 +108,54 @@ void ringarray_reset(ringarray_t* self)
     self->element_size = 0;
 }
 
-static void erase_first_element(ringarray_t* self)
+static void erase_first_element(bmcl_ringarray_t* self)
 {
     increment_read_ptr(self);
     --self->count;
 }
 
-void ringarray_append(ringarray_t* self, const void* element)
+void bmcl_ringarray_append(bmcl_ringarray_t* self, const void* element)
 {
-    if (ringarray_is_full(self))
+    if (bmcl_ringarray_is_full(self))
         erase_first_element(self);
     memcpy(get_write_ptr(self), element, self->element_size);
     increment_write_ptr(self);
     self->count++;
 }
 
-size_t ringarray_count(const ringarray_t* self)
+size_t bmcl_ringarray_count(const bmcl_ringarray_t* self)
 {
     return self->count;
 }
 
-size_t ringarray_size(const ringarray_t* self)
+size_t bmcl_ringarray_size(const bmcl_ringarray_t* self)
 {
     return self->size;
 }
 
-bool ringarray_is_empty(const ringarray_t* self)
+bool bmcl_ringarray_is_empty(const bmcl_ringarray_t* self)
 {
     return self->count == 0;
 }
 
-bool ringarray_is_full(const ringarray_t* self)
+bool bmcl_ringarray_is_full(const bmcl_ringarray_t* self)
 {
-    return !ringarray_is_empty(self) && self->read_offset == self->write_offset;
+    return !bmcl_ringarray_is_empty(self) && self->read_offset == self->write_offset;
 }
 
-size_t ringarray_element_size(const ringarray_t* self)
+size_t bmcl_ringarray_element_size(const bmcl_ringarray_t* self)
 {
     return self->element_size;
 }
 
-void ringarray_copy_first(const ringarray_t* self, void* dest)
+void bmcl_ringarray_copy_first(const bmcl_ringarray_t* self, void* dest)
 {
-    assert(!ringarray_is_empty(self));
+    assert(!bmcl_ringarray_is_empty(self));
     memcpy(dest, get_read_ptr(self), self->element_size);
 }
 
-void ringarray_remove_first(ringarray_t* self)
+void bmcl_ringarray_remove_first(bmcl_ringarray_t* self)
 {
-    assert(!ringarray_is_empty(self));
+    assert(!bmcl_ringarray_is_empty(self));
     erase_first_element(self);
 }

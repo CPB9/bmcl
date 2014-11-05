@@ -11,41 +11,41 @@ extern "C" {
 #endif
 
 typedef struct {
-    ringbuf_t ringbuf;
+    bmcl_ringbuf_t ringbuf;
     size_t count;
-} ringbucket_t;
+} bmcl_ringbucket_t;
 
-void ringbucket_init(ringbucket_t* self, void* data, size_t size);
+void bmcl_ringbucket_init(bmcl_ringbucket_t* self, void* data, size_t size);
 
-void ringbucket_init_queue(ringbucket_t* self, queue_t* queue);
+void bmcl_ringbucket_init_queue(bmcl_ringbucket_t* self, bmcl_queue_t* queue);
 
 #if BMCL_HAVE_MALLOC
 
-ringbucket_t* ringbucket_create(size_t size);
+bmcl_ringbucket_t* bmcl_ringbucket_create(size_t size);
 
-void ringbucket_destroy(ringbucket_t* self);
+void bmcl_ringbucket_destroy(bmcl_ringbucket_t* self);
 
-queue_t* ringbucket_create_queue(ringbucket_t* self);
+bmcl_queue_t* bmcl_ringbucket_create_queue(bmcl_ringbucket_t* self);
 
 #endif
 
-size_t ringbucket_get_free_space(const ringbucket_t* self);
+size_t bmcl_ringbucket_get_free_space(const bmcl_ringbucket_t* self);
 
-size_t ringbucket_header_size();
+size_t bmcl_ringbucket_header_size();
 
-bool ringbucket_is_empty(const ringbucket_t* self);
+bool bmcl_ringbucket_is_empty(const bmcl_ringbucket_t* self);
 
-void ringbucket_reset(ringbucket_t* self);
+void bmcl_ringbucket_reset(bmcl_ringbucket_t* self);
 
-void ringbucket_append(ringbucket_t* self, const void* element, size_t size);
+void bmcl_ringbucket_append(bmcl_ringbucket_t* self, const void* element, size_t size);
 
-size_t ringbucket_count(const ringbucket_t* self);
+size_t bmcl_ringbucket_count(const bmcl_ringbucket_t* self);
 
-size_t ringbucket_first_size(const ringbucket_t* self);
+size_t bmcl_ringbucket_first_size(const bmcl_ringbucket_t* self);
 
-void ringbucket_copy_first(const ringbucket_t* self, void* dest);
+void bmcl_ringbucket_copy_first(const bmcl_ringbucket_t* self, void* dest);
 
-void ringbucket_remove_first(ringbucket_t* self);
+void bmcl_ringbucket_remove_first(bmcl_ringbucket_t* self);
 
 #ifdef __cplusplus
 }

@@ -50,15 +50,15 @@ static void inc4(std::size_t* counter)
 
 TEST_F(SchedTest, test1)
 {
-    sched_t* sched;
+    bmcl_sched_t* sched;
     const task_t tasks[4] = {{(void*)inc1, 3}, {(void*)inc2, 11}, {(void*)inc3, 101}, {(void*)inc4, 211}};
-    sched = sched_create(tasks, 4, executor1);
+    sched = bmcl_sched_create(tasks, 4, executor1);
     uint64_t maxCount = 11 * 101 * 211 + 3 * 101 * 211 + 3 * 11 * 211 + 3 * 11 * 101;
     UserData userData = {maxCount, 0, {0, 0, 0, 0}};
-    sched_exec_while_possible(sched, &userData);
+    bmcl_sched_exec_while_possible(sched, &userData);
     EXPECT_EQ(11 * 101 * 211, userData.counters[0]);
     EXPECT_EQ(3 * 101 * 211, userData.counters[1]);
     EXPECT_EQ(3 * 11 * 211, userData.counters[2]);
     EXPECT_EQ(3 * 11 * 101, userData.counters[3]);
-    sched_destroy(sched);
+    bmcl_sched_destroy(sched);
 }

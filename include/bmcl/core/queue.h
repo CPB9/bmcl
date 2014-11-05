@@ -11,53 +11,53 @@ typedef struct {
     void (*copy_first)(const void* self, void* dest);
     void (*remove_first)(void* self);
     bool (*const_el_size)(const void* self, size_t* size);
-} queue_impl_t;
+} bmcl_queue_impl_t;
 
 typedef struct {
     void* data;
-    const queue_impl_t* impl;
-} queue_t;
+    const bmcl_queue_impl_t* impl;
+} bmcl_queue_t;
 
 #if BMCL_HAVE_MALLOC
 
-static inline void queue_destroy(queue_t* self)
+static inline void bmcl_queue_destroy(bmcl_queue_t* self)
 {
     free(self);
 }
 
 #endif
 
-static inline void queue_append(queue_t* self, const void* element, size_t size)
+static inline void bmcl_queue_append(bmcl_queue_t* self, const void* element, size_t size)
 {
     self->impl->append(self->data, element, size);
 }
 
-static inline size_t queue_count(const queue_t* self)
+static inline size_t bmcl_queue_count(const bmcl_queue_t* self)
 {
     return self->impl->count(self->data);
 }
 
-static inline size_t queue_first_size(const queue_t* self)
+static inline size_t bmcl_queue_first_size(const bmcl_queue_t* self)
 {
     return self->impl->first_size(self->data);
 }
 
-static inline void queue_copy_first(const queue_t* self, void* dest)
+static inline void bmcl_queue_copy_first(const bmcl_queue_t* self, void* dest)
 {
     self->impl->copy_first(self->data, dest);
 }
 
-static inline void queue_remove_first(queue_t* self)
+static inline void bmcl_queue_remove_first(bmcl_queue_t* self)
 {
     self->impl->remove_first(self->data);
 }
 
-static inline bool queue_is_empty(const queue_t* self)
+static inline bool bmcl_queue_is_empty(const bmcl_queue_t* self)
 {
-    return queue_count(self) == 0;
+    return bmcl_queue_count(self) == 0;
 }
 
-static inline bool queue_const_el_size(const queue_t* self, size_t* size)
+static inline bool bmcl_queue_const_el_size(const bmcl_queue_t* self, size_t* size)
 {
     return self->impl->const_el_size(self->data, size);
 }

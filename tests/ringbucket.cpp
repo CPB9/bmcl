@@ -12,65 +12,65 @@ protected:
     void TearDown()
     {
         if (_ringbucket) {
-            ringbucket_destroy(_ringbucket);
+            bmcl_ringbucket_destroy(_ringbucket);
         }
     }
 
     void initRingBucket(std::size_t size)
     {
         assert(_ringbucket == 0);
-        _ringbucket = ringbucket_create(size);
+        _ringbucket = bmcl_ringbucket_create(size);
     }
 
     template <std::size_t n, typename R>
     void appendElement(const R (&array)[n])
     {
-        ringbucket_append(_ringbucket, array, sizeof(R) * n);
+        bmcl_ringbucket_append(_ringbucket, array, sizeof(R) * n);
     }
 
     template <std::size_t n, typename R>
     void expectNextElement(const R (&array)[n])
     {
         std::size_t elementSize = sizeof(R) * n;
-        ASSERT_EQ(elementSize, ringbucket_first_size(_ringbucket));
+        ASSERT_EQ(elementSize, bmcl_ringbucket_first_size(_ringbucket));
         R tmp[n];
-        ringbucket_copy_first(_ringbucket, tmp);
-        ringbucket_remove_first(_ringbucket);
+        bmcl_ringbucket_copy_first(_ringbucket, tmp);
+        bmcl_ringbucket_remove_first(_ringbucket);
         EXPECT_EQ_MEM(array, tmp, elementSize);
     }
 
     void expectCount(std::size_t count)
     {
-        EXPECT_EQ(count, ringbucket_count(_ringbucket));
+        EXPECT_EQ(count, bmcl_ringbucket_count(_ringbucket));
     }
 
     void expectFreeSpace(std::size_t size)
     {
-        EXPECT_EQ(size, ringbucket_get_free_space(_ringbucket));
+        EXPECT_EQ(size, bmcl_ringbucket_get_free_space(_ringbucket));
     }
 
     void expectEmpty(bool isEmpty = true)
     {
-        EXPECT_EQ(isEmpty, ringbucket_is_empty(_ringbucket));
+        EXPECT_EQ(isEmpty, bmcl_ringbucket_is_empty(_ringbucket));
     }
 
     void expectFirstElementSize(std::size_t size)
     {
-        EXPECT_EQ(size, ringbucket_first_size(_ringbucket));
+        EXPECT_EQ(size, bmcl_ringbucket_first_size(_ringbucket));
     }
 
     std::size_t fullSize(std::size_t elementSize)
     {
-        return elementSize + ringbucket_header_size();
+        return elementSize + bmcl_ringbucket_header_size();
     }
 
     void reset()
     {
-        ringbucket_reset(_ringbucket);
+        bmcl_ringbucket_reset(_ringbucket);
     }
 
 private:
-    ringbucket_t* _ringbucket;
+    bmcl_ringbucket_t* _ringbucket;
 };
 
 TEST_F(RingBucketTest, init)
@@ -143,9 +143,9 @@ TEST_F(RingBucketTest, overwrite)
 
 TEST_F(RingBucketTest, queue_el_size)
 {
-    ringbucket_t* bucket = ringbucket_create(100);
-    queue_t* queue = ringbucket_create_queue(bucket);
-    EXPECT_FALSE(queue_const_el_size(queue, 0));
-    queue_destroy(queue);
-    ringbucket_destroy(bucket);
+    bmcl_ringbucket_t* bucket = bmcl_ringbucket_create(100);
+    bmcl_queue_t* queue = bmcl_ringbucket_create_queue(bucket);
+    EXPECT_FALSE(bmcl_queue_const_el_size(queue, 0));
+    bmcl_queue_destroy(queue);
+    bmcl_ringbucket_destroy(bucket);
 }

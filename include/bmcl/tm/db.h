@@ -9,47 +9,47 @@
 extern "C" {
 #endif
 
-typedef bool (*tm_frame_serializer_t)(size_t frame, writer_t* dest, void* user_data);
+typedef bool (*bmcl_tm_frame_serializer_t)(size_t frame, bmcl_writer_t* dest, void* user_data);
 
 typedef struct {
     void* ptr;
     size_t size;
-} tm_var_t;
+} bmcl_tm_var_t;
 
 typedef struct {
     uint16_t* var_ids;
     size_t id_count;
     size_t total_size;
-} tm_frame_t;
+} bmcl_tm_frame_t;
 
 typedef struct {
-    tm_var_t* vars;
+    bmcl_tm_var_t* vars;
     size_t var_count;
-    tm_frame_t* frames;
+    bmcl_tm_frame_t* frames;
     size_t frame_count;
-    tm_frame_serializer_t serializer;
-} tm_db_t;
+    bmcl_tm_frame_serializer_t serializer;
+} bmcl_tm_db_t;
 
-void tm_db_init(tm_var_t* vars, size_t var_count, tm_frame_t* frames, size_t frame_count,
-                tm_frame_serializer_t serializer);
+void bmcl_tm_db_init(bmcl_tm_var_t* vars, size_t var_count, bmcl_tm_frame_t* frames, size_t frame_count,
+                     bmcl_tm_frame_serializer_t serializer);
 
-bool tm_db_serialize_frame(size_t frame_num, writer_t* dest, void* user_data);
+bool bmcl_tm_db_serialize_frame(size_t frame_num, bmcl_writer_t* dest, void* user_data);
 
-void tm_db_copy_frame(size_t frame_num, writer_t* dest);
+void bmcl_tm_db_copy_frame(size_t frame_num, bmcl_writer_t* dest);
 
-bool tm_db_has_frame(size_t frame_num);
+bool bmcl_tm_db_has_frame(size_t frame_num);
 
-bool tm_db_can_copy(size_t frame_num, writer_t* dest);
+bool bmcl_tm_db_can_copy(size_t frame_num, bmcl_writer_t* dest);
 
-size_t tm_db_recalc_frame_size(size_t frame_num);
+size_t bmcl_tm_db_recalc_frame_size(size_t frame_num);
 
-size_t tm_db_frame_size(size_t frame_num);
+size_t bmcl_tm_db_frame_size(size_t frame_num);
 
-size_t tm_db_frame_len(size_t frame_num);
+size_t bmcl_tm_db_frame_len(size_t frame_num);
 
-size_t tm_db_frame_count();
+size_t bmcl_tm_db_frame_count();
 
-size_t tm_db_var_count();
+size_t bmcl_tm_db_var_count();
 
 #ifdef __cplusplus
 }

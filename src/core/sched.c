@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size_t task_num, task_executor_t executor)
+void bmcl_sched_init(bmcl_sched_t* self, const task_t* tasks, task_data_t* task_data, size_t task_num,
+                     task_executor_t executor)
 {
     assert(task_num > 0);
     assert(task_num <= UINT_MAX / sizeof(task_data_t));
@@ -22,22 +23,22 @@ void sched_init(sched_t* self, const task_t* tasks, task_data_t* task_data, size
 
 #if BMCL_HAVE_MALLOC
 
-sched_t* sched_create(const task_t* tasks, size_t task_num, task_executor_t executor)
+bmcl_sched_t* bmcl_sched_create(const task_t* tasks, size_t task_num, task_executor_t executor)
 {
-    uint8_t* data = malloc(sizeof(sched_t) + sizeof(task_data_t) * task_num);
-    sched_t* self = (sched_t*)data;
-    sched_init(self, tasks, (task_data_t*)(data + sizeof(sched_t)), task_num, executor);
+    uint8_t* data = malloc(sizeof(bmcl_sched_t) + sizeof(task_data_t) * task_num);
+    bmcl_sched_t* self = (bmcl_sched_t*)data;
+    bmcl_sched_init(self, tasks, (task_data_t*)(data + sizeof(bmcl_sched_t)), task_num, executor);
     return self;
 }
 
-void sched_destroy(sched_t* self)
+void bmcl_sched_destroy(bmcl_sched_t* self)
 {
     free(self);
 }
 
 #endif
 
-bool sched_exec_next(sched_t* self, void* user_data)
+bool bmcl_sched_exec_next(bmcl_sched_t* self, void* user_data)
 {
     size_t task_index = 0;
     int max_weight = self->task_data[0].weight;
@@ -55,8 +56,8 @@ bool sched_exec_next(sched_t* self, void* user_data)
     return self->executor(task->task, user_data);
 }
 
-void sched_exec_while_possible(sched_t* self, void* user_data)
+void bmcl_sched_exec_while_possible(bmcl_sched_t* self, void* user_data)
 {
-    while (sched_exec_next(self, user_data))
+    while (bmcl_sched_exec_next(self, user_data))
         ;
 }

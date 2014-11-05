@@ -7,153 +7,157 @@
 #include <string.h>
 #include <assert.h>
 
-static const writer_impl_t memwriter_impl = {
-    (void (*)(void*, const void*, size_t))memwriter_write, (void (*)(void*, uint8_t))memwriter_write_uint8,
-    (void (*)(void*, uint16_t))memwriter_write_uint16le,   (void (*)(void*, uint32_t))memwriter_write_uint32le,
-    (void (*)(void*, uint64_t))memwriter_write_uint64le,   (void (*)(void*, uint16_t))memwriter_write_uint16be,
-    (void (*)(void*, uint32_t))memwriter_write_uint32be,   (void (*)(void*, uint64_t))memwriter_write_uint64be,
+static const bmcl_writer_impl_t memwriter_writer_impl = {
+    (void (*)(void*, const void*, size_t))bmcl_memwriter_write,
+    (void (*)(void*, uint8_t))bmcl_memwriter_write_uint8,
+    (void (*)(void*, uint16_t))bmcl_memwriter_write_uint16le,
+    (void (*)(void*, uint32_t))bmcl_memwriter_write_uint32le,
+    (void (*)(void*, uint64_t))bmcl_memwriter_write_uint64le,
+    (void (*)(void*, uint16_t))bmcl_memwriter_write_uint16be,
+    (void (*)(void*, uint32_t))bmcl_memwriter_write_uint32be,
+    (void (*)(void*, uint64_t))bmcl_memwriter_write_uint64be,
 };
 
-void memwriter_init(memwriter_t* self, void* dest, size_t max_size)
+void bmcl_memwriter_init(bmcl_memwriter_t* self, void* dest, size_t max_size)
 {
     self->start = (uint8_t*)dest;
     self->current = self->start;
     self->end = self->start + max_size;
 }
 
-void memwriter_init_writer(memwriter_t* self, writer_t* writer)
+void bmcl_memwriter_init_writer(bmcl_memwriter_t* self, bmcl_writer_t* writer)
 {
     writer->data = self;
-    writer->impl = &memwriter_impl;
+    writer->impl = &memwriter_writer_impl;
 }
 
 #if BMCL_HAVE_MALLOC
 
-memwriter_t* memwriter_create(size_t max_size)
+bmcl_memwriter_t* bmcl_memwriter_create(size_t max_size)
 {
-    uint8_t* data = malloc(sizeof(memwriter_t) + max_size);
-    memwriter_t* self = (memwriter_t*)data;
-    memwriter_init(self, data + sizeof(memwriter_t), max_size);
+    uint8_t* data = malloc(sizeof(bmcl_memwriter_t) + max_size);
+    bmcl_memwriter_t* self = (bmcl_memwriter_t*)data;
+    bmcl_memwriter_init(self, data + sizeof(bmcl_memwriter_t), max_size);
     return self;
 }
 
-memwriter_t* memwriter_create_with_dest(void* dest, size_t max_size)
+bmcl_memwriter_t* bmcl_memwriter_create_with_dest(void* dest, size_t max_size)
 {
-    memwriter_t* self = malloc(sizeof(memwriter_t));
-    memwriter_init(self, dest, max_size);
+    bmcl_memwriter_t* self = malloc(sizeof(bmcl_memwriter_t));
+    bmcl_memwriter_init(self, dest, max_size);
     return self;
 }
 
-void memwriter_destroy(memwriter_t* self)
+void bmcl_memwriter_destroy(bmcl_memwriter_t* self)
 {
     free(self);
 }
 
-writer_t* memwriter_create_writer(memwriter_t* self)
+bmcl_writer_t* bmcl_memwriter_create_writer(bmcl_memwriter_t* self)
 {
-    writer_t* writer = malloc(sizeof(writer_t));
-    memwriter_init_writer(self, writer);
+    bmcl_writer_t* writer = malloc(sizeof(bmcl_writer_t));
+    bmcl_memwriter_init_writer(self, writer);
     return writer;
 }
 
 #endif
 
-const void* memwriter_ptr(const memwriter_t* self)
+const void* bmcl_memwriter_ptr(const bmcl_memwriter_t* self)
 {
     return self->start;
 }
 
-const void* memwriter_current_ptr(const memwriter_t* self)
+const void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self)
 {
     return self->current;
 }
 
-size_t memwriter_size(const memwriter_t* self)
+size_t bmcl_memwriter_size(const bmcl_memwriter_t* self)
 {
     return self->current - self->start;
 }
 
-bool memwriter_is_full(const memwriter_t* self)
+bool bmcl_memwriter_is_full(const bmcl_memwriter_t* self)
 {
     return self->current == self->end;
 }
 
-size_t memwriter_max_size(const memwriter_t* self)
+size_t bmcl_memwriter_max_size(const bmcl_memwriter_t* self)
 {
     return self->end - self->start;
 }
 
-size_t memwriter_size_left(const memwriter_t* self)
+size_t bmcl_memwriter_size_left(const bmcl_memwriter_t* self)
 {
     return self->end - self->current;
 }
 
-void memwriter_write(memwriter_t* self, const void* data, size_t size)
+void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size)
 {
-    assert(memwriter_size_left(self) >= size);
+    assert(bmcl_memwriter_size_left(self) >= size);
     memcpy(self->current, data, size);
     self->current += size;
 }
 
-void memwriter_fill(memwriter_t* self, uint8_t byte, size_t size)
+void bmcl_memwriter_fill(bmcl_memwriter_t* self, uint8_t byte, size_t size)
 {
-    assert(memwriter_size_left(self) >= size);
+    assert(bmcl_memwriter_size_left(self) >= size);
     memset(self->current, byte, size);
     self->current += size;
 }
 
-void memwriter_fillup(memwriter_t* self, uint8_t byte)
+void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte)
 {
     size_t size = self->end - self->current;
     memset(self->current, byte, size);
     self->current += size;
 }
 
-void memwriter_write_uint8(memwriter_t* self, uint8_t value)
+void bmcl_memwriter_write_uint8(bmcl_memwriter_t* self, uint8_t value)
 {
-    assert(memwriter_size_left(self) >= 1);
+    assert(bmcl_memwriter_size_left(self) >= 1);
     *self->current = value;
     self->current++;
 }
 
-void memwriter_write_uint16le(memwriter_t* self, uint16_t value)
+void bmcl_memwriter_write_uint16le(bmcl_memwriter_t* self, uint16_t value)
 {
-    assert(memwriter_size_left(self) >= 2);
+    assert(bmcl_memwriter_size_left(self) >= 2);
     le16enc(self->current, value);
     self->current += 2;
 }
 
-void memwriter_write_uint32le(memwriter_t* self, uint32_t value)
+void bmcl_memwriter_write_uint32le(bmcl_memwriter_t* self, uint32_t value)
 {
-    assert(memwriter_size_left(self) >= 4);
+    assert(bmcl_memwriter_size_left(self) >= 4);
     le32enc(self->current, value);
     self->current += 4;
 }
 
-void memwriter_write_uint64le(memwriter_t* self, uint64_t value)
+void bmcl_memwriter_write_uint64le(bmcl_memwriter_t* self, uint64_t value)
 {
-    assert(memwriter_size_left(self) >= 8);
+    assert(bmcl_memwriter_size_left(self) >= 8);
     le64enc(self->current, value);
     self->current += 8;
 }
 
-void memwriter_write_uint16be(memwriter_t* self, uint16_t value)
+void bmcl_memwriter_write_uint16be(bmcl_memwriter_t* self, uint16_t value)
 {
-    assert(memwriter_size_left(self) >= 2);
+    assert(bmcl_memwriter_size_left(self) >= 2);
     be16enc(self->current, value);
     self->current += 2;
 }
 
-void memwriter_write_uint32be(memwriter_t* self, uint32_t value)
+void bmcl_memwriter_write_uint32be(bmcl_memwriter_t* self, uint32_t value)
 {
-    assert(memwriter_size_left(self) >= 4);
+    assert(bmcl_memwriter_size_left(self) >= 4);
     be32enc(self->current, value);
     self->current += 4;
 }
 
-void memwriter_write_uint64be(memwriter_t* self, uint64_t value)
+void bmcl_memwriter_write_uint64be(bmcl_memwriter_t* self, uint64_t value)
 {
-    assert(memwriter_size_left(self) >= 8);
+    assert(bmcl_memwriter_size_left(self) >= 8);
     be64enc(self->current, value);
     self->current += 8;
 }

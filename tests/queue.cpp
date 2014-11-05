@@ -10,49 +10,49 @@ public:
     {
     }
 
-    queue_t* get()
+    bmcl_queue_t* get()
     {
         return _queue;
     }
 
 protected:
-    queue_t* _queue;
+    bmcl_queue_t* _queue;
 };
 
 class RingArrayQueue : public Queue {
 public:
     RingArrayQueue(std::size_t elementNum, std::size_t elementSize)
     {
-        _ringarray = ringarray_create(elementNum, elementSize);
-        _queue = ringarray_create_queue(_ringarray);
+        _ringarray = bmcl_ringarray_create(elementNum, elementSize);
+        _queue = bmcl_ringarray_create_queue(_ringarray);
     }
 
     ~RingArrayQueue()
     {
-        queue_destroy(_queue);
-        ringarray_destroy(_ringarray);
+        bmcl_queue_destroy(_queue);
+        bmcl_ringarray_destroy(_ringarray);
     }
 
 private:
-    ringarray_t* _ringarray;
+    bmcl_ringarray_t* _ringarray;
 };
 
 class RingBucketQueue : public Queue {
 public:
     RingBucketQueue(std::size_t elementNum, std::size_t elementSize)
     {
-        _ringbucket = ringbucket_create(elementNum * elementSize);
-        _queue = ringbucket_create_queue(_ringbucket);
+        _ringbucket = bmcl_ringbucket_create(elementNum * elementSize);
+        _queue = bmcl_ringbucket_create_queue(_ringbucket);
     }
 
     ~RingBucketQueue()
     {
-        queue_destroy(_queue);
-        ringbucket_destroy(_ringbucket);
+        bmcl_queue_destroy(_queue);
+        bmcl_ringbucket_destroy(_ringbucket);
     }
 
 private:
-    ringbucket_t* _ringbucket;
+    bmcl_ringbucket_t* _ringbucket;
 };
 
 template <typename T>
@@ -80,33 +80,33 @@ protected:
     template <std::size_t n, typename R>
     void append(const R (&array)[n])
     {
-        queue_append(_queue, array, sizeof(R) * n);
+        bmcl_queue_append(_queue, array, sizeof(R) * n);
     }
 
     template <std::size_t n, typename R>
     void expectNextElement(const R (&array)[n])
     {
         std::size_t size = sizeof(R) * n;
-        ASSERT_EQ(size, queue_first_size(_queue));
+        ASSERT_EQ(size, bmcl_queue_first_size(_queue));
         R tmp[n];
-        queue_copy_first(_queue, tmp);
-        queue_remove_first(_queue);
+        bmcl_queue_copy_first(_queue, tmp);
+        bmcl_queue_remove_first(_queue);
         EXPECT_EQ_MEM(array, tmp, size);
     }
 
     void expectEmpty(bool isEmpty = true)
     {
-        EXPECT_EQ(isEmpty, queue_is_empty(_queue));
+        EXPECT_EQ(isEmpty, bmcl_queue_is_empty(_queue));
     }
 
     void expectCount(std::size_t count)
     {
-        EXPECT_EQ(count, queue_count(_queue));
+        EXPECT_EQ(count, bmcl_queue_count(_queue));
     }
 
 private:
     T* _shell;
-    queue_t* _queue;
+    bmcl_queue_t* _queue;
 };
 
 typedef ::testing::Types<RingArrayQueue, RingBucketQueue> QueueTypes;
