@@ -120,44 +120,17 @@ void bmcl_memwriter_write_uint8(bmcl_memwriter_t* self, uint8_t value)
     self->current++;
 }
 
-void bmcl_memwriter_write_uint16le(bmcl_memwriter_t* self, uint16_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 2);
-    le16enc(self->current, value);
-    self->current += 2;
-}
+#define MAKE_MEMWRITER(type, suffix, enc_func)                                                                         \
+    void bmcl_memwriter_write_##suffix(bmcl_memwriter_t* self, type value)                                             \
+    {                                                                                                                  \
+        assert(bmcl_memwriter_size_left(self) >= sizeof(type));                                                        \
+        enc_func(self->current, value);                                                                                \
+        self->current += sizeof(type);                                                                                 \
+    }
 
-void bmcl_memwriter_write_uint32le(bmcl_memwriter_t* self, uint32_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 4);
-    le32enc(self->current, value);
-    self->current += 4;
-}
-
-void bmcl_memwriter_write_uint64le(bmcl_memwriter_t* self, uint64_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 8);
-    le64enc(self->current, value);
-    self->current += 8;
-}
-
-void bmcl_memwriter_write_uint16be(bmcl_memwriter_t* self, uint16_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 2);
-    be16enc(self->current, value);
-    self->current += 2;
-}
-
-void bmcl_memwriter_write_uint32be(bmcl_memwriter_t* self, uint32_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 4);
-    be32enc(self->current, value);
-    self->current += 4;
-}
-
-void bmcl_memwriter_write_uint64be(bmcl_memwriter_t* self, uint64_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 8);
-    be64enc(self->current, value);
-    self->current += 8;
-}
+MAKE_MEMWRITER(uint16_t, uint16le, le16enc);
+MAKE_MEMWRITER(uint32_t, uint32le, le32enc);
+MAKE_MEMWRITER(uint64_t, uint64le, le64enc);
+MAKE_MEMWRITER(uint16_t, uint16be, be16enc);
+MAKE_MEMWRITER(uint32_t, uint32be, be32enc);
+MAKE_MEMWRITER(uint64_t, uint64be, be64enc);

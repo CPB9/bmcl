@@ -1,5 +1,6 @@
 #include "bmcl/core/endian.h"
 #include "bmcl/core/memreader.h"
+#include "bmcl/core/status.h"
 
 #include <assert.h>
 #include <stddef.h>
@@ -94,58 +95,28 @@ void bmcl_memreader_read(bmcl_memreader_t* self, void* dest, size_t size)
     self->current += size;
 }
 
-uint8_t bmcl_memreader_read_uint8(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 1);
-    uint8_t value = *self->current;
-    self->current += 1;
-    return value;
-}
+#define MAKE_MEMREADER(type, suffix, dec_func)                                                                         \
+    type bmcl_memreader_read_##suffix(bmcl_memreader_t* self)                                                          \
+    {                                                                                                                  \
+        assert(bmcl_memreader_size_left(self) >= sizeof(type));                                                        \
+        type value = dec_func(self->current);                                                                          \
+        self->current += sizeof(type);                                                                                 \
+        return value;                                                                                                  \
+    }
 
-uint16_t bmcl_memreader_read_uint16le(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 2);
-    uint16_t value = le16dec(self->current);
-    self->current += 2;
-    return value;
-}
+MAKE_MEMREADER(uint8_t, uint8, *);
+MAKE_MEMREADER(uint16_t, uint16le, le16dec);
+MAKE_MEMREADER(uint32_t, uint32le, le32dec);
+MAKE_MEMREADER(uint64_t, uint64le, le64dec);
+MAKE_MEMREADER(uint16_t, uint16be, be16dec);
+MAKE_MEMREADER(uint32_t, uint32be, be32dec);
+MAKE_MEMREADER(uint64_t, uint64be, be64dec);
 
-uint32_t bmcl_memreader_read_uint32le(bmcl_memreader_t* self)
+static bmcl_status_t read_uint8(void* memreader, uint8_t* dest)
 {
-    assert(bmcl_memreader_size_left(self) >= 4);
-    uint32_t value = le32dec(self->current);
-    self->current += 4;
-    return value;
-}
-
-uint64_t bmcl_memreader_read_uint64le(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 8);
-    uint64_t value = le64dec(self->current);
-    self->current += 8;
-    return value;
-}
-
-uint16_t bmcl_memreader_read_uint16be(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 2);
-    uint16_t value = be16dec(self->current);
-    self->current += 2;
-    return value;
-}
-
-uint32_t bmcl_memreader_read_uint32be(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 4);
-    uint32_t value = be32dec(self->current);
-    self->current += 4;
-    return value;
-}
-
-uint64_t bmcl_memreader_read_uint64be(bmcl_memreader_t* self)
-{
-    assert(bmcl_memreader_size_left(self) >= 8);
-    uint64_t value = be64dec(self->current);
-    self->current += 8;
-    return value;
+    bmcl_memreader_t* self = (bmcl_memreader_t*)memreader;
+    if (bmcl_memreader_size_left(self) >= 1) {
+    }
+    *dest = *self->current;
+    return BMCL_SUCCESS;
 }
