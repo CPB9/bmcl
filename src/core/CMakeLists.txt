@@ -5,6 +5,7 @@ set(BMCL_CORE_SRCS
     ringbucket.c
     ringbuf.c
     sched.c
+    status.c
 )
 
 set(BMCL_CORE_HDRS
@@ -18,6 +19,7 @@ set(BMCL_CORE_HDRS
     ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbucket.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbuf.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/sched.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/status.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/writer.h
 )
 
