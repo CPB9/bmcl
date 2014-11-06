@@ -276,4 +276,3 @@ static inline void le64enc(void* pp, uint64_t u)
 }
 
 #endif
-

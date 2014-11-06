@@ -90,7 +90,7 @@ protected:
     void expectNext(R data, F func)
     {
         R tmp;
-        tmp = func(_reader);
+        func(_reader, &tmp);
         EXPECT_EQ(data, tmp);
     }
 

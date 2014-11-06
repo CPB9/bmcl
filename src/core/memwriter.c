@@ -7,16 +7,47 @@
 #include <string.h>
 #include <assert.h>
 
+#define MAKE_MEMWRITER(type, suffix, enc_func)                                                                         \
+    void bmcl_memwriter_write_##suffix(bmcl_memwriter_t* self, type value)                                             \
+    {                                                                                                                  \
+        assert(bmcl_memwriter_size_left(self) >= sizeof(type));                                                        \
+        enc_func(self->current, value);                                                                                \
+        self->current += sizeof(type);                                                                                 \
+    }                                                                                                                  \
+                                                                                                                       \
+    static bmcl_status_t write_##suffix(void* memwriter, type value)                                                          \
+    {                                                                                                                  \
+        bmcl_memwriter_t* self = (bmcl_memwriter_t*)memwriter;                                                         \
+        if (bmcl_memwriter_size_left(self) < sizeof(type)) {                                                           \
+            return BMCL_ERR_NOT_ENOUGH_SPACE;                                                                          \
+        }                                                                                                              \
+        enc_func(self->current, value);                                                                                \
+        self->current += sizeof(type);                                                                                 \
+        return BMCL_SUCCESS;                                                                                           \
+    }
+
+#define enc8(ptr, value) *ptr = value;
+MAKE_MEMWRITER(uint8_t, uint8, enc8);
+MAKE_MEMWRITER(uint16_t, uint16le, le16enc);
+MAKE_MEMWRITER(uint32_t, uint32le, le32enc);
+MAKE_MEMWRITER(uint64_t, uint64le, le64enc);
+MAKE_MEMWRITER(uint16_t, uint16be, be16enc);
+MAKE_MEMWRITER(uint32_t, uint32be, be32enc);
+MAKE_MEMWRITER(uint64_t, uint64be, be64enc);
+
+static bmcl_status_t write(void* memwriter, const void* data, size_t size)
+{
+    bmcl_memwriter_t* self = (bmcl_memwriter_t*)memwriter;
+    if (bmcl_memwriter_size_left(self) < size) {
+        return BMCL_ERR_NOT_ENOUGH_SPACE;
+    }
+    memcpy(self->current, data, size);
+    self->current += size;
+    return BMCL_SUCCESS;
+}
+
 static const bmcl_writer_impl_t memwriter_writer_impl = {
-    (void (*)(void*, const void*, size_t))bmcl_memwriter_write,
-    (void (*)(void*, uint8_t))bmcl_memwriter_write_uint8,
-    (void (*)(void*, uint16_t))bmcl_memwriter_write_uint16le,
-    (void (*)(void*, uint32_t))bmcl_memwriter_write_uint32le,
-    (void (*)(void*, uint64_t))bmcl_memwriter_write_uint64le,
-    (void (*)(void*, uint16_t))bmcl_memwriter_write_uint16be,
-    (void (*)(void*, uint32_t))bmcl_memwriter_write_uint32be,
-    (void (*)(void*, uint64_t))bmcl_memwriter_write_uint64be,
-};
+    write, write_uint8, write_uint16le, write_uint32le, write_uint64le, write_uint16be, write_uint32be, write_uint64be};
 
 void bmcl_memwriter_init(bmcl_memwriter_t* self, void* dest, size_t max_size)
 {
@@ -112,25 +143,3 @@ void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte)
     memset(self->current, byte, size);
     self->current += size;
 }
-
-void bmcl_memwriter_write_uint8(bmcl_memwriter_t* self, uint8_t value)
-{
-    assert(bmcl_memwriter_size_left(self) >= 1);
-    *self->current = value;
-    self->current++;
-}
-
-#define MAKE_MEMWRITER(type, suffix, enc_func)                                                                         \
-    void bmcl_memwriter_write_##suffix(bmcl_memwriter_t* self, type value)                                             \
-    {                                                                                                                  \
-        assert(bmcl_memwriter_size_left(self) >= sizeof(type));                                                        \
-        enc_func(self->current, value);                                                                                \
-        self->current += sizeof(type);                                                                                 \
-    }
-
-MAKE_MEMWRITER(uint16_t, uint16le, le16enc);
-MAKE_MEMWRITER(uint32_t, uint32le, le32enc);
-MAKE_MEMWRITER(uint64_t, uint64le, le64enc);
-MAKE_MEMWRITER(uint16_t, uint16be, be16enc);
-MAKE_MEMWRITER(uint32_t, uint32be, be32enc);
-MAKE_MEMWRITER(uint64_t, uint64be, be64enc);
