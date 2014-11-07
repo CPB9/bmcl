@@ -23,4 +23,4 @@ set(BMCL_CORE_HDRS
     ${BMCL_INCLUDE_DIRS}/bmcl/core/writer.h
 )
 
-add_bmcl_library(bmclcore SRCS ${BMCL_CORE_SRCS} HDRS ${BMCL_CORE_HDRS})
+add_bmcl_library(bmcl-core SRCS ${BMCL_CORE_SRCS} HDRS ${BMCL_CORE_HDRS})

@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/tm/db.h"
+#include "bmcl/telem/db.h"
 #include "bmcl/core/writer.h"
 
 #include <assert.h>

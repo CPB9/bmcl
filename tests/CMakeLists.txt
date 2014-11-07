@@ -16,7 +16,7 @@ set(ALL_TESTS "")
 macro(add_unit_test test)
     add_executable(${test} ${ARGN})
     target_link_libraries(${test}
-        bmclcore
+        bmcl-core
         gtest
         gtest_main
     )
