@@ -23,7 +23,7 @@
         self->current += sizeof(type);                                                                                 \
     }                                                                                                                  \
                                                                                                                        \
-    static bmcl_status_t write_##suffix(void* memwriter, type value)                                                          \
+    static bmcl_status_t write_##suffix(void* memwriter, type value)                                                   \
     {                                                                                                                  \
         bmcl_memwriter_t* self = (bmcl_memwriter_t*)memwriter;                                                         \
         if (bmcl_memwriter_size_left(self) < sizeof(type)) {                                                           \
@@ -138,6 +138,13 @@ void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size)
     self->current += size;
 }
 
+void bmcl_memwriter_pop(bmcl_memwriter_t* self, void* dest, size_t size)
+{
+    assert(bmcl_memwriter_size(self) >= size);
+    self->current -= size;
+    memcpy(dest, self->current, size);
+}
+
 void bmcl_memwriter_fill(bmcl_memwriter_t* self, uint8_t byte, size_t size)
 {
     assert(bmcl_memwriter_size_left(self) >= size);
@@ -150,4 +157,33 @@ void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte)
     size_t size = self->end - self->current;
     memset(self->current, byte, size);
     self->current += size;
+}
+
+// TODO: replace memcpy
+#define MAKE_STACK_FUNC(type, suffix)                                                                                  \
+    void bmcl_memwriter_write_##suffix(bmcl_memwriter_t* self, type value)                                             \
+    {                                                                                                                  \
+        assert(bmcl_memwriter_size_left(self) >= sizeof(type));                                                        \
+        memcpy(self->current, &value, sizeof(type));                                                                   \
+    }                                                                                                                  \
+                                                                                                                       \
+    type bmcl_memwriter_pop_##suffix(bmcl_memwriter_t* self)                                                           \
+    {                                                                                                                  \
+        assert(bmcl_memwriter_size(self) >= sizeof(type));                                                             \
+        type value;                                                                                                    \
+        memcpy(&value, self->current, sizeof(type));                                                                   \
+        self->current += sizeof(type);                                                                                 \
+        return value;                                                                                                  \
+    }
+
+MAKE_STACK_FUNC(uint16_t, uint16);
+MAKE_STACK_FUNC(uint32_t, uint32);
+MAKE_STACK_FUNC(uint64_t, uint64);
+
+uint8_t bmcl_memwriter_pop_uint8(bmcl_memwriter_t* self)
+{
+    assert(bmcl_memwriter_size(self) >= 1);
+    uint8_t value = *self->current;
+    self->current += 1;
+    return value;
 }

@@ -54,11 +54,27 @@ size_t bmcl_memwriter_size_left(const bmcl_memwriter_t* self);
 
 void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size);
 
+void bmcl_memwriter_pop(bmcl_memwriter_t* self, void* dest, size_t size);
+
 void bmcl_memwriter_fill(bmcl_memwriter_t* self, uint8_t byte, size_t size);
 
 void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte);
 
 void bmcl_memwriter_write_uint8(bmcl_memwriter_t* self, uint8_t value);
+
+void bmcl_memwriter_write_uint16(bmcl_memwriter_t* self, uint16_t value);
+
+void bmcl_memwriter_write_uint32(bmcl_memwriter_t* self, uint32_t value);
+
+void bmcl_memwriter_write_uint64(bmcl_memwriter_t* self, uint64_t value);
+
+uint8_t bmcl_memwriter_pop_uint8(bmcl_memwriter_t* self);
+
+uint16_t bmcl_memwriter_pop_uint16(bmcl_memwriter_t* self);
+
+uint32_t bmcl_memwriter_pop_uint32(bmcl_memwriter_t* self);
+
+uint64_t bmcl_memwriter_pop_uint64(bmcl_memwriter_t* self);
 
 void bmcl_memwriter_write_uint16le(bmcl_memwriter_t* self, uint16_t value);
 
