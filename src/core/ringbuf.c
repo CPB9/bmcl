@@ -29,7 +29,7 @@
     {                                                                                                                  \
         bmcl_ringbuf_t* self = (bmcl_ringbuf_t*)ringbuf;                                                               \
         if (sizeof(type) > self->size - self->free_space) {                                                            \
-            return BMCL_ERR_NOT_ENOUGH_SPACE;                                                                          \
+            return BMCL_ERR_BUFFER_OVERREAD;                                                                          \
         }                                                                                                              \
         type data;                                                                                                     \
         bmcl_ringbuf_peek(self, &data, sizeof(type), 0);                                                               \

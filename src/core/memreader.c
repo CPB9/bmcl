@@ -20,7 +20,7 @@ static bmcl_status_t read(void* memreader, void* dest, size_t size)
 {
     bmcl_memreader_t* self = (bmcl_memreader_t*)memreader;
     if (bmcl_memreader_size_left(self) < size) {
-        return BMCL_ERR_NOT_ENOUGH_SPACE;
+        return BMCL_ERR_BUFFER_OVERREAD;
     }
     memcpy(dest, self->current, size);
     self->current += size;
@@ -40,7 +40,7 @@ static bmcl_status_t read(void* memreader, void* dest, size_t size)
     {                                                                                                                  \
         bmcl_memreader_t* self = (bmcl_memreader_t*)memreader;                                                         \
         if (bmcl_memreader_size_left(self) < sizeof(type)) {                                                           \
-            return BMCL_ERR_NOT_ENOUGH_SPACE;                                                                          \
+            return BMCL_ERR_BUFFER_OVERREAD;                                                                          \
         }                                                                                                              \
         *dest = dec_func(self->current);                                                                               \
         self->current += sizeof(type);                                                                                 \

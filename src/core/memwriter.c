@@ -27,7 +27,7 @@
     {                                                                                                                  \
         bmcl_memwriter_t* self = (bmcl_memwriter_t*)memwriter;                                                         \
         if (bmcl_memwriter_size_left(self) < sizeof(type)) {                                                           \
-            return BMCL_ERR_NOT_ENOUGH_SPACE;                                                                          \
+            return BMCL_ERR_BUFFER_OVERFLOW;                                                                           \
         }                                                                                                              \
         enc_func(self->current, value);                                                                                \
         self->current += sizeof(type);                                                                                 \
@@ -47,7 +47,7 @@ static bmcl_status_t write(void* memwriter, const void* data, size_t size)
 {
     bmcl_memwriter_t* self = (bmcl_memwriter_t*)memwriter;
     if (bmcl_memwriter_size_left(self) < size) {
-        return BMCL_ERR_NOT_ENOUGH_SPACE;
+        return BMCL_ERR_BUFFER_OVERFLOW;
     }
     memcpy(self->current, data, size);
     self->current += size;
@@ -106,7 +106,7 @@ const void* bmcl_memwriter_ptr(const bmcl_memwriter_t* self)
     return self->start;
 }
 
-const void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self)
+void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self)
 {
     return self->current;
 }
@@ -129,6 +129,12 @@ size_t bmcl_memwriter_max_size(const bmcl_memwriter_t* self)
 size_t bmcl_memwriter_size_left(const bmcl_memwriter_t* self)
 {
     return self->end - self->current;
+}
+
+void bmcl_memwriter_advance(bmcl_memwriter_t* self, size_t size)
+{
+    assert(bmcl_memwriter_size_left(self) >= size);
+    self->current += size;
 }
 
 void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size)
@@ -165,14 +171,15 @@ void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte)
     {                                                                                                                  \
         assert(bmcl_memwriter_size_left(self) >= sizeof(type));                                                        \
         memcpy(self->current, &value, sizeof(type));                                                                   \
+        self->current += sizeof(type);                                                                                 \
     }                                                                                                                  \
                                                                                                                        \
     type bmcl_memwriter_pop_##suffix(bmcl_memwriter_t* self)                                                           \
     {                                                                                                                  \
-        assert(bmcl_memwriter_size(self) >= sizeof(type));                                                             \
+        assert(bmcl_memwriter_size(self) >= sizeof(type));                                                              \
+        self->current -= sizeof(type);                                                                                 \
         type value;                                                                                                    \
         memcpy(&value, self->current, sizeof(type));                                                                   \
-        self->current += sizeof(type);                                                                                 \
         return value;                                                                                                  \
     }
 
@@ -183,7 +190,7 @@ MAKE_STACK_FUNC(uint64_t, uint64);
 uint8_t bmcl_memwriter_pop_uint8(bmcl_memwriter_t* self)
 {
     assert(bmcl_memwriter_size(self) >= 1);
+    self->current -= 1;
     uint8_t value = *self->current;
-    self->current += 1;
     return value;
 }

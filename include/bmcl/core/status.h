@@ -8,14 +8,30 @@
 
 #pragma once
 
-typedef enum { BMCL_SUCCESS = 0, BMCL_ERR_NOT_ENOUGH_SPACE = 1 } bmcl_status_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef enum {
+    BMCL_SUCCESS = 0,
+    BMCL_ERR_BUFFER_OVERFLOW,
+    BMCL_ERR_BUFFER_OVERREAD,
+    BMCL_ERR_STACK_OVERFLOW,
+    BMCL_ERR_NOT_ENOUGH_STACK_DATA,
+    BMCL_ERR_INVALID_INSTRUCTION,
+    BMCL_ERR_UNEXPECTED_END_OF_BYTECODE,
+} bmcl_status_t;
 
 const char* bmcl_strerror(bmcl_status_t status);
 
-#define BMCL_CHECK(expr)                                                                                      \
+#define BMCL_CHECK(expr)                                                                                               \
     {                                                                                                                  \
         bmcl_status_t status = expr;                                                                                   \
         if (status != BMCL_SUCCESS) {                                                                                  \
             return status;                                                                                             \
         }                                                                                                              \
     }
+
+#ifdef __cplusplus
+}
+#endif

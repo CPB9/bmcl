@@ -42,7 +42,7 @@ bmcl_writer_t* bmcl_memwriter_create_writer(bmcl_memwriter_t* self);
 
 const void* bmcl_memwriter_ptr(const bmcl_memwriter_t* self);
 
-const void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self);
+void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self);
 
 size_t bmcl_memwriter_size(const bmcl_memwriter_t* self); /* rename -> size_used */
 
@@ -51,6 +51,8 @@ bool bmcl_memwriter_is_full(const bmcl_memwriter_t* self);
 size_t bmcl_memwriter_max_size(const bmcl_memwriter_t* self);
 
 size_t bmcl_memwriter_size_left(const bmcl_memwriter_t* self);
+
+void bmcl_memwriter_advance(bmcl_memwriter_t* self, size_t size);
 
 void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size);
 

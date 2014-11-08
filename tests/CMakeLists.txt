@@ -13,9 +13,10 @@ file(MAKE_DIRECTORY ${TESTS_DIR})
 
 set(ALL_TESTS "")
 
-macro(add_unit_test test)
-    add_executable(${test} ${ARGN})
+macro(add_unit_test test file)
+    add_executable(${test} ${file})
     target_link_libraries(${test}
+        ${ARGN}
         bmcl-core
         gtest
         gtest_main
@@ -40,6 +41,9 @@ add_unit_test(ringbucket ringbucket.cpp)
 add_unit_test(ringbuf ringbuf.cpp)
 add_unit_test(sched sched.cpp)
 add_unit_test(writer writer.cpp)
+
+add_unit_test(interp interp.cpp bmcl-interp)
+
 
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})

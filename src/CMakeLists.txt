@@ -24,4 +24,5 @@ function(ADD_BMCL_LIBRARY lib)
 endfunction()
 
 add_subdirectory(core)
+add_subdirectory(interp)
 add_subdirectory(telem)
