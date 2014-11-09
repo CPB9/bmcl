@@ -48,7 +48,9 @@ add_unit_test(interp interp.cpp bmcl-interp)
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests
-    bmclcore
+    bmcl-core
+    bmcl-interp
+    bmcl-telem
     gtest
     gtest_main
 )

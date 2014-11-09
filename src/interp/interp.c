@@ -41,36 +41,49 @@ MAKE_STACK_PUSH_FUNC(int64_t, 64, uint64be, uint64);
         return BMCL_SUCCESS;                                                                                           \
     }
 
-MAKE_CONVERT_FUNCTION(int8_t, i8, int16_t, i16);
 MAKE_CONVERT_FUNCTION(int8_t, i8, int32_t, i32);
-MAKE_CONVERT_FUNCTION(int8_t, i8, int64_t, i64);
-MAKE_CONVERT_FUNCTION(int8_t, i8, float, float);
-MAKE_CONVERT_FUNCTION(int8_t, i8, double, double);
-MAKE_CONVERT_FUNCTION(int16_t, i16, int8_t, i8);
+MAKE_CONVERT_FUNCTION(int8_t, i8, uint32_t, u32);
+MAKE_CONVERT_FUNCTION(uint8_t, u8, int32_t, i32);
+MAKE_CONVERT_FUNCTION(uint8_t, u8, uint32_t, u32);
 MAKE_CONVERT_FUNCTION(int16_t, i16, int32_t, i32);
-MAKE_CONVERT_FUNCTION(int16_t, i16, int64_t, i64);
-MAKE_CONVERT_FUNCTION(int16_t, i16, float, float);
-MAKE_CONVERT_FUNCTION(int16_t, i16, double, double);
+MAKE_CONVERT_FUNCTION(int16_t, i16, uint32_t, u32);
+MAKE_CONVERT_FUNCTION(uint16_t, u16, int32_t, i32);
+MAKE_CONVERT_FUNCTION(uint16_t, u16, uint32_t, u32);
 MAKE_CONVERT_FUNCTION(int32_t, i32, int8_t, i8);
+MAKE_CONVERT_FUNCTION(int32_t, i32, uint8_t, u8);
 MAKE_CONVERT_FUNCTION(int32_t, i32, int16_t, i16);
+MAKE_CONVERT_FUNCTION(int32_t, i32, uint16_t, u16);
 MAKE_CONVERT_FUNCTION(int32_t, i32, int64_t, i64);
+MAKE_CONVERT_FUNCTION(int32_t, i32, uint64_t, u64);
 MAKE_CONVERT_FUNCTION(int32_t, i32, float, float);
 MAKE_CONVERT_FUNCTION(int32_t, i32, double, double);
-MAKE_CONVERT_FUNCTION(int64_t, i64, int8_t, i8);
-MAKE_CONVERT_FUNCTION(int64_t, i64, int16_t, i16);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, int8_t, i8);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, uint8_t, u8);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, int16_t, i16);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, uint16_t, u16);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, int64_t, i64);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, uint64_t, u64);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, float, float);
+MAKE_CONVERT_FUNCTION(uint32_t, u32, double, double);
 MAKE_CONVERT_FUNCTION(int64_t, i64, int32_t, i32);
+MAKE_CONVERT_FUNCTION(int64_t, i64, uint32_t, u32);
 MAKE_CONVERT_FUNCTION(int64_t, i64, float, float);
 MAKE_CONVERT_FUNCTION(int64_t, i64, double, double);
-MAKE_CONVERT_FUNCTION(float, float, int8_t, i8);
-MAKE_CONVERT_FUNCTION(float, float, int16_t, i16);
+MAKE_CONVERT_FUNCTION(uint64_t, u64, int32_t, i32);
+MAKE_CONVERT_FUNCTION(uint64_t, u64, uint32_t, u32);
+MAKE_CONVERT_FUNCTION(uint64_t, u64, float, float);
+MAKE_CONVERT_FUNCTION(uint64_t, u64, double, double);
 MAKE_CONVERT_FUNCTION(float, float, int32_t, i32);
+MAKE_CONVERT_FUNCTION(float, float, uint32_t, u32);
 MAKE_CONVERT_FUNCTION(float, float, int64_t, i64);
+MAKE_CONVERT_FUNCTION(float, float, uint64_t, u64);
 MAKE_CONVERT_FUNCTION(float, float, double, double);
-MAKE_CONVERT_FUNCTION(double, double, int8_t, i8);
-MAKE_CONVERT_FUNCTION(double, double, int16_t, i16);
 MAKE_CONVERT_FUNCTION(double, double, int32_t, i32);
+MAKE_CONVERT_FUNCTION(double, double, uint32_t, u32);
 MAKE_CONVERT_FUNCTION(double, double, int64_t, i64);
+MAKE_CONVERT_FUNCTION(double, double, uint64_t, u64);
 MAKE_CONVERT_FUNCTION(double, double, float, float);
+
 
 #define MAKE_SUM_FUNCTION(type, suffix)                                                                                \
     static bmcl_status_t sum_##suffix(bmcl_sci_interp_t* interp)                                                       \
@@ -90,6 +103,10 @@ MAKE_SUM_FUNCTION(int8_t, i8);
 MAKE_SUM_FUNCTION(int16_t, i16);
 MAKE_SUM_FUNCTION(int32_t, i32);
 MAKE_SUM_FUNCTION(int64_t, i64);
+MAKE_SUM_FUNCTION(uint8_t, u8);
+MAKE_SUM_FUNCTION(uint16_t, u16);
+MAKE_SUM_FUNCTION(uint32_t, u32);
+MAKE_SUM_FUNCTION(uint64_t, u64);
 MAKE_SUM_FUNCTION(float, float);
 MAKE_SUM_FUNCTION(double, double);
 
@@ -122,40 +139,56 @@ static bmcl_status_t (*jump_table[])(bmcl_sci_interp_t*) = {
     stack_push16,
     stack_push32,
     stack_push64,
-    convert_i8_to_i16,
     convert_i8_to_i32,
-    convert_i8_to_i64,
-    convert_i8_to_float,
-    convert_i8_to_double,
-    convert_i16_to_i8,
+    convert_i8_to_u32,
+    convert_u8_to_i32,
+    convert_u8_to_u32,
     convert_i16_to_i32,
-    convert_i16_to_i64,
-    convert_i16_to_float,
-    convert_i16_to_double,
+    convert_i16_to_u32,
+    convert_u16_to_i32,
+    convert_u16_to_u32,
     convert_i32_to_i8,
+    convert_i32_to_u8,
     convert_i32_to_i16,
+    convert_i32_to_u16,
     convert_i32_to_i64,
+    convert_i32_to_u64,
     convert_i32_to_float,
     convert_i32_to_double,
-    convert_i64_to_i8,
-    convert_i64_to_i16,
+    convert_u32_to_i8,
+    convert_u32_to_u8,
+    convert_u32_to_i16,
+    convert_u32_to_u16,
+    convert_u32_to_i64,
+    convert_u32_to_u64,
+    convert_u32_to_float,
+    convert_u32_to_double,
     convert_i64_to_i32,
+    convert_i64_to_u32,
     convert_i64_to_float,
     convert_i64_to_double,
-    convert_float_to_i8,
-    convert_float_to_i16,
+    convert_u64_to_i32,
+    convert_u64_to_u32,
+    convert_u64_to_float,
+    convert_u64_to_double,
     convert_float_to_i32,
+    convert_float_to_u32,
     convert_float_to_i64,
+    convert_float_to_u64,
     convert_float_to_double,
-    convert_double_to_i8,
-    convert_double_to_i16,
     convert_double_to_i32,
+    convert_double_to_u32,
     convert_double_to_i64,
+    convert_double_to_u64,
     convert_double_to_float,
     sum_i8,
     sum_i16,
     sum_i32,
     sum_i64,
+    sum_u8,
+    sum_u16,
+    sum_u32,
+    sum_u64,
     sum_float,
     sum_double,
 };
