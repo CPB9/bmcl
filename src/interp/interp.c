@@ -1,12 +1,13 @@
 #include "bmcl/interp/interp.h"
 
+#include <assert.h>
 #include <stdlib.h>
 
 #define MAKE_STACK_PUSH_FUNC(type, func_suffix, read_suffix, write_suffix)                                             \
     static bmcl_status_t stack_push##func_suffix(bmcl_sci_interp_t* interp)                                            \
     {                                                                                                                  \
         if (bmcl_memreader_size_left(&interp->bytecode) < sizeof(type)) {                                              \
-            return BMCL_ERR_UNEXPECTED_END_OF_BYTECODE;                                                                           \
+            return BMCL_ERR_UNEXPECTED_END_OF_BYTECODE;                                                                \
         }                                                                                                              \
         if (bmcl_memwriter_size_left(&interp->stack) < sizeof(type)) {                                                 \
             return BMCL_ERR_STACK_OVERFLOW;                                                                            \
@@ -35,7 +36,7 @@ MAKE_STACK_PUSH_FUNC(int64_t, 64, uint64be, uint64);
             return BMCL_ERR_STACK_OVERFLOW;                                                                            \
         }                                                                                                              \
                                                                                                                        \
-        type2 var2 = (type1)var1;                                                                                      \
+        type2 var2 = (type2)var1;                                                                                      \
         bmcl_memwriter_write(&interp->stack, &var2, sizeof(type2));                                                    \
         return BMCL_SUCCESS;                                                                                           \
     }
@@ -162,16 +163,15 @@ static bmcl_status_t (*jump_table[])(bmcl_sci_interp_t*) = {
 bmcl_status_t bmcl_sci_interp_exec_next(bmcl_sci_interp_t* interp)
 {
     if (bmcl_memreader_is_empty(&interp->bytecode)) {
-        return BMCL_ERR_BUFFER_OVERFLOW;
+        return BMCL_ERR_BUFFER_OVERFLOW; //TODO: eof
     }
 
     uint8_t instr_id = bmcl_memreader_read_uint8(&interp->bytecode);
     size_t instr_count = sizeof(jump_table) / sizeof(jump_table[0]);
+    assert(instr_count <= 256);
     if (instr_id >= instr_count) {
         return BMCL_ERR_INVALID_INSTRUCTION;
     }
 
     return jump_table[instr_id](interp);
 }
-
-

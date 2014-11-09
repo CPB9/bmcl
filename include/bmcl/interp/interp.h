@@ -10,9 +10,12 @@ extern "C" {
 
 typedef enum {
     BMCL_INSTR_PUSH8 = 0,
-    BMCL_INSTR_PUSH16 = 1,
-    BMCL_INSTR_PUSH32 = 2,
-    BMCL_INSTR_PUSH64 = 3,
+    BMCL_INSTR_PUSH16,
+    BMCL_INSTR_PUSH32,
+    BMCL_INSTR_PUSH64,
+    BMCL_INSTR_CONVERT_I8_TO_I16,
+    BMCL_INSTR_CONVERT_I8_TO_I32,
+    BMCL_INSTR_CONVERT_I8_TO_I64,
 } bmcl_sci_instr_type_t;
 
 typedef struct {
