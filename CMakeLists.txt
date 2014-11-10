@@ -26,7 +26,7 @@ if(NOT ARDUINO_BOARD)
             string(REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
         endforeach()
     else()
-        add_definitions(-Wall -Wextra -O0 -ggdb)
+        add_definitions(-Wall -Wextra -O0 -g -ggdb -pipe)
         add_definitions(-DBMCL_HAVE_MALLOC=1) # temp
     endif()
 

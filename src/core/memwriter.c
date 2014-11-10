@@ -176,7 +176,7 @@ void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte)
                                                                                                                        \
     type bmcl_memwriter_pop_##suffix(bmcl_memwriter_t* self)                                                           \
     {                                                                                                                  \
-        assert(bmcl_memwriter_size(self) >= sizeof(type));                                                              \
+        assert(bmcl_memwriter_size(self) >= sizeof(type));                                                             \
         self->current -= sizeof(type);                                                                                 \
         type value;                                                                                                    \
         memcpy(&value, self->current, sizeof(type));                                                                   \

@@ -85,8 +85,8 @@ MAKE_CONVERT_FUNCTION(double, double, uint64_t, u64);
 MAKE_CONVERT_FUNCTION(double, double, float, float);
 
 
-#define MAKE_SUM_FUNCTION(type, suffix)                                                                                \
-    static bmcl_status_t sum_##suffix(bmcl_sci_interp_t* interp)                                                       \
+#define MAKE_MATH_FUNCTION(type, prefix, suffix, op)                                                                   \
+    static bmcl_status_t prefix##_##suffix(bmcl_sci_interp_t* interp)                                                  \
     {                                                                                                                  \
         if (bmcl_memwriter_size(&interp->stack) < 2 * sizeof(type)) {                                                  \
             return BMCL_ERR_NOT_ENOUGH_STACK_DATA;                                                                     \
@@ -94,21 +94,54 @@ MAKE_CONVERT_FUNCTION(double, double, float, float);
         type op1, op2;                                                                                                 \
         bmcl_memwriter_pop(&interp->stack, &op1, sizeof(type));                                                        \
         bmcl_memwriter_pop(&interp->stack, &op2, sizeof(type));                                                        \
-        type result = op1 + op2;                                                                                       \
+        type result = op1 op op2;                                                                                      \
         bmcl_memwriter_write(&interp->stack, &result, sizeof(type));                                                   \
         return BMCL_SUCCESS;                                                                                           \
     }
 
-MAKE_SUM_FUNCTION(int8_t, i8);
-MAKE_SUM_FUNCTION(int16_t, i16);
-MAKE_SUM_FUNCTION(int32_t, i32);
-MAKE_SUM_FUNCTION(int64_t, i64);
-MAKE_SUM_FUNCTION(uint8_t, u8);
-MAKE_SUM_FUNCTION(uint16_t, u16);
-MAKE_SUM_FUNCTION(uint32_t, u32);
-MAKE_SUM_FUNCTION(uint64_t, u64);
-MAKE_SUM_FUNCTION(float, float);
-MAKE_SUM_FUNCTION(double, double);
+MAKE_MATH_FUNCTION(int8_t, add, i8, +);
+MAKE_MATH_FUNCTION(int16_t, add, i16, +);
+MAKE_MATH_FUNCTION(int32_t, add, i32, +);
+MAKE_MATH_FUNCTION(int64_t, add, i64, +);
+MAKE_MATH_FUNCTION(uint8_t, add, u8, +);
+MAKE_MATH_FUNCTION(uint16_t, add, u16, +);
+MAKE_MATH_FUNCTION(uint32_t, add, u32, +);
+MAKE_MATH_FUNCTION(uint64_t, add, u64, +);
+MAKE_MATH_FUNCTION(float, add, float, +);
+MAKE_MATH_FUNCTION(double, add, double, +);
+
+MAKE_MATH_FUNCTION(int8_t, sub, i8, -);
+MAKE_MATH_FUNCTION(int16_t, sub, i16, -);
+MAKE_MATH_FUNCTION(int32_t, sub, i32, -);
+MAKE_MATH_FUNCTION(int64_t, sub, i64, -);
+MAKE_MATH_FUNCTION(uint8_t, sub, u8, -);
+MAKE_MATH_FUNCTION(uint16_t, sub, u16, -);
+MAKE_MATH_FUNCTION(uint32_t, sub, u32, -);
+MAKE_MATH_FUNCTION(uint64_t, sub, u64, -);
+MAKE_MATH_FUNCTION(float, sub, float, -);
+MAKE_MATH_FUNCTION(double, sub, double, -);
+
+MAKE_MATH_FUNCTION(int8_t, mult, i8, *);
+MAKE_MATH_FUNCTION(int16_t, mult, i16, *);
+MAKE_MATH_FUNCTION(int32_t, mult, i32, *);
+MAKE_MATH_FUNCTION(int64_t, mult, i64, *);
+MAKE_MATH_FUNCTION(uint8_t, mult, u8, *);
+MAKE_MATH_FUNCTION(uint16_t, mult, u16, *);
+MAKE_MATH_FUNCTION(uint32_t, mult, u32, *);
+MAKE_MATH_FUNCTION(uint64_t, mult, u64, *);
+MAKE_MATH_FUNCTION(float, mult, float, *);
+MAKE_MATH_FUNCTION(double, mult, double, *);
+
+MAKE_MATH_FUNCTION(int8_t, div, i8, /);
+MAKE_MATH_FUNCTION(int16_t, div, i16, /);
+MAKE_MATH_FUNCTION(int32_t, div, i32, /);
+MAKE_MATH_FUNCTION(int64_t, div, i64, /);
+MAKE_MATH_FUNCTION(uint8_t, div, u8, /);
+MAKE_MATH_FUNCTION(uint16_t, div, u16, /);
+MAKE_MATH_FUNCTION(uint32_t, div, u32, /);
+MAKE_MATH_FUNCTION(uint64_t, div, u64, /);
+MAKE_MATH_FUNCTION(float, div, float, /);
+MAKE_MATH_FUNCTION(double, div, double, /);
 
 void bmcl_sci_interp_init(bmcl_sci_interp_t* self, const void* bytecode, size_t bytecode_size, void* stack,
                           size_t stack_size)
@@ -139,6 +172,7 @@ static bmcl_status_t (*jump_table[])(bmcl_sci_interp_t*) = {
     stack_push16,
     stack_push32,
     stack_push64,
+    // float, double?
     convert_i8_to_i32,
     convert_i8_to_u32,
     convert_u8_to_i32,
@@ -181,16 +215,46 @@ static bmcl_status_t (*jump_table[])(bmcl_sci_interp_t*) = {
     convert_double_to_i64,
     convert_double_to_u64,
     convert_double_to_float,
-    sum_i8,
-    sum_i16,
-    sum_i32,
-    sum_i64,
-    sum_u8,
-    sum_u16,
-    sum_u32,
-    sum_u64,
-    sum_float,
-    sum_double,
+    add_i8,
+    add_i16,
+    add_i32,
+    add_i64,
+    add_u8,
+    add_u16,
+    add_u32,
+    add_u64,
+    add_float,
+    add_double,
+    sub_i8,
+    sub_i16,
+    sub_i32,
+    sub_i64,
+    sub_u8,
+    sub_u16,
+    sub_u32,
+    sub_u64,
+    sub_float,
+    sub_double,
+    mult_i8,
+    mult_i16,
+    mult_i32,
+    mult_i64,
+    mult_u8,
+    mult_u16,
+    mult_u32,
+    mult_u64,
+    mult_float,
+    mult_double,
+    div_i8,
+    div_i16,
+    div_i32,
+    div_i64,
+    div_u8,
+    div_u16,
+    div_u32,
+    div_u64,
+    div_float,
+    div_double,
 };
 
 bmcl_status_t bmcl_sci_interp_exec_next(bmcl_sci_interp_t* interp)
@@ -208,3 +272,4 @@ bmcl_status_t bmcl_sci_interp_exec_next(bmcl_sci_interp_t* interp)
 
     return jump_table[instr_id](interp);
 }
+
