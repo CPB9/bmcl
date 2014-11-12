@@ -265,77 +265,31 @@ TEST_F(InterpTest, push64_stack_overflow)
     expectNextCmdError(BMCL_ERR_STACK_OVERFLOW);
 }
 
-TEST_F(InterpTest, convert_i8_to_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_I8_TO_I32);
-    appendStackUint8(-101);
-    execNextCmd();
-    expectStackUint32(-101);
-}
+#define CONV_TEST(name, type1, type2, instr, val, res)                                                                 \
+    TEST_F(InterpTest, convert_##name)                                                                                 \
+    {                                                                                                                  \
+        newInterp(1);                                                                                                  \
+        appendInstrHeader(instr);                                                                                      \
+        appendStack<type1>(val);                                                                                       \
+        execNextCmd();                                                                                                 \
+        expectStack<type2>(res);                                                                                       \
+    }
 
-TEST_F(InterpTest, convert_i8_to_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_I8_TO_U32);
-    appendStackUint8(122);
-    execNextCmd();
-    expectStackUint32(122);
-}
-
-TEST_F(InterpTest, convert_u8_to_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_U8_TO_I32);
-    appendStackUint8(242);
-    execNextCmd();
-    expectStackUint32(242);
-}
-
-TEST_F(InterpTest, convert_u8_to_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_U8_TO_U32);
-    appendStackUint8(55);
-    execNextCmd();
-    expectStackUint32(55);
-}
-
-TEST_F(InterpTest, convert_i16_to_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_I16_TO_I32);
-    appendStackUint16(-31186);
-    execNextCmd();
-    expectStackUint32(-31186);
-}
-
-TEST_F(InterpTest, convert_i16_to_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_I16_TO_U32);
-    appendStackUint16(21254);
-    execNextCmd();
-    expectStackUint32(21254);
-}
-
-TEST_F(InterpTest, convert_u16_to_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_U16_TO_I32);
-    appendStackUint16(61876);
-    execNextCmd();
-    expectStackUint32(61876);
-}
-
-TEST_F(InterpTest, convert_u16_to_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_CONVERT_U16_TO_U32);
-    appendStackUint16(61873);
-    execNextCmd();
-    expectStackUint32(61873);
-}
+CONV_TEST(i8_to_i32, int8_t, int32_t, BMCL_INSTR_CONVERT_I8_TO_I32, -101, -101);
+CONV_TEST(i8_to_u32, int8_t, uint32_t, BMCL_INSTR_CONVERT_I8_TO_U32, 122, 122);
+CONV_TEST(u8_to_i32, uint8_t, int32_t, BMCL_INSTR_CONVERT_U8_TO_I32, 222, 222);
+CONV_TEST(u8_to_u32, uint8_t, uint32_t, BMCL_INSTR_CONVERT_U8_TO_U32, 233, 233);
+CONV_TEST(i16_to_i32, int16_t, int32_t, BMCL_INSTR_CONVERT_I16_TO_I32, -31186, -31186);
+CONV_TEST(i16_to_u32, int16_t, uint32_t, BMCL_INSTR_CONVERT_I16_TO_U32, 21254, 21254);
+CONV_TEST(u16_to_i32, uint16_t, int32_t, BMCL_INSTR_CONVERT_U16_TO_I32, 61867, 61867);
+CONV_TEST(u16_to_u32, uint16_t, uint32_t, BMCL_INSTR_CONVERT_U16_TO_U32, 61877, 61877);
+CONV_TEST(i32_to_i8, int32_t, int8_t, BMCL_INSTR_CONVERT_I32_TO_I8, -122, -122);
+CONV_TEST(i32_to_i8_tr, int32_t, int8_t, BMCL_INSTR_CONVERT_I32_TO_I8, -1898066756, -68);
+CONV_TEST(i32_to_i16, int32_t, int16_t, BMCL_INSTR_CONVERT_I32_TO_I16, -32011, -32011);
+CONV_TEST(i32_to_i16_tr, int32_t, int16_t, BMCL_INSTR_CONVERT_I32_TO_I16, -2138718315, -16491);
+CONV_TEST(i32_to_i64, int32_t, int64_t, BMCL_INSTR_CONVERT_I32_TO_I64, 2107480648, 2107480648);
+CONV_TEST(i32_to_float, int32_t, float, BMCL_INSTR_CONVERT_I32_TO_FLOAT, -8088608, -8088608);
+CONV_TEST(i32_to_double, int32_t, double, BMCL_INSTR_CONVERT_I32_TO_DOUBLE, -2147000001, -2147000001);
 
 #define OP_TEST(name, type, instr, op1, op2, res)                                                                      \
     TEST_F(InterpTest, name)                                                                                           \
@@ -388,4 +342,3 @@ OP_TEST(div_u32, uint32_t, BMCL_INSTR_DIV_U32, 687543ul, 4294067097ul, 6245ul);
 OP_TEST(div_u64, uint64_t, BMCL_INSTR_DIV_U64, 19875643ull, 18446123373544750007ull, 928076811076ull);
 OP_TEST(div_float, float, BMCL_INSTR_DIV_FLOAT, 8.88, 2.22, 0.25);
 OP_TEST(div_double, double, BMCL_INSTR_DIV_DOUBLE, 9875.64, 183142.1636976, 18.54484);
-
