@@ -14,7 +14,7 @@ protected:
         if (_interp) {
             bmcl_memwriter_destroy(_bcWriter);
             bmcl_sci_interp_destroy(_interp);
-            delete [] _bytecode;
+            delete[] _bytecode;
         }
     }
 
@@ -57,6 +57,12 @@ protected:
         bmcl_memwriter_write_uint64be(_bcWriter, value);
     }
 
+    template <typename T>
+    void appendStack(T value)
+    {
+        bmcl_memwriter_write(&_interp->stack, &value, sizeof(value));
+    }
+
     void appendStackUint8(uint8_t value)
     {
         bmcl_memwriter_write_uint8(&_interp->stack, value);
@@ -91,6 +97,14 @@ protected:
     {
         bmcl_status_t status = bmcl_sci_interp_exec_next(_interp);
         EXPECT_EQ(err, status);
+    }
+
+    template <typename T>
+    void expectStack(T expected)
+    {
+        T value;
+        bmcl_memwriter_pop(&_interp->stack, &value, sizeof(value));
+        EXPECT_EQ(expected, value);
     }
 
     void expectStackUint8(uint8_t value)
@@ -132,6 +146,22 @@ private:
     uint8_t* _bytecode;
     bmcl_sci_interp_t* _interp;
 };
+
+template <>
+void InterpTest::expectStack<double>(double expected)
+{
+    double value;
+    bmcl_memwriter_pop(&_interp->stack, &value, sizeof(value));
+    EXPECT_DOUBLE_EQ(expected, value);
+}
+
+template <>
+void InterpTest::expectStack<float>(float expected)
+{
+    float value;
+    bmcl_memwriter_pop(&_interp->stack, &value, sizeof(value));
+    EXPECT_FLOAT_EQ(expected, value);
+}
 
 TEST_F(InterpTest, push8)
 {
@@ -307,162 +337,55 @@ TEST_F(InterpTest, convert_u16_to_u32)
     expectStackUint32(61873);
 }
 
-TEST_F(InterpTest, add_i8)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_I8);
-    appendStackUint8(-53);
-    appendStackUint8(-5);
-    execNextCmd();
-    expectStackUint8(-58);
-}
+#define OP_TEST(name, type, instr, op1, op2, res)                                                                      \
+    TEST_F(InterpTest, name)                                                                                           \
+    {                                                                                                                  \
+        newInterp(1);                                                                                                  \
+        appendInstrHeader(instr);                                                                                      \
+        appendStack<type>(op1);                                                                                        \
+        appendStack<type>(op2);                                                                                        \
+        execNextCmd();                                                                                                 \
+        expectStack<type>(res);                                                                                        \
+    }
 
-TEST_F(InterpTest, add_i16)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_I16);
-    appendStackUint16(-10000);
-    appendStackUint16(-2345);
-    execNextCmd();
-    expectStackUint16(-12345);
-}
+OP_TEST(add_i8, int8_t, BMCL_INSTR_ADD_I8, -53, -5, -58);
+OP_TEST(add_i16, int16_t, BMCL_INSTR_ADD_I16, -10000, -2345, -12345);
+OP_TEST(add_i32, int32_t, BMCL_INSTR_ADD_I32, -2100000000l, 100000000l, -2000000000l);
+OP_TEST(add_i64, int64_t, BMCL_INSTR_ADD_I64, 9000000000000000000ll, 100000000000000000ll, 9100000000000000000ll);
+OP_TEST(add_u8, uint8_t, BMCL_INSTR_ADD_U8, 12, 222, 234);
+OP_TEST(add_u16, uint16_t, BMCL_INSTR_ADD_U16, 30000, 123, 30123);
+OP_TEST(add_u32, uint32_t, BMCL_INSTR_ADD_U32, 4000000000ul, 100000001ul, 4100000001ul);
+OP_TEST(add_u64, uint64_t, BMCL_INSTR_ADD_U64, 18000000000000000000ull, 111111111111111111ull, 18111111111111111111ull);
+OP_TEST(add_float, float, BMCL_INSTR_ADD_FLOAT, -12.1234, 45.09875, 32.97535);
+OP_TEST(add_double, double, BMCL_INSTR_ADD_DOUBLE, -1209876.123445678, 45245.0987523467, -1164631.0246933314);
+OP_TEST(sub_i8, int8_t, BMCL_INSTR_SUB_I8, 5, -95, -100);
+OP_TEST(sub_i16, int16_t, BMCL_INSTR_SUB_I16, 123, -30000, -30123);
+OP_TEST(sub_i32, int32_t, BMCL_INSTR_SUB_I32, 111111111l, -2000000000l, -2111111111l);
+OP_TEST(sub_i64, int64_t, BMCL_INSTR_SUB_I64, 20000000000000000ll, -9200000000000000000ll, -9220000000000000000ll);
+OP_TEST(sub_u8, uint8_t, BMCL_INSTR_SUB_U8, 33, 233, 200);
+OP_TEST(sub_u16, uint16_t, BMCL_INSTR_SUB_U16, 5000, 65000, 60000);
+OP_TEST(sub_u32, uint32_t, BMCL_INSTR_SUB_U32, 295ul, 4000000295ul, 4000000000ul);
+OP_TEST(sub_u64, uint64_t, BMCL_INSTR_SUB_U64, 20000000000000000ull, 18000000000000000000ull, 17980000000000000000ull);
+OP_TEST(sub_float, float, BMCL_INSTR_SUB_FLOAT, 3.234, 13.234, 10);
+OP_TEST(sub_double, double, BMCL_INSTR_SUB_DOUBLE, 98564.987654, 4643.098856645, -93921.888797355);
+OP_TEST(mult_i8, int8_t, BMCL_INSTR_MULT_I8, 6, -20, -120);
+OP_TEST(mult_i16, int16_t, BMCL_INSTR_MULT_I16, -42, 743, -31206);
+OP_TEST(mult_i32, int32_t, BMCL_INSTR_MULT_I32, 79874l, -26885l, -2147412490l);
+OP_TEST(mult_i64, int64_t, BMCL_INSTR_MULT_I64, -10575638543ll, 872133819ll, -9223372030870185717ll);
+OP_TEST(mult_u8, uint8_t, BMCL_INSTR_MULT_U8, 4, 50, 200);
+OP_TEST(mult_u16, uint16_t, BMCL_INSTR_MULT_U16, 543, 120, 65160);
+OP_TEST(mult_u32, uint32_t, BMCL_INSTR_MULT_U32, 98712ul, 43510ul, 4294959120ul);
+OP_TEST(mult_u64, uint64_t, BMCL_INSTR_MULT_U64, 49843287116ull, 370094854ull, 18446744068076101064ull);
+OP_TEST(mult_float, float, BMCL_INSTR_MULT_FLOAT, 2.23, 4.876, 10.87348);
+OP_TEST(mult_double, double, BMCL_INSTR_MULT_DOUBLE, 123.0954, 245.9987564, 30281.31531856056);
+OP_TEST(div_i8, int8_t, BMCL_INSTR_DIV_I8, -7, 120, -17);
+OP_TEST(div_i16, int16_t, BMCL_INSTR_DIV_I16, 123, -32011, -260);
+OP_TEST(div_i32, int32_t, BMCL_INSTR_DIV_I32, -198543l, 2147483601l, -10816l);
+OP_TEST(div_i64, int64_t, BMCL_INSTR_DIV_I64, 92336190ll, -9220372030804000ll, -99856535ll);
+OP_TEST(div_u8, uint8_t, BMCL_INSTR_DIV_U8, 53, 255, 4);
+OP_TEST(div_u16, uint16_t, BMCL_INSTR_DIV_U16, 5833, 65000, 11);
+OP_TEST(div_u32, uint32_t, BMCL_INSTR_DIV_U32, 687543ul, 4294067097ul, 6245ul);
+OP_TEST(div_u64, uint64_t, BMCL_INSTR_DIV_U64, 19875643ull, 18446123373544750007ull, 928076811076ull);
+OP_TEST(div_float, float, BMCL_INSTR_DIV_FLOAT, 8.88, 2.22, 0.25);
+OP_TEST(div_double, double, BMCL_INSTR_DIV_DOUBLE, 9875.64, 183142.1636976, 18.54484);
 
-TEST_F(InterpTest, add_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_I32);
-    appendStackUint32(-2100000000l);
-    appendStackUint32(100000000l);
-    execNextCmd();
-    expectStackUint32(-2000000000l);
-}
-
-TEST_F(InterpTest, add_i64)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_I64);
-    appendStackUint64(4100000000ll);
-    appendStackUint64(98765432ll);
-    execNextCmd();
-    expectStackUint64(4198765432ll);
-}
-
-TEST_F(InterpTest, add_u8)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_U8);
-    appendStackUint8(12);
-    appendStackUint8(222);
-    execNextCmd();
-    expectStackUint8(234);
-}
-
-TEST_F(InterpTest, add_u16)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_U16);
-    appendStackUint16(30000);
-    appendStackUint16(123);
-    execNextCmd();
-    expectStackUint16(30123);
-}
-
-TEST_F(InterpTest, add_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_U32);
-    appendStackUint32(4000000000ul);
-    appendStackUint32(100000001ul);
-    execNextCmd();
-    expectStackUint32(4100000001ul);
-}
-
-TEST_F(InterpTest, add_u64)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_U64);
-    appendStackUint64(18000000000000000000ull);
-    appendStackUint64(111111111111111111ull);
-    execNextCmd();
-    expectStackUint64(18111111111111111111ull);
-}
-
-TEST_F(InterpTest, add_float)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_FLOAT);
-    appendStackFloat(-12.1234);
-    appendStackFloat(45.09875);
-    execNextCmd();
-    expectStackFloat(32.97535);
-}
-
-TEST_F(InterpTest, add_double)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_ADD_DOUBLE);
-    appendStackDouble(-1209876.123445678);
-    appendStackDouble(45245.0987523467);
-    execNextCmd();
-    expectStackDouble(-1164631.0246933314);
-}
-
-TEST_F(InterpTest, sub_i8)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_I8);
-    appendStackUint8(5);
-    appendStackUint8(-95);
-    execNextCmd();
-    expectStackUint8(-100);
-}
-
-TEST_F(InterpTest, sub_i16)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_I16);
-    appendStackUint16(123);
-    appendStackUint16(-30000);
-    execNextCmd();
-    expectStackUint16(-30123);
-}
-
-TEST_F(InterpTest, sub_i32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_I32);
-    appendStackUint32(111111111l);
-    appendStackUint32(-2000000000l);
-    execNextCmd();
-    expectStackUint32(-2111111111l);
-}
-
-TEST_F(InterpTest, sub_u8)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_U8);
-    appendStackUint8(33);
-    appendStackUint8(233);
-    execNextCmd();
-    expectStackUint8(200);
-}
-
-TEST_F(InterpTest, sub_u16)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_U16);
-    appendStackUint16(5000);
-    appendStackUint16(65000);
-    execNextCmd();
-    expectStackUint16(60000);
-}
-
-TEST_F(InterpTest, sub_u32)
-{
-    newInterp(1);
-    appendInstrHeader(BMCL_INSTR_SUB_U32);
-    appendStackUint32(295ul);
-    appendStackUint32(4000000295ul);
-    execNextCmd();
-    expectStackUint32(4000000000ul);
-}
