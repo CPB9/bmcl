@@ -2,6 +2,8 @@
 
 #include "bmcl-test.h"
 
+using namespace bmcl::core;
+
 class MemReaderTest : public ::testing::Test {
 protected:
     void SetUp()
@@ -12,7 +14,7 @@ protected:
     void TearDown()
     {
         if (_reader) {
-            bmcl_memreader_destroy(_reader);
+            delete _reader;
         }
     }
 
@@ -20,37 +22,39 @@ protected:
     void initReader(const R (&array)[n])
     {
         assert(_reader == 0);
-        _reader = bmcl_memreader_create(array, sizeof(R) * n);
+        _reader = new MemReader(array, sizeof(R) * n);
     }
 
     void expectParams(std::size_t read, std::size_t left, void* data)
     {
-        EXPECT_EQ(read, bmcl_memreader_size_read(_reader));
-        EXPECT_EQ(left, bmcl_memreader_size_left(_reader));
-        EXPECT_EQ(read + left, bmcl_memreader_size(_reader));
-        bool isEmpty = read == bmcl_memreader_size(_reader);
-        EXPECT_EQ(isEmpty, bmcl_memreader_is_empty(_reader));
-        EXPECT_EQ((uint8_t*)data, bmcl_memreader_current_ptr(_reader));
+        EXPECT_EQ(read, _reader->sizeRead());
+        EXPECT_EQ(left, _reader->sizeLeft());
+        EXPECT_EQ(read + left, _reader->size());
+        bool isEmpty = read == _reader->size();
+        EXPECT_EQ(isEmpty, _reader->isEmpty());
+        EXPECT_EQ((uint8_t*)data, _reader->currentPtr());
     }
 
     void skip(std::size_t size)
     {
-        bmcl_memreader_skip(_reader, size);
+        _reader->skip(size);
     }
 
     void peek(void* dest, std::size_t size, std::size_t offset)
     {
-        bmcl_memreader_peek(_reader, dest, size, offset);
+        _reader->peek(dest, size, offset);
     }
 
     void read(void* dest, std::size_t size)
     {
-        bmcl_memreader_read(_reader, dest, size);
+        _reader->read(dest, size);
     }
 
-    void expectNextUint8(uint8_t value)
+    void expectNextUint8(uint8_t expected)
     {
-        EXPECT_EQ(value, bmcl_memreader_read_uint8(_reader));
+        uint8_t value;
+        _reader->read(&value, 1);
+        EXPECT_EQ(expected, value);
     }
 
     template <std::size_t n, typename R>
@@ -58,11 +62,11 @@ protected:
     {
         std::size_t dataSize = sizeof(R) * n;
         uint8_t temp[dataSize];
-        bmcl_memreader_read(_reader, temp, dataSize);
+        _reader->read(temp, dataSize);
         EXPECT_EQ_MEM(array, temp, dataSize);
     }
 
-    bmcl_memreader_t* _reader;
+    MemReader* _reader;
 };
 
 TEST_F(MemReaderTest, init)

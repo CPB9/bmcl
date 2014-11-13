@@ -8,23 +8,28 @@
 
 #include "bmcl/core/status.h"
 
-const char* bmcl_strerror(bmcl_status_t status)
+namespace bmcl {
+namespace core {
+
+const char* Status::toCString(Status::Msg status)
 {
     switch (status) {
-    case BMCL_SUCCESS:
+    case Status::Success:
         return "Success";
-    case BMCL_ERR_BUFFER_OVERFLOW:
+    case Status::BufferOverflow:
         return "Buffer overflow";
-    case BMCL_ERR_BUFFER_OVERREAD:
+    case Status::BufferOverread:
         return "Buffer overread";
-    case BMCL_ERR_STACK_OVERFLOW:
+    case Status::StackOverflow:
         return "Stack overflow";
-    case BMCL_ERR_NOT_ENOUGH_STACK_DATA:
+    case Status::NotEnoughStackData:
         return "Not enough stack data";
-    case BMCL_ERR_INVALID_INSTRUCTION:
+    case Status::InvalidInstruction:
         return "Invalid instruction";
-    case BMCL_ERR_UNEXPECTED_END_OF_BYTECODE:
+    case Status::UnexpectedEndOFBytecode:
         return "Unexpected end of bytecode";
     }
     return "Undefined error";
+}
+}
 }

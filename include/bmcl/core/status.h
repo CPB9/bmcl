@@ -8,30 +8,23 @@
 
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace bmcl {
+namespace core {
 
-typedef enum {
-    BMCL_SUCCESS = 0,
-    BMCL_ERR_BUFFER_OVERFLOW,
-    BMCL_ERR_BUFFER_OVERREAD,
-    BMCL_ERR_STACK_OVERFLOW,
-    BMCL_ERR_NOT_ENOUGH_STACK_DATA,
-    BMCL_ERR_INVALID_INSTRUCTION,
-    BMCL_ERR_UNEXPECTED_END_OF_BYTECODE,
-} bmcl_status_t;
+class Status {
+public:
+    enum Msg {
+        Success = 0,
+        BufferOverflow,
+        BufferOverread,
+        StackOverflow,
+        NotEnoughStackData,
+        InvalidInstruction,
+        UnexpectedEndOFBytecode,
+    };
 
-const char* bmcl_strerror(bmcl_status_t status);
+    const char* toCString(Status::Msg msg);
 
-#define BMCL_CHECK(expr)                                                                                               \
-    {                                                                                                                  \
-        bmcl_status_t status = expr;                                                                                   \
-        if (status != BMCL_SUCCESS) {                                                                                  \
-            return status;                                                                                             \
-        }                                                                                                              \
-    }
-
-#ifdef __cplusplus
+};
 }
-#endif
+}

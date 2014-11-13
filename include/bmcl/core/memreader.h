@@ -10,64 +10,72 @@
 
 #include "bmcl/core/reader.h"
 
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdbool>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace bmcl {
+namespace core {
 
-typedef struct {
-    const uint8_t* start;
-    const uint8_t* current;
-    const uint8_t* end;
-} bmcl_memreader_t;
+class MemReader : public Reader {
+public:
+    MemReader(const void* ptr, std::size_t size)
+    {
+        _start = (uint8_t*)ptr;
+        _current = _start;
+        _end = _start + size;
+    }
 
-void bmcl_memreader_init(bmcl_memreader_t* self, const void* ptr, size_t size);
+    const uint8_t* currentPtr() const
+    {
+        return _current;
+    }
 
-void bmcl_memreader_init_reader(bmcl_memreader_t* self, bmcl_reader_t* reader);
+    std::size_t size() const
+    {
+        return _end - _start;
+    }
 
-#if BMCL_HAVE_MALLOC
+    std::size_t sizeLeft() const
+    {
+        return _end - _current;
+    }
 
-bmcl_memreader_t* bmcl_memreader_create(const void* ptr, size_t size);
+    std::size_t sizeRead() const
+    {
+        return _current - _start;
+    }
 
-void bmcl_memreader_destroy(bmcl_memreader_t* self);
+    bool isEmpty() const
+    {
+        return _current >= _end;
+    }
 
-bmcl_reader_t* bmcl_memreader_create_reader(bmcl_memreader_t* self);
+    void skip(std::size_t size)
+    {
+        assert(sizeLeft() >= size);
+        _current += size;
+    }
 
-#endif
+    void peek(void* dest, std::size_t size, std::size_t offset) const
+    {
+        assert(sizeLeft() >= size + offset);
+        std::memcpy(dest, _current + offset, size);
+    }
 
-const uint8_t* bmcl_memreader_current_ptr(const bmcl_memreader_t* self);
+    virtual void read(void* dest, std::size_t size)
+    {
+        assert(sizeLeft() >= size);
+        std::memcpy(dest, _current, size);
+        _current += size;
+    }
 
-size_t bmcl_memreader_size(const bmcl_memreader_t* self);
-
-size_t bmcl_memreader_size_left(const bmcl_memreader_t* self);
-
-size_t bmcl_memreader_size_read(const bmcl_memreader_t* self);
-
-bool bmcl_memreader_is_empty(const bmcl_memreader_t* self);
-
-void bmcl_memreader_skip(bmcl_memreader_t* self, size_t size);
-
-void bmcl_memreader_peek(const bmcl_memreader_t* self, void* dest, size_t size, size_t offset);
-
-void bmcl_memreader_read(bmcl_memreader_t* self, void* dest, size_t size);
-
-uint8_t bmcl_memreader_read_uint8(bmcl_memreader_t* self);
-
-uint16_t bmcl_memreader_read_uint16le(bmcl_memreader_t* self);
-
-uint32_t bmcl_memreader_read_uint32le(bmcl_memreader_t* self);
-
-uint64_t bmcl_memreader_read_uint64le(bmcl_memreader_t* self);
-
-uint16_t bmcl_memreader_read_uint16be(bmcl_memreader_t* self);
-
-uint32_t bmcl_memreader_read_uint32be(bmcl_memreader_t* self);
-
-uint64_t bmcl_memreader_read_uint64be(bmcl_memreader_t* self);
-
-#ifdef __cplusplus
+private:
+    const uint8_t* _start;
+    const uint8_t* _current;
+    const uint8_t* _end;
+};
 }
-#endif
+}

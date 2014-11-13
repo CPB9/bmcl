@@ -10,71 +10,76 @@
 
 #include "bmcl/core/status.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
 
-typedef struct {
-    bmcl_status_t (*write)(void* self, const void* data, size_t size);
-    bmcl_status_t (*write_uint8)(void* self, uint8_t value);
-    bmcl_status_t (*write_uint16le)(void* self, uint16_t value);
-    bmcl_status_t (*write_uint32le)(void* self, uint32_t value);
-    bmcl_status_t (*write_uint64le)(void* self, uint64_t value);
-    bmcl_status_t (*write_uint16be)(void* self, uint16_t value);
-    bmcl_status_t (*write_uint32be)(void* self, uint32_t value);
-    bmcl_status_t (*write_uint64be)(void* self, uint64_t value);
-} bmcl_writer_impl_t;
+namespace bmcl {
+namespace core {
 
-typedef struct {
-    void* data;
-    const bmcl_writer_impl_t* impl;
-} bmcl_writer_t;
+class Writer {
+public:
+    virtual ~Writer()
+    {
+    }
 
-#if BMCL_HAVE_MALLOC
+    virtual void write(const void* data, std::size_t size) = 0;
 
-static inline void bmcl_writer_destroy(bmcl_writer_t* self)
-{
-    free(self);
+    template <typename T>
+    void writeType(T value)
+    {
+        write(&value, sizeof(value));
+    }
+
+    void writeUint8(uint8_t value)
+    {
+        writeType<uint8_t>(value);
+    }
+
+    void writeUint16(uint16_t value)
+    {
+        writeType<uint16_t>(value);
+    }
+
+    void writeUint32(uint32_t value)
+    {
+        writeType<uint32_t>(value);
+    }
+
+    void writeUint64(uint64_t value)
+    {
+        writeType<uint64_t>(value);
+    }
+
+    void writeUint16Le(uint16_t value)
+    {
+        writeType<uint16_t>(htole16(value));
+    }
+
+    void writeUint32Le(uint32_t value)
+    {
+        writeType<uint32_t>(htole32(value));
+    }
+
+    void writeUint64Le(uint64_t value)
+    {
+        writeType<uint64_t>(htole64(value));
+    }
+
+    void writeUint16Be(uint16_t value)
+    {
+        writeType<uint16_t>(htobe16(value));
+    }
+
+    void writeUint32Be(uint32_t value)
+    {
+        writeType<uint32_t>(htobe32(value));
+    }
+
+    void writeUint64Be(uint64_t value)
+    {
+        writeType<uint64_t>(htobe64(value));
+    }
+};
 }
-
-#endif
-
-static inline bmcl_status_t bmcl_writer_write(bmcl_writer_t* self, const void* data, size_t size)
-{
-    return self->impl->write(self->data, data, size);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint8(bmcl_writer_t* self, uint8_t value)
-{
-    return self->impl->write_uint8(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint16le(bmcl_writer_t* self, uint16_t value)
-{
-    return self->impl->write_uint16le(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint32le(bmcl_writer_t* self, uint32_t value)
-{
-    return self->impl->write_uint32le(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint64le(bmcl_writer_t* self, uint64_t value)
-{
-    return self->impl->write_uint64le(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint16be(bmcl_writer_t* self, uint16_t value)
-{
-    return self->impl->write_uint16be(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint32be(bmcl_writer_t* self, uint32_t value)
-{
-    return self->impl->write_uint32be(self->data, value);
-}
-
-static inline bmcl_status_t bmcl_writer_write_uint64be(bmcl_writer_t* self, uint64_t value)
-{
-    return self->impl->write_uint64be(self->data, value);
 }

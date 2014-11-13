@@ -8,56 +8,120 @@
 
 #pragma once
 
-#include "bmcl/core/queue.h"
+#include <cassert>
+#include <cstdbool>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
-#include <stdbool.h>
-#include <stddef.h>
+namespace bmcl {
+namespace core {
 
-#ifdef __cplusplus
-extern "C" {
+class RingArray {
+public:
+    RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize)
+    {
+        init(ptr, bufSize, elementSize);
+#if BMCL_HAVE_MALLOC
+        hasAllocatedMem = false;
 #endif
-
-typedef struct {
-    void* data;
-    size_t element_size;
-    size_t size;
-    size_t read_offset;
-    size_t write_offset;
-    size_t count;
-} bmcl_ringarray_t;
-
-void bmcl_ringarray_init(bmcl_ringarray_t* self, void* data, size_t buf_size, size_t element_size);
-
-void bmcl_ringarray_init_queue(bmcl_ringarray_t* self, bmcl_queue_t* queue);
+    }
 
 #if BMCL_HAVE_MALLOC
 
-bmcl_ringarray_t* bmcl_ringarray_create(size_t element_num, size_t element_size);
+    RingArray(std::size_t numElements, std::size_t elementSize)
+    {
+        std::size_t bufSize = numElements * elementSize;
+        uint8_t* ptr = new uint8_t[bufSize];
+        init(ptr, bufSize, elementSize);
+        hasAllocatedMem = true;
+    }
 
-void bmcl_ringarray_destroy(bmcl_ringarray_t* self);
-
-bmcl_queue_t* bmcl_ringarray_create_queue(bmcl_ringarray_t* self);
+    ~RingArray()
+    {
+        if (hasAllocatedMem) {
+            delete[] _data;
+        }
+    }
 
 #endif
 
-void bmcl_ringarray_reset(bmcl_ringarray_t* self);
+    void reset()
+    {
+        init(_data, _size, _elementSize);
+    }
 
-bool bmcl_ringarray_is_empty(const bmcl_ringarray_t* self);
+    void append(const void* element);
 
-bool bmcl_ringarray_is_full(const bmcl_ringarray_t* self);
+    std::size_t count() const
+    {
+        return _count;
+    }
 
-void bmcl_ringarray_append(bmcl_ringarray_t* self, const void* element);
+    std::size_t size() const
+    {
+        return _size;
+    }
 
-size_t bmcl_ringarray_count(const bmcl_ringarray_t* self);
+    bool isEmpty() const
+    {
+        return _count == 0;
+    }
 
-size_t bmcl_ringarray_size(const bmcl_ringarray_t* self);
+    bool isFull() const
+    {
+        return !isEmpty() && (_readOffset == _writeOffset);
+    }
 
-size_t bmcl_ringarray_element_size(const bmcl_ringarray_t* self);
+    std::size_t elementSize() const
+    {
+        return _elementSize;
+    }
 
-void bmcl_ringarray_copy_first(const bmcl_ringarray_t* self, void* dest);
+    void copyFirst(void* dest) const
+    {
+        assert(!isEmpty());
+        std::memcpy(dest, readPtr(), _elementSize);
+    }
 
-void bmcl_ringarray_remove_first(bmcl_ringarray_t* self);
+    void removeFirst()
+    {
+        assert(!isEmpty());
+        eraseFirstElement();
+    }
 
-#ifdef __cplusplus
+private:
+    void init(void* ptr, std::size_t bufSize, std::size_t elementSize);
+
+    void eraseFirstElement()
+    {
+        incReadPtr();
+        _count--;
+    }
+
+    void* writePtr() const
+    {
+        return _data + _writeOffset * _elementSize;
+    }
+
+    void* readPtr() const
+    {
+        return _data + _readOffset * _elementSize;
+    }
+
+    void incReadPtr();
+
+    void intWritePtr();
+
+    uint8_t* _data;
+    std::size_t _elementSize;
+    std::size_t _size;
+    std::size_t _readOffset;
+    std::size_t _writeOffset;
+    std::size_t _count;
+#if BMCL_HAVE_MALLOC
+    bool hasAllocatedMem;
+#endif
+};
 }
-#endif
+}

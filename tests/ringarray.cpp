@@ -2,6 +2,8 @@
 
 #include "bmcl-test.h"
 
+using namespace bmcl::core;
+
 class RingArrayTest : public ::testing::Test {
 protected:
     void SetUp()
@@ -12,62 +14,62 @@ protected:
     void TearDown()
     {
         if (_ringarray) {
-            bmcl_ringarray_destroy(_ringarray);
+            delete _ringarray;
         }
     }
 
     void initRingArray(std::size_t elementNum, std::size_t elementSize)
     {
         assert(_ringarray == 0);
-        _ringarray = bmcl_ringarray_create(elementNum, elementSize);
+        _ringarray = new RingArray(elementNum, elementSize);
     }
 
     template <std::size_t n, typename R>
     void appendElement(const R (&array)[n])
     {
         std::size_t elementSize = sizeof(R) * n;
-        assert(elementSize == bmcl_ringarray_element_size(_ringarray));
-        bmcl_ringarray_append(_ringarray, array);
+        assert(elementSize == _ringarray->elementSize());
+        _ringarray->append(array);
     }
 
     template <std::size_t n, typename R>
     void expectNextElement(const R (&array)[n])
     {
         std::size_t elementSize = sizeof(R) * n;
-        assert(elementSize == bmcl_ringarray_element_size(_ringarray));
+        assert(elementSize == _ringarray->elementSize());
         R tmp[n];
-        bmcl_ringarray_copy_first(_ringarray, tmp);
-        bmcl_ringarray_remove_first(_ringarray);
+        _ringarray->copyFirst(tmp);
+        _ringarray->removeFirst();
         EXPECT_EQ_MEM(array, tmp, elementSize);
     }
 
     void expectEmpty(bool isEmpty = true)
     {
-        EXPECT_EQ(isEmpty, bmcl_ringarray_is_empty(_ringarray));
+        EXPECT_EQ(isEmpty, _ringarray->isEmpty());
     }
 
     void expectFull(bool isFull = true)
     {
-        EXPECT_EQ(isFull, bmcl_ringarray_is_full(_ringarray));
+        EXPECT_EQ(isFull, _ringarray->isFull());
     }
 
     void expectCount(std::size_t count)
     {
-        EXPECT_EQ(count, bmcl_ringarray_count(_ringarray));
+        EXPECT_EQ(count, _ringarray->count());
     }
 
     void expectSize(std::size_t size)
     {
-        EXPECT_EQ(size, bmcl_ringarray_size(_ringarray));
+        EXPECT_EQ(size, _ringarray->size());
     }
 
     void expectElementSize(std::size_t size)
     {
-        EXPECT_EQ(size, bmcl_ringarray_element_size(_ringarray));
+        EXPECT_EQ(size, _ringarray->elementSize());
     }
 
 private:
-    bmcl_ringarray_t* _ringarray;
+    RingArray* _ringarray;
 };
 
 TEST_F(RingArrayTest, init)
@@ -144,15 +146,4 @@ TEST_F(RingArrayTest, overwrite_one)
     expectFull();
     expectNextElement(element2);
     expectNextElement(element3);
-}
-
-TEST_F(RingArrayTest, queue_el_size)
-{
-    bmcl_ringarray_t* array = bmcl_ringarray_create(100, 17);
-    bmcl_queue_t* queue = bmcl_ringarray_create_queue(array);
-    std::size_t size = 0;
-    EXPECT_TRUE(bmcl_queue_const_el_size(queue, &size));
-    EXPECT_EQ(size, 17);
-    bmcl_queue_destroy(queue);
-    bmcl_ringarray_destroy(array);
 }

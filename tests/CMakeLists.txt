@@ -28,23 +28,20 @@ macro(add_unit_test test file)
         FOLDER "tests"
     )
     add_test(${test} ${TESTS_DIR}/${test})
-    list(APPEND ALL_TESTS ${test})
+    list(APPEND ALL_TESTS ${file})
 endmacro()
 
-add_unit_test(environment environment.cpp)
-add_unit_test(memreader memreader.cpp)
-add_unit_test(memwriter memwriter.cpp)
-add_unit_test(queue queue.cpp)
-add_unit_test(reader reader.cpp)
-add_unit_test(ringarray ringarray.cpp)
-add_unit_test(ringbucket ringbucket.cpp)
-add_unit_test(ringbuf ringbuf.cpp)
-add_unit_test(sched sched.cpp)
-add_unit_test(writer writer.cpp)
-
-add_unit_test(interp interp.cpp bmcl-interp)
-
-
+add_unit_test(environment_tests environment.cpp)
+add_unit_test(memreader_tests memreader.cpp)
+add_unit_test(memwriter_tests memwriter.cpp)
+# add_unit_test(queue queue.cpp)
+add_unit_test(reader_tests reader.cpp)
+add_unit_test(ringarray_tests ringarray.cpp)
+add_unit_test(ringbucket_tests ringbucket.cpp)
+add_unit_test(ringbuf_tests ringbuf.cpp)
+add_unit_test(writer_tests writer.cpp)
+#
+# add_unit_test(interp interp.cpp bmcl-interp)
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests

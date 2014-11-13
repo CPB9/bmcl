@@ -5,60 +5,56 @@
 
 #include "bmcl-test.h"
 
-class Reader {
+using namespace bmcl::core;
+
+class ReaderShell {
 public:
-    virtual ~Reader()
+    virtual ~ReaderShell()
     {
     }
 
-    bmcl_reader_t* get()
+    Reader* get()
     {
         return _reader;
     }
 
 protected:
-    bmcl_reader_t* _reader;
+    Reader* _reader;
 };
 
-class MemReader : public Reader {
+class MemReaderShell : public ReaderShell {
 public:
-    MemReader(const void* ptr, std::size_t size)
+    MemReaderShell(const void* ptr, std::size_t size)
     {
-        _memreader = bmcl_memreader_create(ptr, size);
-        _reader = bmcl_memreader_create_reader(_memreader);
+        _reader = new MemReader(ptr, size);
     }
 
-    ~MemReader()
+    ~MemReaderShell()
     {
-        bmcl_reader_destroy(_reader);
-        bmcl_memreader_destroy(_memreader);
+        delete _reader;
     }
-
-private:
-    bmcl_memreader_t* _memreader;
 };
 
-class RingBufReader : public Reader {
+class RingBufReaderShell : public ReaderShell {
 public:
-    RingBufReader(const void* ptr, std::size_t size)
+    RingBufReaderShell(const void* ptr, std::size_t size)
     {
-        _ringbuf = bmcl_ringbuf_create(size);
+        _ringbuf = new RingBuf(size);
         std::size_t fillerSize = size / 2 + 1;
         uint8_t* filler = new uint8_t[fillerSize];
-        bmcl_ringbuf_write(_ringbuf, filler, fillerSize);
-        bmcl_ringbuf_write(_ringbuf, ptr, size);
-        _reader = bmcl_ringbuf_create_reader(_ringbuf);
+        _ringbuf->write(filler, fillerSize);
+        _ringbuf->write(ptr, size);
+        _reader = _ringbuf;
         delete[] filler;
     }
 
-    ~RingBufReader()
+    ~RingBufReaderShell()
     {
-        bmcl_reader_destroy(_reader);
-        bmcl_ringbuf_destroy(_ringbuf);
+        delete _reader;
     }
 
 private:
-    bmcl_ringbuf_t* _ringbuf;
+    RingBuf* _ringbuf;
 };
 
 template <typename T>
@@ -82,51 +78,43 @@ protected:
     {
         std::size_t size = sizeof(R) * n;
         uint8_t tmp[size];
-        bmcl_reader_read(_reader, tmp, size);
+        _reader->read(tmp, size);
         EXPECT_EQ_MEM(array, tmp, size);
-    }
-
-    template <typename R, typename F>
-    void expectNext(R data, F func)
-    {
-        R tmp;
-        func(_reader, &tmp);
-        EXPECT_EQ(data, tmp);
     }
 
     void expectNextUint8(uint8_t value)
     {
-        expectNext(value, bmcl_reader_read_uint8);
+        EXPECT_EQ(value, _reader->readUint8());
     }
 
     void expectNextUint16be(uint16_t value)
     {
-        expectNext(value, bmcl_reader_read_uint16be);
+        EXPECT_EQ(value, _reader->readUint16Be());
     }
 
     void expectNextUint32be(uint32_t value)
     {
-        expectNext(value, bmcl_reader_read_uint32be);
+        EXPECT_EQ(value, _reader->readUint32Be());
     }
 
     void expectNextUint64be(uint64_t value)
     {
-        expectNext(value, bmcl_reader_read_uint64be);
+        EXPECT_EQ(value, _reader->readUint64Be());
     }
 
     void expectNextUint16le(uint16_t value)
     {
-        expectNext(value, bmcl_reader_read_uint16le);
+        EXPECT_EQ(value, _reader->readUint16Le());
     }
 
     void expectNextUint32le(uint32_t value)
     {
-        expectNext(value, bmcl_reader_read_uint32le);
+        EXPECT_EQ(value, _reader->readUint32Le());
     }
 
     void expectNextUint64le(uint64_t value)
     {
-        expectNext(value, bmcl_reader_read_uint64le);
+        EXPECT_EQ(value, _reader->readUint64Le());
     }
 
     void TearDown()
@@ -138,10 +126,10 @@ protected:
 
 private:
     T* _shell;
-    bmcl_reader_t* _reader;
+    Reader* _reader;
 };
 
-typedef ::testing::Types<MemReader, RingBufReader> ReaderTypes;
+typedef ::testing::Types<MemReaderShell, RingBufReaderShell> ReaderTypes;
 TYPED_TEST_CASE(ReaderTest, ReaderTypes);
 
 TYPED_TEST(ReaderTest, read)

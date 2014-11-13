@@ -8,53 +8,84 @@
 
 #pragma once
 
-#include "bmcl/core/queue.h"
 #include "bmcl/core/ringbuf.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#include <cstdbool>
+#include <cstddef>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace bmcl {
+namespace core {
 
-typedef struct {
-    bmcl_ringbuf_t ringbuf;
-    size_t count;
-} bmcl_ringbucket_t;
+typedef std::size_t RingBucketHeaderSize;
 
-void bmcl_ringbucket_init(bmcl_ringbucket_t* self, void* data, size_t size);
-
-void bmcl_ringbucket_init_queue(bmcl_ringbucket_t* self, bmcl_queue_t* queue);
+class RingBucket {
+public:
+    RingBucket(void* data, std::size_t size)
+        : _ringbuf(data, size)
+    {
+        assert(data != 0);
+        assert(size != 0);
+        _count = 0;
+    }
 
 #if BMCL_HAVE_MALLOC
 
-bmcl_ringbucket_t* bmcl_ringbucket_create(size_t size);
-
-void bmcl_ringbucket_destroy(bmcl_ringbucket_t* self);
-
-bmcl_queue_t* bmcl_ringbucket_create_queue(bmcl_ringbucket_t* self);
+    RingBucket(std::size_t size): _ringbuf(size)
+    {
+        assert(size != 0);
+        _count = 0;
+    }
 
 #endif
 
-size_t bmcl_ringbucket_get_free_space(const bmcl_ringbucket_t* self);
+    std::size_t freeSpace() const
+    {
+        return _ringbuf.freeSpace();
+    }
 
-size_t bmcl_ringbucket_header_size();
+    static std::size_t headerSize()
+    {
+        return sizeof(RingBucketHeaderSize);
+    }
 
-bool bmcl_ringbucket_is_empty(const bmcl_ringbucket_t* self);
+    bool isEmpty() const
+    {
+        return _count == 0;
+    }
 
-void bmcl_ringbucket_reset(bmcl_ringbucket_t* self);
+    void reset()
+    {
+        _ringbuf.clear();
+        _count = 0;
+    }
 
-void bmcl_ringbucket_append(bmcl_ringbucket_t* self, const void* element, size_t size);
+    std::size_t count() const
+    {
+        return _count;
+    }
 
-size_t bmcl_ringbucket_count(const bmcl_ringbucket_t* self);
+    void removeFirst()
+    {
+        assert(!isEmpty());
+        eraseElement();
+    }
 
-size_t bmcl_ringbucket_first_size(const bmcl_ringbucket_t* self);
+    void append(const void* data, std::size_t data_size);
 
-void bmcl_ringbucket_copy_first(const bmcl_ringbucket_t* self, void* dest);
+    std::size_t firstSize() const;
 
-void bmcl_ringbucket_remove_first(bmcl_ringbucket_t* self);
+    void copyFirst(void* dest) const;
 
-#ifdef __cplusplus
+
+private:
+    void prepareForAppend(std::size_t data_size);
+
+    std::size_t eraseElement();
+
+    void eraseElementsToFitSize(std::size_t size);
+
+    RingBuf _ringbuf;
+    std::size_t _count;
+};
 }
-#endif
+}

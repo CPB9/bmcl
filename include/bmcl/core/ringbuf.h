@@ -11,86 +11,123 @@
 #include "bmcl/core/reader.h"
 #include "bmcl/core/writer.h"
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include <cassert>
+#include <cstdbool>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
-#ifdef __cplusplus
-extern "C" {
+namespace bmcl {
+namespace core {
+
+class RingBuf: public Reader, public Writer {
+public:
+    RingBuf(void* data, std::size_t size)
+    {
+        init(data, size);
+#if BMCL_HAVE_MALLOC
+        hasAllocatedMem = false;
 #endif
-
-typedef struct {
-    size_t read_offset;
-    size_t write_offset;
-    size_t size;
-    size_t free_space;
-    uint8_t* data;
-} bmcl_ringbuf_t;
-
-void bmcl_ringbuf_init(bmcl_ringbuf_t* self, void* data, size_t size);
-
-void bmcl_ringbuf_init_writer(bmcl_ringbuf_t* self, bmcl_writer_t* writer);
-
-void bmcl_ringbuf_init_reader(bmcl_ringbuf_t* self, bmcl_reader_t* reader);
+    }
 
 #if BMCL_HAVE_MALLOC
 
-bmcl_ringbuf_t* bmcl_ringbuf_create(size_t size);
+    RingBuf(std::size_t size)
+    {
+        uint8_t* data = new uint8_t[size];
+        init(data, size);
+        hasAllocatedMem = true;
+    }
 
-void bmcl_ringbuf_destroy(bmcl_ringbuf_t* self);
-
-bmcl_writer_t* bmcl_ringbuf_create_writer(bmcl_ringbuf_t* self);
-
-bmcl_reader_t* bmcl_ringbuf_create_reader(bmcl_ringbuf_t* self);
+    ~RingBuf()
+    {
+        if (hasAllocatedMem) {
+            delete[] _data;
+        }
+    }
 
 #endif
 
-void bmcl_ringbuf_clear(bmcl_ringbuf_t* self);
+    void clear()
+    {
+        _write_offset = 0;
+        _read_offset = 0;
+        _free_space = _size;
+    }
 
-size_t bmcl_ringbuf_get_free_space(const bmcl_ringbuf_t* self);
+    std::size_t freeSpace() const
+    {
+        return _free_space;
+    }
 
-size_t bmcl_ringbuf_get_used_space(const bmcl_ringbuf_t* self);
+    std::size_t usedSpace() const
+    {
+        return _size - _free_space;
+    }
 
-bool bmcl_ringbuf_is_full(const bmcl_ringbuf_t* self);
+    bool isFull() const
+    {
+        return _free_space == 0;
+    }
 
-bool bmcl_ringbuf_is_empty(const bmcl_ringbuf_t* self);
+    bool isEmpty() const
+    {
+        return _free_space == _size;
+    }
 
-void bmcl_ringbuf_erase(bmcl_ringbuf_t* self, size_t size);
+    void erase(std::size_t size)
+    {
+        assert(_size - _free_space >= size);
+        _free_space += size;
+        _read_offset += size;
+        if (_read_offset >= _size) {
+            _read_offset -= _size;
+        }
+    }
 
-void bmcl_ringbuf_write(bmcl_ringbuf_t* self, const void* data, size_t size);
+    virtual void write(const void* data, std::size_t size);
 
-void bmcl_ringbuf_write_uint8(bmcl_ringbuf_t* self, uint8_t byte);
+    void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
 
-void bmcl_ringbuf_write_uint16le(bmcl_ringbuf_t* self, uint16_t value);
+    virtual void read(void* dest, std::size_t size)
+    {
+        peek(dest, size, 0);
+        erase(size);
+    }
 
-void bmcl_ringbuf_write_uint32le(bmcl_ringbuf_t* self, uint32_t value);
+    std::size_t size() const
+    {
+        return _size;
+    }
 
-void bmcl_ringbuf_write_uint64le(bmcl_ringbuf_t* self, uint64_t value);
+private:
+    void init(void* data, std::size_t size)
+    {
+        assert(size > 0);
+        _data = (uint8_t*)data;
+        _size = size;
+        _free_space = size;
+        _read_offset = 0;
+        _write_offset = 0;
+    }
 
-void bmcl_ringbuf_write_uint16be(bmcl_ringbuf_t* self, uint16_t value);
+    void extend(std::size_t size)
+    {
+        _write_offset += size;
+        if (_write_offset >= _size) {
+            _write_offset -= _size;
+        }
+        _free_space -= size;
+    }
 
-void bmcl_ringbuf_write_uint32be(bmcl_ringbuf_t* self, uint32_t value);
-
-void bmcl_ringbuf_write_uint64be(bmcl_ringbuf_t* self, uint64_t value);
-
-void bmcl_ringbuf_peek(const bmcl_ringbuf_t* self, void* dest, size_t size, size_t offset);
-
-void bmcl_ringbuf_read(bmcl_ringbuf_t* self, void* dest, size_t size);
-
-uint8_t bmcl_ringbuf_read_uint8(bmcl_ringbuf_t* self);
-
-uint16_t bmcl_ringbuf_read_uint16le(bmcl_ringbuf_t* self);
-
-uint32_t bmcl_ringbuf_read_uint32le(bmcl_ringbuf_t* self);
-
-uint64_t bmcl_ringbuf_read_uint64le(bmcl_ringbuf_t* self);
-
-uint16_t bmcl_ringbuf_read_uint16be(bmcl_ringbuf_t* self);
-
-uint32_t bmcl_ringbuf_read_uint32be(bmcl_ringbuf_t* self);
-
-uint64_t bmcl_ringbuf_read_uint64be(bmcl_ringbuf_t* self);
-
-#ifdef __cplusplus
+    std::size_t _read_offset;
+    std::size_t _write_offset;
+    std::size_t _size;
+    std::size_t _free_space;
+    uint8_t* _data;
+#if BMCL_HAVE_MALLOC
+    bool hasAllocatedMem;
+#endif
+};
 }
-#endif
+}

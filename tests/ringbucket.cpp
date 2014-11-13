@@ -2,6 +2,8 @@
 
 #include "bmcl-test.h"
 
+using namespace bmcl::core;
+
 class RingBucketTest : public ::testing::Test {
 protected:
     void SetUp()
@@ -12,65 +14,65 @@ protected:
     void TearDown()
     {
         if (_ringbucket) {
-            bmcl_ringbucket_destroy(_ringbucket);
+            delete _ringbucket;
         }
     }
 
     void initRingBucket(std::size_t size)
     {
         assert(_ringbucket == 0);
-        _ringbucket = bmcl_ringbucket_create(size);
+        _ringbucket = new RingBucket(size);
     }
 
     template <std::size_t n, typename R>
     void appendElement(const R (&array)[n])
     {
-        bmcl_ringbucket_append(_ringbucket, array, sizeof(R) * n);
+        _ringbucket->append(array, sizeof(R) * n);
     }
 
     template <std::size_t n, typename R>
     void expectNextElement(const R (&array)[n])
     {
         std::size_t elementSize = sizeof(R) * n;
-        ASSERT_EQ(elementSize, bmcl_ringbucket_first_size(_ringbucket));
+        ASSERT_EQ(elementSize, _ringbucket->firstSize());
         R tmp[n];
-        bmcl_ringbucket_copy_first(_ringbucket, tmp);
-        bmcl_ringbucket_remove_first(_ringbucket);
+        _ringbucket->copyFirst(tmp);
+        _ringbucket->removeFirst();
         EXPECT_EQ_MEM(array, tmp, elementSize);
     }
 
     void expectCount(std::size_t count)
     {
-        EXPECT_EQ(count, bmcl_ringbucket_count(_ringbucket));
+        EXPECT_EQ(count, _ringbucket->count());
     }
 
     void expectFreeSpace(std::size_t size)
     {
-        EXPECT_EQ(size, bmcl_ringbucket_get_free_space(_ringbucket));
+        EXPECT_EQ(size, _ringbucket->freeSpace());
     }
 
     void expectEmpty(bool isEmpty = true)
     {
-        EXPECT_EQ(isEmpty, bmcl_ringbucket_is_empty(_ringbucket));
+        EXPECT_EQ(isEmpty, _ringbucket->isEmpty());
     }
 
     void expectFirstElementSize(std::size_t size)
     {
-        EXPECT_EQ(size, bmcl_ringbucket_first_size(_ringbucket));
+        EXPECT_EQ(size, _ringbucket->firstSize());
     }
 
     std::size_t fullSize(std::size_t elementSize)
     {
-        return elementSize + bmcl_ringbucket_header_size();
+        return elementSize + _ringbucket->headerSize();
     }
 
     void reset()
     {
-        bmcl_ringbucket_reset(_ringbucket);
+        _ringbucket->reset();
     }
 
 private:
-    bmcl_ringbucket_t* _ringbucket;
+    RingBucket* _ringbucket;
 };
 
 TEST_F(RingBucketTest, init)
@@ -91,7 +93,6 @@ TEST_F(RingBucketTest, reset)
     expectFreeSpace(100);
     expectEmpty();
 }
-
 
 TEST_F(RingBucketTest, append_one)
 {
@@ -139,13 +140,4 @@ TEST_F(RingBucketTest, overwrite)
     expectNextElement(element2);
     expectNextElement(element3);
     expectNextElement(element4);
-}
-
-TEST_F(RingBucketTest, queue_el_size)
-{
-    bmcl_ringbucket_t* bucket = bmcl_ringbucket_create(100);
-    bmcl_queue_t* queue = bmcl_ringbucket_create_queue(bucket);
-    EXPECT_FALSE(bmcl_queue_const_el_size(queue, 0));
-    bmcl_queue_destroy(queue);
-    bmcl_ringbucket_destroy(bucket);
 }

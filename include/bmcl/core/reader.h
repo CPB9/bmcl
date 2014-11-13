@@ -8,73 +8,80 @@
 
 #pragma once
 
-#include "bmcl/core/status.h"
+#include "bmcl/core/endian.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
 
-typedef struct {
-    bmcl_status_t (*read)(void* self, void* dest, size_t size);
-    bmcl_status_t (*read_uint8)(void* self, uint8_t* value);
-    bmcl_status_t (*read_uint16le)(void* self, uint16_t* value);
-    bmcl_status_t (*read_uint32le)(void* self, uint32_t* value);
-    bmcl_status_t (*read_uint64le)(void* self, uint64_t* value);
-    bmcl_status_t (*read_uint16be)(void* self, uint16_t* value);
-    bmcl_status_t (*read_uint32be)(void* self, uint32_t* value);
-    bmcl_status_t (*read_uint64be)(void* self, uint64_t* value);
-} bmcl_reader_impl_t;
+namespace bmcl {
+namespace core {
 
-typedef struct {
-    void* data;
-    const bmcl_reader_impl_t* impl;
-} bmcl_reader_t;
+class Reader {
+public:
+    virtual ~Reader()
+    {
+    }
 
-#if BMCL_HAVE_MALLOC
+    virtual void read(void* dest, std::size_t) = 0;
 
-static inline void bmcl_reader_destroy(bmcl_reader_t* self)
-{
-    free(self);
+    template <typename T>
+    T readType()
+    {
+        T value;
+        read(&value, sizeof(value));
+        return value;
+    }
+
+    uint8_t readUint8()
+    {
+        return readType<uint8_t>();
+    }
+
+    uint16_t readUint16()
+    {
+        return readType<uint16_t>();
+    }
+
+    uint32_t readUint32()
+    {
+        return readType<uint32_t>();
+    }
+
+    uint64_t readUint64()
+    {
+        return readType<uint64_t>();
+    }
+
+    uint16_t readUint16Le()
+    {
+        return le16toh(readType<uint16_t>());
+    }
+
+    uint32_t readUint32Le()
+    {
+        return le32toh(readType<uint32_t>());
+    }
+
+    uint64_t readUint64Le()
+    {
+        return le64toh(readType<uint64_t>());
+    }
+
+    uint16_t readUint16Be()
+    {
+        return be16toh(readType<uint16_t>());
+    }
+
+    uint32_t readUint32Be()
+    {
+        return be32toh(readType<uint32_t>());
+    }
+
+    uint64_t readUint64Be()
+    {
+        return be64toh(readType<uint64_t>());
+    }
+};
 }
-
-#endif
-
-static inline void bmcl_reader_read(bmcl_reader_t* self, void* dest, size_t size)
-{
-    self->impl->read(self->data, dest, size);
-}
-
-static inline uint8_t bmcl_reader_read_uint8(bmcl_reader_t* self, uint8_t* value)
-{
-    return self->impl->read_uint8(self->data, value);
-}
-
-static inline uint16_t bmcl_reader_read_uint16le(bmcl_reader_t* self, uint16_t* value)
-{
-    return self->impl->read_uint16le(self->data, value);
-}
-
-static inline uint32_t bmcl_reader_read_uint32le(bmcl_reader_t* self, uint32_t* value)
-{
-    return self->impl->read_uint32le(self->data, value);
-}
-
-static inline uint64_t bmcl_reader_read_uint64le(bmcl_reader_t* self, uint64_t* value)
-{
-    return self->impl->read_uint64le(self->data, value);
-}
-
-static inline uint16_t bmcl_reader_read_uint16be(bmcl_reader_t* self, uint16_t* value)
-{
-    return self->impl->read_uint16be(self->data, value);
-}
-
-static inline uint32_t bmcl_reader_read_uint32be(bmcl_reader_t* self, uint32_t* value)
-{
-    return self->impl->read_uint32be(self->data, value);
-}
-
-static inline uint64_t bmcl_reader_read_uint64be(bmcl_reader_t* self, uint64_t* value)
-{
-    return self->impl->read_uint64be(self->data, value);
 }

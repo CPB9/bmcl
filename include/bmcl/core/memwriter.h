@@ -10,86 +10,121 @@
 
 #include "bmcl/core/writer.h"
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include <cassert>
+#include <cstdbool>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 
-#ifdef __cplusplus
-extern "C" {
+namespace bmcl {
+namespace core {
+
+class MemWriter : public Writer {
+public:
+    MemWriter(void* dest, std::size_t max_size)
+    {
+        init(dest, max_size);
+#if BMCL_HAVE_MALLOC
+        hasAllocatedMem = false;
 #endif
-
-typedef struct {
-    uint8_t* start;
-    uint8_t* current;
-    const uint8_t* end;
-} bmcl_memwriter_t;
-
-void bmcl_memwriter_init(bmcl_memwriter_t* self, void* dest, size_t max_size);
-
-void bmcl_memwriter_init_writer(bmcl_memwriter_t* self, bmcl_writer_t* writer);
+    }
 
 #if BMCL_HAVE_MALLOC
 
-bmcl_memwriter_t* bmcl_memwriter_create(size_t max_size);
+    MemWriter(std::size_t max_size)
+    {
+        uint8_t* dest = new uint8_t[max_size];
+        init(dest, max_size);
+        hasAllocatedMem = true;
+    }
 
-bmcl_memwriter_t* bmcl_memwriter_create_with_dest(void* dest, size_t max_size);
-
-void bmcl_memwriter_destroy(bmcl_memwriter_t* self);
-
-bmcl_writer_t* bmcl_memwriter_create_writer(bmcl_memwriter_t* self);
+    ~MemWriter()
+    {
+        if (hasAllocatedMem) {
+            delete[] _start;
+        }
+    }
 
 #endif
 
-const void* bmcl_memwriter_ptr(const bmcl_memwriter_t* self);
+    uint8_t* ptr() const
+    {
+        return _start;
+    }
 
-void* bmcl_memwriter_current_ptr(const bmcl_memwriter_t* self);
+    uint8_t* currentPtr() const
+    {
+        return _current;
+    }
 
-size_t bmcl_memwriter_size(const bmcl_memwriter_t* self); /* rename -> size_used */
+    std::size_t sizeUsed() const
+    {
+        return _current - _start;
+    }
 
-bool bmcl_memwriter_is_full(const bmcl_memwriter_t* self);
+    bool isFull() const
+    {
+        return _current >= _end;
+    }
 
-size_t bmcl_memwriter_max_size(const bmcl_memwriter_t* self);
+    std::size_t maxSize() const
+    {
+        return _end - _start;
+    }
 
-size_t bmcl_memwriter_size_left(const bmcl_memwriter_t* self);
+    std::size_t sizeLeft() const
+    {
+        return _end - _current;
+    }
 
-void bmcl_memwriter_advance(bmcl_memwriter_t* self, size_t size);
+    void advance(std::size_t size)
+    {
+        assert(sizeLeft() >= size);
+        _current += size;
+    }
 
-void bmcl_memwriter_write(bmcl_memwriter_t* self, const void* data, size_t size);
+    virtual void write(const void* data, std::size_t size)
+    {
+        assert(sizeLeft() >= size);
+        std::memcpy(_current, data, size);
+        _current += size;
+    }
 
-void bmcl_memwriter_pop(bmcl_memwriter_t* self, void* dest, size_t size);
+    void pop(void* dest, std::size_t size)
+    {
+        assert(sizeUsed() >= size);
+        _current -= size;
+        std::memcpy(dest, _current, size);
+    }
 
-void bmcl_memwriter_fill(bmcl_memwriter_t* self, uint8_t byte, size_t size);
+    void fill(uint8_t byte, std::size_t size)
+    {
+        assert(sizeLeft() >= size);
+        std::memset(_current, byte, size);
+        _current += size;
+    }
 
-void bmcl_memwriter_fillup(bmcl_memwriter_t* self, uint8_t byte);
+    void fillUp(uint8_t byte)
+    {
+        std::size_t size = _end - _current;
+        std::memset(_current, byte, size);
+        _current += size;
+    }
 
-void bmcl_memwriter_write_uint8(bmcl_memwriter_t* self, uint8_t value);
+private:
+    void init(void* dest, std::size_t max_size)
+    {
+        _start = (uint8_t*)dest;
+        _current = _start;
+        _end = _start + max_size;
+    }
 
-void bmcl_memwriter_write_uint16(bmcl_memwriter_t* self, uint16_t value);
-
-void bmcl_memwriter_write_uint32(bmcl_memwriter_t* self, uint32_t value);
-
-void bmcl_memwriter_write_uint64(bmcl_memwriter_t* self, uint64_t value);
-
-uint8_t bmcl_memwriter_pop_uint8(bmcl_memwriter_t* self);
-
-uint16_t bmcl_memwriter_pop_uint16(bmcl_memwriter_t* self);
-
-uint32_t bmcl_memwriter_pop_uint32(bmcl_memwriter_t* self);
-
-uint64_t bmcl_memwriter_pop_uint64(bmcl_memwriter_t* self);
-
-void bmcl_memwriter_write_uint16le(bmcl_memwriter_t* self, uint16_t value);
-
-void bmcl_memwriter_write_uint32le(bmcl_memwriter_t* self, uint32_t value);
-
-void bmcl_memwriter_write_uint64le(bmcl_memwriter_t* self, uint64_t value);
-
-void bmcl_memwriter_write_uint16be(bmcl_memwriter_t* self, uint16_t value);
-
-void bmcl_memwriter_write_uint32be(bmcl_memwriter_t* self, uint32_t value);
-
-void bmcl_memwriter_write_uint64be(bmcl_memwriter_t* self, uint64_t value);
-
-#ifdef __cplusplus
+    uint8_t* _start;
+    uint8_t* _current;
+    const uint8_t* _end;
+#if BMCL_HAVE_MALLOC
+    bool hasAllocatedMem;
+#endif
+};
 }
-#endif
+}
