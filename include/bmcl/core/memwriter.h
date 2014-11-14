@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "bmcl/core/stack.h"
 #include "bmcl/core/writer.h"
 
 #include <cassert>
@@ -19,11 +20,11 @@
 namespace bmcl {
 namespace core {
 
-class MemWriter : public Writer {
+class MemWriter : public Writer, public Stack {
 public:
-    MemWriter(void* dest, std::size_t max_size)
+    MemWriter(void* dest, std::size_t maxSize)
     {
-        init(dest, max_size);
+        init(dest, maxSize);
 #if BMCL_HAVE_MALLOC
         hasAllocatedMem = false;
 #endif
@@ -31,10 +32,10 @@ public:
 
 #if BMCL_HAVE_MALLOC
 
-    MemWriter(std::size_t max_size)
+    MemWriter(std::size_t maxSize)
     {
-        uint8_t* dest = new uint8_t[max_size];
-        init(dest, max_size);
+        uint8_t* dest = new uint8_t[maxSize];
+        init(dest, maxSize);
         hasAllocatedMem = true;
     }
 
@@ -90,7 +91,12 @@ public:
         _current += size;
     }
 
-    void pop(void* dest, std::size_t size)
+    virtual void push(const void* src, std::size_t size)
+    {
+        write(src, size);
+    }
+
+    virtual void pop(void* dest, std::size_t size)
     {
         assert(sizeUsed() >= size);
         _current -= size;
@@ -112,11 +118,11 @@ public:
     }
 
 private:
-    void init(void* dest, std::size_t max_size)
+    void init(void* dest, std::size_t maxSize)
     {
         _start = (uint8_t*)dest;
         _current = _start;
-        _end = _start + max_size;
+        _end = _start + maxSize;
     }
 
     uint8_t* _start;
