@@ -1,13 +1,9 @@
-language: c
-compiler: clang
-env: 
-  global: 
-      - CXX=clang++
-      - secure: "WO7Bs89KG+TemRpZqkRBtGGf3CRKXJpBFpZXyE8xwakE2EtEdCd4/ljaBMjMa0pR1t7mp8sR8UOczkBdyxNft7CKBEuhByWI1F4zhZenWFSBP/JRdzglL8HIShmvJJeMnUhYLQt2GhbyMwYoKQJKTGTUGDC9fH6qQsc2n2Ajr+I="
-  matrix:
-      - SANITIZER_FLAGS="-DSANITIZE_ADDRESS=1"
-      - SANITIZER_FLAGS=""
-script: ls && mkdir -p build && cd build && cmake $SANITIZER_FLAGS ../ && make && ctest
+language: cpp
+compiler: gcc
+env:
+  global:
+    - secure: "WO7Bs89KG+TemRpZqkRBtGGf3CRKXJpBFpZXyE8xwakE2EtEdCd4/ljaBMjMa0pR1t7mp8sR8UOczkBdyxNft7CKBEuhByWI1F4zhZenWFSBP/JRdzglL8HIShmvJJeMnUhYLQt2GhbyMwYoKQJKTGTUGDC9fH6qQsc2n2Ajr+I="
+script: mkdir -p build && cd build && cmake ../ && make
 
 addons:
   coverity_scan:
@@ -16,7 +12,6 @@ addons:
       version: 0.1
       description: bmcl
     notification_email: dndanik@gmail.com
-    build_command_prepend: mkdir build && cd build && cmake ..
+    build_command_prepend: mkdir -p build && cd build && cmake .. && make clean
     build_command: make
     branch_pattern: coverity_scan
-
