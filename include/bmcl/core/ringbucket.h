@@ -10,7 +10,6 @@
 
 #include "bmcl/core/ringbuf.h"
 
-#include <cstdbool>
 #include <cstddef>
 
 namespace bmcl {

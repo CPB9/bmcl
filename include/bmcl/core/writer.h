@@ -11,7 +11,7 @@
 #include "bmcl/core/status.h"
 
 #include <cstddef>
-#include <cstdint>
+#include <stdint.h>
 #include <cstdlib>
 
 namespace bmcl {

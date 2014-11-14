@@ -97,177 +97,177 @@ Status::Msg Interpreter::execNext()
     uint8_t instrId = _bytecode.readUint8();
 
     switch (instrId) {
-    case Instruction::Push8:
+    case Interpreter::Push8:
         return stackPush<uint8_t>();
-    case Instruction::Push16:
+    case Interpreter::Push16:
         return stackPush<uint16_t>();
-    case Instruction::Push32:
+    case Interpreter::Push32:
         return stackPush<uint32_t>();
-    case Instruction::Push64:
+    case Interpreter::Push64:
         return stackPush<uint64_t>();
-    case Instruction::ConvertI8ToI32:
+    case Interpreter::ConvertI8ToI32:
         return stackConvert<int8_t, int32_t>();
-    case Instruction::ConvertI8ToU32:
+    case Interpreter::ConvertI8ToU32:
         return stackConvert<int8_t, uint32_t>();
-    case Instruction::ConvertU8ToI32:
+    case Interpreter::ConvertU8ToI32:
         return stackConvert<uint8_t, int32_t>();
-    case Instruction::ConvertU8ToU32:
+    case Interpreter::ConvertU8ToU32:
         return stackConvert<uint8_t, uint32_t>();
-    case Instruction::ConvertI16ToI32:
+    case Interpreter::ConvertI16ToI32:
         return stackConvert<int16_t, int32_t>();
-    case Instruction::ConvertI16ToU32:
+    case Interpreter::ConvertI16ToU32:
         return stackConvert<int16_t, uint32_t>();
-    case Instruction::ConvertU16ToI32:
+    case Interpreter::ConvertU16ToI32:
         return stackConvert<uint16_t, int32_t>();
-    case Instruction::ConvertU16ToU32:
+    case Interpreter::ConvertU16ToU32:
         return stackConvert<uint16_t, uint32_t>();
-    case Instruction::ConvertI32ToI8:
+    case Interpreter::ConvertI32ToI8:
         return stackConvert<int32_t, int8_t>();
-    case Instruction::ConvertI32ToU8:
+    case Interpreter::ConvertI32ToU8:
         return stackConvert<int32_t, uint8_t>();
-    case Instruction::ConvertI32ToI16:
+    case Interpreter::ConvertI32ToI16:
         return stackConvert<int32_t, int16_t>();
-    case Instruction::ConvertI32ToU16:
+    case Interpreter::ConvertI32ToU16:
         return stackConvert<int32_t, uint16_t>();
-    case Instruction::ConvertI32ToI64:
+    case Interpreter::ConvertI32ToI64:
         return stackConvert<int32_t, int64_t>();
-    case Instruction::ConvertI32ToU64:
+    case Interpreter::ConvertI32ToU64:
         return stackConvert<int32_t, uint64_t>();
-    case Instruction::ConvertI32ToFloat:
+    case Interpreter::ConvertI32ToFloat:
         return stackConvert<int32_t, float>();
-    case Instruction::ConvertI32ToDouble:
+    case Interpreter::ConvertI32ToDouble:
         return stackConvert<int32_t, double>();
-    case Instruction::ConvertU32ToI8:
+    case Interpreter::ConvertU32ToI8:
         return stackConvert<uint32_t, int8_t>();
-    case Instruction::ConvertU32ToU8:
+    case Interpreter::ConvertU32ToU8:
         return stackConvert<uint32_t, uint8_t>();
-    case Instruction::ConvertU32ToI16:
+    case Interpreter::ConvertU32ToI16:
         return stackConvert<uint32_t, int16_t>();
-    case Instruction::ConvertU32ToU16:
+    case Interpreter::ConvertU32ToU16:
         return stackConvert<uint32_t, uint16_t>();
-    case Instruction::ConvertU32ToI64:
+    case Interpreter::ConvertU32ToI64:
         return stackConvert<uint32_t, int64_t>();
-    case Instruction::ConvertU32ToU64:
+    case Interpreter::ConvertU32ToU64:
         return stackConvert<uint32_t, uint64_t>();
-    case Instruction::ConvertU32ToFloat:
+    case Interpreter::ConvertU32ToFloat:
         return stackConvert<uint32_t, float>();
-    case Instruction::ConvertU32ToDouble:
+    case Interpreter::ConvertU32ToDouble:
         return stackConvert<uint32_t, double>();
-    case Instruction::ConvertI64ToI32:
+    case Interpreter::ConvertI64ToI32:
         return stackConvert<int64_t, int32_t>();
-    case Instruction::ConvertI64ToU32:
+    case Interpreter::ConvertI64ToU32:
         return stackConvert<int64_t, uint32_t>();
-    case Instruction::ConvertI64ToFloat:
+    case Interpreter::ConvertI64ToFloat:
         return stackConvert<int64_t, float>();
-    case Instruction::ConvertI64ToDouble:
+    case Interpreter::ConvertI64ToDouble:
         return stackConvert<int64_t, double>();
-    case Instruction::ConvertU64ToI32:
+    case Interpreter::ConvertU64ToI32:
         return stackConvert<uint64_t, int32_t>();
-    case Instruction::ConvertU64ToU32:
+    case Interpreter::ConvertU64ToU32:
         return stackConvert<uint64_t, uint32_t>();
-    case Instruction::ConvertU64ToFloat:
+    case Interpreter::ConvertU64ToFloat:
         return stackConvert<uint64_t, float>();
-    case Instruction::ConvertU64ToDouble:
+    case Interpreter::ConvertU64ToDouble:
         return stackConvert<uint64_t, double>();
-    case Instruction::ConvertFloatToI32:
+    case Interpreter::ConvertFloatToI32:
         return stackConvert<float, int32_t>();
-    case Instruction::ConvertFloatToU32:
+    case Interpreter::ConvertFloatToU32:
         return stackConvert<float, uint32_t>();
-    case Instruction::ConvertFloatToI64:
+    case Interpreter::ConvertFloatToI64:
         return stackConvert<float, int64_t>();
-    case Instruction::ConvertFloatToU64:
+    case Interpreter::ConvertFloatToU64:
         return stackConvert<float, uint64_t>();
-    case Instruction::ConvertFloatToDouble:
+    case Interpreter::ConvertFloatToDouble:
         return stackConvert<float, double>();
-    case Instruction::ConvertDoubleToI32:
+    case Interpreter::ConvertDoubleToI32:
         return stackConvert<double, int32_t>();
-    case Instruction::ConvertDoubleToU32:
+    case Interpreter::ConvertDoubleToU32:
         return stackConvert<double, uint32_t>();
-    case Instruction::ConvertDoubleToI64:
+    case Interpreter::ConvertDoubleToI64:
         return stackConvert<double, int64_t>();
-    case Instruction::ConvertDoubleToU64:
+    case Interpreter::ConvertDoubleToU64:
         return stackConvert<double, uint64_t>();
-    case Instruction::ConvertDoubleToFloat:
+    case Interpreter::ConvertDoubleToFloat:
         return stackConvert<double, float>();
-    case Instruction::AddI8:
+    case Interpreter::AddI8:
         return stackOp<int8_t>(OpAdd<int8_t>());
-    case Instruction::AddI16:
+    case Interpreter::AddI16:
         return stackOp<int16_t>(OpAdd<int16_t>());
-    case Instruction::AddI32:
+    case Interpreter::AddI32:
         return stackOp<int32_t>(OpAdd<int32_t>());
-    case Instruction::AddI64:
+    case Interpreter::AddI64:
         return stackOp<int64_t>(OpAdd<int64_t>());
-    case Instruction::AddU8:
+    case Interpreter::AddU8:
         return stackOp<uint8_t>(OpAdd<uint8_t>());
-    case Instruction::AddU16:
+    case Interpreter::AddU16:
         return stackOp<uint16_t>(OpAdd<uint16_t>());
-    case Instruction::AddU32:
+    case Interpreter::AddU32:
         return stackOp<uint32_t>(OpAdd<uint32_t>());
-    case Instruction::AddU64:
+    case Interpreter::AddU64:
         return stackOp<uint64_t>(OpAdd<uint64_t>());
-    case Instruction::AddFloat:
+    case Interpreter::AddFloat:
         return stackOp<float>(OpAdd<float>());
-    case Instruction::AddDouble:
+    case Interpreter::AddDouble:
         return stackOp<double>(OpAdd<double>());
-    case Instruction::SubI8:
+    case Interpreter::SubI8:
         return stackOp<int8_t>(OpSub<int8_t>());
-    case Instruction::SubI16:
+    case Interpreter::SubI16:
         return stackOp<int16_t>(OpSub<int16_t>());
-    case Instruction::SubI32:
+    case Interpreter::SubI32:
         return stackOp<int32_t>(OpSub<int32_t>());
-    case Instruction::SubI64:
+    case Interpreter::SubI64:
         return stackOp<int64_t>(OpSub<int64_t>());
-    case Instruction::SubU8:
+    case Interpreter::SubU8:
         return stackOp<uint8_t>(OpSub<uint8_t>());
-    case Instruction::SubU16:
+    case Interpreter::SubU16:
         return stackOp<uint16_t>(OpSub<uint16_t>());
-    case Instruction::SubU32:
+    case Interpreter::SubU32:
         return stackOp<uint32_t>(OpSub<uint32_t>());
-    case Instruction::SubU64:
+    case Interpreter::SubU64:
         return stackOp<uint64_t>(OpSub<uint64_t>());
-    case Instruction::SubFloat:
+    case Interpreter::SubFloat:
         return stackOp<float>(OpSub<float>());
-    case Instruction::SubDouble:
+    case Interpreter::SubDouble:
         return stackOp<double>(OpSub<double>());
-    case Instruction::MultI8:
+    case Interpreter::MultI8:
         return stackOp<int8_t>(OpMult<int8_t>());
-    case Instruction::MultI16:
+    case Interpreter::MultI16:
         return stackOp<int16_t>(OpMult<int16_t>());
-    case Instruction::MultI32:
+    case Interpreter::MultI32:
         return stackOp<int32_t>(OpMult<int32_t>());
-    case Instruction::MultI64:
+    case Interpreter::MultI64:
         return stackOp<int64_t>(OpMult<int64_t>());
-    case Instruction::MultU8:
+    case Interpreter::MultU8:
         return stackOp<uint8_t>(OpMult<uint8_t>());
-    case Instruction::MultU16:
+    case Interpreter::MultU16:
         return stackOp<uint16_t>(OpMult<uint16_t>());
-    case Instruction::MultU32:
+    case Interpreter::MultU32:
         return stackOp<uint32_t>(OpMult<uint32_t>());
-    case Instruction::MultU64:
+    case Interpreter::MultU64:
         return stackOp<uint64_t>(OpMult<uint64_t>());
-    case Instruction::MultFloat:
+    case Interpreter::MultFloat:
         return stackOp<float>(OpMult<float>());
-    case Instruction::MultDouble:
+    case Interpreter::MultDouble:
         return stackOp<double>(OpMult<double>());
-    case Instruction::DivI8:
+    case Interpreter::DivI8:
         return stackOp<int8_t>(OpDiv<int8_t>());
-    case Instruction::DivI16:
+    case Interpreter::DivI16:
         return stackOp<int16_t>(OpDiv<int16_t>());
-    case Instruction::DivI32:
+    case Interpreter::DivI32:
         return stackOp<int32_t>(OpDiv<int32_t>());
-    case Instruction::DivI64:
+    case Interpreter::DivI64:
         return stackOp<int64_t>(OpDiv<int64_t>());
-    case Instruction::DivU8:
+    case Interpreter::DivU8:
         return stackOp<uint8_t>(OpDiv<uint8_t>());
-    case Instruction::DivU16:
+    case Interpreter::DivU16:
         return stackOp<uint16_t>(OpDiv<uint16_t>());
-    case Instruction::DivU32:
+    case Interpreter::DivU32:
         return stackOp<uint32_t>(OpDiv<uint32_t>());
-    case Instruction::DivU64:
+    case Interpreter::DivU64:
         return stackOp<uint64_t>(OpDiv<uint64_t>());
-    case Instruction::DivFloat:
+    case Interpreter::DivFloat:
         return stackOp<float>(OpDiv<float>());
-    case Instruction::DivDouble:
+    case Interpreter::DivDouble:
         return stackOp<double>(OpDiv<double>());
     }
 

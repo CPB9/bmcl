@@ -10,8 +10,7 @@
 #include "bmcl/core/ringbuf.h"
 
 #include <cassert>
-#include <cstdbool>
-#include <cstdint>
+#include <stdint.h>
 #include <cstring>
 
 #define min(a, b) (((a) > (b)) ? (b) : (a))

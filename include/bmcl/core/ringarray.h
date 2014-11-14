@@ -9,9 +9,8 @@
 #pragma once
 
 #include <cassert>
-#include <cstdbool>
 #include <cstddef>
-#include <cstdint>
+#include <stdint.h>
 #include <cstring>
 
 namespace bmcl {
