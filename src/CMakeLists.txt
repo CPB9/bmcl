@@ -1,5 +1,5 @@
 if(MSVC)
-    add_definitions(/Dinline=__inline) # temporary hack
+#    add_definitions(/Dinline=__inline) # temporary hack
 else()
     add_definitions(-std=c++98)
 endif()

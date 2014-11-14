@@ -89,7 +89,7 @@ protected:
     void expect(const R (&array)[n])
     {
         std::size_t dataSize = sizeof(R) * n;
-        uint8_t temp[dataSize];
+        R temp[n];
         _ringbuf->peek(temp, dataSize);
         EXPECT_EQ(dataSize, _ringbuf->usedSpace());
         EXPECT_EQ_MEM(array, temp, dataSize);

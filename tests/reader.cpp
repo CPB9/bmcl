@@ -77,7 +77,7 @@ protected:
     void expectNextData(const R (&array)[n])
     {
         std::size_t size = sizeof(R) * n;
-        uint8_t tmp[size];
+        R tmp[n];
         _reader->read(tmp, size);
         EXPECT_EQ_MEM(array, tmp, size);
     }
