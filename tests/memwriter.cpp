@@ -7,6 +7,11 @@ using namespace bmcl::core;
 
 class MemWriterTest : public ::testing::Test {
 protected:
+    MemWriterTest()
+        : _writer(0)
+    {
+    }
+
     void SetUp()
     {
         _writer = 0;

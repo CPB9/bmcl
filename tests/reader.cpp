@@ -60,6 +60,12 @@ private:
 template <typename T>
 class ReaderTest : public ::testing::Test {
 protected:
+    ReaderTest()
+        : _shell(0)
+        , _reader(0)
+    {
+    }
+
     template <std::size_t n, typename R>
     void newReader(const R (&array)[n])
     {

@@ -6,6 +6,11 @@ using namespace bmcl::core;
 
 class RingBufTest : public ::testing::Test {
 protected:
+    RingBufTest()
+        : _ringbuf(0)
+    {
+    }
+
     void SetUp()
     {
         _ringbuf = 0;

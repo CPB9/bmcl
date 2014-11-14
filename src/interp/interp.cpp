@@ -58,7 +58,7 @@ Status::Msg Interpreter::stackOp(F func)
 
 template <typename T>
 struct OpAdd {
-    inline T operator()(T val1, T val2)
+    inline T operator()(T val1, T val2) const
     {
         return val1 + val2;
     }
@@ -66,7 +66,7 @@ struct OpAdd {
 
 template <typename T>
 struct OpSub {
-    inline T operator()(T val1, T val2)
+    inline T operator()(T val1, T val2) const
     {
         return val1 - val2;
     }
@@ -74,7 +74,7 @@ struct OpSub {
 
 template <typename T>
 struct OpMult {
-    inline T operator()(T val1, T val2)
+    inline T operator()(T val1, T val2) const
     {
         return val1 * val2;
     }
@@ -82,7 +82,7 @@ struct OpMult {
 
 template <typename T>
 struct OpDiv {
-    inline T operator()(T val1, T val2)
+    inline T operator()(T val1, T val2) const
     {
         return val1 / val2;
     }

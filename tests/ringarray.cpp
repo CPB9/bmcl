@@ -6,6 +6,11 @@ using namespace bmcl::core;
 
 class RingArrayTest : public ::testing::Test {
 protected:
+    RingArrayTest()
+        : _ringarray(0)
+    {
+    }
+
     void SetUp()
     {
         _ringarray = 0;

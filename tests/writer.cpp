@@ -83,6 +83,12 @@ private:
 template <typename T>
 class WriterTest : public ::testing::Test {
 protected:
+    WriterTest()
+        : _shell(0)
+        , _writer(0)
+    {
+    }
+
     template <std::size_t n, typename R>
     void newWriterWithSizeOf(const R (&array)[n])
     {

@@ -6,6 +6,11 @@ using namespace bmcl::core;
 
 class RingBucketTest : public ::testing::Test {
 protected:
+    RingBucketTest()
+        : _ringbucket(0)
+    {
+    }
+
     void SetUp()
     {
         _ringbucket = 0;

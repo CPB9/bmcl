@@ -6,9 +6,12 @@
 
 static inline void print_mem(const void* mem, std::size_t size)
 {
+    std::ios::fmtflags f(std::cout.flags());
+    std::cout << std::hex;
     for (std::size_t i = 0; i < size; i++) {
-        std::cout << std::hex << (std::size_t) * ((uint8_t*)mem + i);
+        std::cout << (std::size_t) * ((uint8_t*)mem + i);
     }
+    std::cout.flags(f);
 }
 
 static inline void check_eq_mem(const uint8_t* expected, const uint8_t* actual, size_t size, const char* fname,
