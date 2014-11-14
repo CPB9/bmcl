@@ -47,7 +47,7 @@ add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests
     bmcl-core
     bmcl-interp
-    bmcl-telem
+#    bmcl-telem
     gtest
     gtest_main
 )

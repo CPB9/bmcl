@@ -27,7 +27,7 @@ Status::Msg Interpreter::stackPush()
 template <typename T1, typename T2>
 Status::Msg Interpreter::stackConvert()
 {
-    if (_stack.sizeLeft() < sizeof(T1)) {
+    if (_stack.sizeUsed() < sizeof(T1)) {
         return Status::NotEnoughStackData;
     }
 

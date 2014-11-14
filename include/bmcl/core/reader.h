@@ -26,7 +26,7 @@ public:
     virtual void read(void* dest, std::size_t size) = 0;
 
     template <typename T>
-    T readType()
+    inline T readType()
     {
         T value;
         read(&value, sizeof(value));

@@ -2,6 +2,8 @@
 
 #include "bmcl-test.h"
 
+#include <algorithm>
+
 using namespace bmcl::core;
 using namespace bmcl::interp;
 
@@ -35,6 +37,12 @@ protected:
         EXPECT_EQ(Status::Success, status) << Status::toCString(status);
     }
 
+    template <typename T>
+    void appendBytecode(T value)
+    {
+        _bcWriter->writeType<T>(value);
+    }
+
     void appendInstrHeader(Interpreter::Instruction type)
     {
         _bcWriter->writeUint8((uint8_t)type);
@@ -44,6 +52,11 @@ protected:
     void appendStack(T value)
     {
         _interp->stack()->writeType<T>(value);
+    }
+
+    void appendStackBytes(uint8_t byte, std::size_t count)
+    {
+        _interp->stack()->fill(byte, count);
     }
 
     void expectNextCmdError(Status::Msg err)
@@ -65,132 +78,59 @@ private:
     Interpreter* _interp;
 };
 
-// template <>
-// void InterpTest::expectStack<double>(double expected)
-// {
-//     double value;
-//     bmcl_memwriter_pop(&_interp->stack, &value, sizeof(value));
-//     EXPECT_DoubleEQ(expected, value);
-// }
-//
-// template <>
-// void InterpTest::expectStack<float>(float expected)
-// {
-//     float value;
-//     bmcl_memwriter_pop(&_interp->stack, &value, sizeof(value));
-//     EXPECT_FloatEQ(expected, value);
-// }
-/*
-TEST_F(InterpTest, push8)
-{
-    newInterp(2);
-    appendInstrHeader(Push8);
-    appendBcUint8(0xba);
-    execNextCmd();
-    expectStackUint8(0xba);
-}
+#define PUSH_TEST(name, type, instr, value)                                                                            \
+    TEST_F(InterpTest, name)                                                                                           \
+    {                                                                                                                  \
+        newInterp(1 + sizeof(type));                                                                                   \
+        appendInstrHeader(Interpreter::instr);                                                                         \
+        appendBytecode<type>(value);                                                                                   \
+        execNextCmd();                                                                                                 \
+        expectStack<type>(value);                                                                                      \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(InterpTest, name##_stack_overflow)                                                                          \
+    {                                                                                                                  \
+        newInterp(1 + sizeof(type), sizeof(type) - 1);                                                                 \
+        appendInstrHeader(Interpreter::instr);                                                                         \
+        appendBytecode<type>(value);                                                                                   \
+        expectNextCmdError(Status::StackOverflow);                                                                     \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(InterpTest, name##_unexpected_end_of_bytecode)                                                              \
+    {                                                                                                                  \
+        newInterp(1 + sizeof(type) - 1, sizeof(type));                                                                 \
+        appendInstrHeader(Interpreter::instr);                                                                         \
+        expectNextCmdError(Status::UnexpectedEndOfBytecode);                                                           \
+    }
 
-TEST_F(InterpTest, push8_ueobc)
-{
-    newInterp(1);
-    appendInstrHeader(Push8);
-    expectNextCmdError(BMCL_ERR_UNEXPECTED_END_OF_BYTECODE);
-}
-
-TEST_F(InterpTest, push8_stack_overflow)
-{
-    newInterp(2, 0);
-    appendInstrHeader(Push8);
-    appendBcUint8(13);
-    expectNextCmdError(BMCL_ERR_STACK_OVERFLOW);
-}
-
-TEST_F(InterpTest, push16)
-{
-    newInterp(3);
-    appendInstrHeader(Push16);
-    appendBcUint16(0x1234);
-    execNextCmd();
-    expectStackUint16(0x1234);
-}
-
-TEST_F(InterpTest, push16_ueobc)
-{
-    newInterp(2);
-    appendInstrHeader(Push16);
-    appendBcUint8(122);
-    expectNextCmdError(BMCL_ERR_UNEXPECTED_END_OF_BYTECODE);
-}
-
-TEST_F(InterpTest, push16_stack_overflow)
-{
-    newInterp(3, 1);
-    appendInstrHeader(Push16);
-    appendBcUint16(12334);
-    expectNextCmdError(BMCL_ERR_STACK_OVERFLOW);
-}
-
-TEST_F(InterpTest, push32)
-{
-    newInterp(5);
-    appendInstrHeader(Push32);
-    appendBcUint32(0xaabbccdd);
-    execNextCmd();
-    expectStackUint32(0xaabbccdd);
-}
-
-TEST_F(InterpTest, push32_ueobc)
-{
-    newInterp(4);
-    appendInstrHeader(Push32);
-    appendBcUint8(123);
-    appendBcUint16(123);
-    expectNextCmdError(BMCL_ERR_UNEXPECTED_END_OF_BYTECODE);
-}
-
-TEST_F(InterpTest, push32_stack_overflow)
-{
-    newInterp(5, 3);
-    appendInstrHeader(Push32);
-    appendBcUint32(0xaabbccdd);
-    expectNextCmdError(BMCL_ERR_STACK_OVERFLOW);
-}
-
-TEST_F(InterpTest, push64)
-{
-    newInterp(9);
-    appendInstrHeader(Push64);
-    appendBcUint64(0xaabbccdd22445566);
-    execNextCmd();
-    expectStackUint64(0xaabbccdd22445566);
-}
-
-TEST_F(InterpTest, push64_ueobc)
-{
-    newInterp(8);
-    appendInstrHeader(Push64);
-    appendBcUint32(123);
-    appendBcUint16(123);
-    appendBcUint8(123);
-    expectNextCmdError(BMCL_ERR_UNEXPECTED_END_OF_BYTECODE);
-}
-
-TEST_F(InterpTest, push64_stack_overflow)
-{
-    newInterp(9, 7);
-    appendInstrHeader(Push64);
-    appendBcUint64(0x1234567809876543);
-    expectNextCmdError(BMCL_ERR_STACK_OVERFLOW);
-}*/
+PUSH_TEST(push8, uint8_t, Push8, 0xba);
+PUSH_TEST(push16, uint16_t, Push16, 0x1234);
+PUSH_TEST(push32, uint32_t, Push32, 0xaabbccdd);
+PUSH_TEST(push64, uint64_t, Push64, 0x9988776655443322);
 
 #define CONV_TEST(name, type1, type2, instr, val, res)                                                                 \
     TEST_F(InterpTest, convert_##name)                                                                                 \
     {                                                                                                                  \
-        newInterp(1);                                                                                                  \
-        appendInstrHeader(Interpreter::instr);                                                                                      \
+        newInterp(1, std::max(sizeof(type1), sizeof(type2)));                                                          \
+        appendInstrHeader(Interpreter::instr);                                                                         \
         appendStack<type1>(val);                                                                                       \
         execNextCmd();                                                                                                 \
         expectStack<type2>(res);                                                                                       \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(InterpTest, convert_##name##_invalid_stack_size)                                                            \
+    {                                                                                                                  \
+        if (sizeof(type2) > sizeof(type1)) {                                                                           \
+            newInterp(1, sizeof(type2) - 1);                                                                           \
+            appendInstrHeader(Interpreter::instr);                                                                     \
+            appendStack<type1>(val);                                                                                   \
+            expectNextCmdError(Status::StackOverflow);                                                                 \
+        } else {                                                                                                       \
+            newInterp(1, sizeof(type1) - 1);                                                                           \
+            appendInstrHeader(Interpreter::instr);                                                                     \
+            appendStackBytes(0xff, sizeof(type1) - 1);                                                                 \
+            expectNextCmdError(Status::NotEnoughStackData);                                                            \
+        }                                                                                                              \
     }
 
 CONV_TEST(i8_to_i32, int8_t, int32_t, ConvertI8ToI32, -101, -101);
@@ -202,22 +142,31 @@ CONV_TEST(i16_to_u32, int16_t, uint32_t, ConvertI16ToU32, 21254, 21254);
 CONV_TEST(u16_to_i32, uint16_t, int32_t, ConvertU16ToI32, 61867, 61867);
 CONV_TEST(u16_to_u32, uint16_t, uint32_t, ConvertU16ToU32, 61877, 61877);
 CONV_TEST(i32_to_i8, int32_t, int8_t, ConvertI32ToI8, -122, -122);
-CONV_TEST(i32_to_i8_tr, int32_t, int8_t, ConvertI32ToI8, -1898066756, -68);
 CONV_TEST(i32_to_i16, int32_t, int16_t, ConvertI32ToI16, -32011, -32011);
-CONV_TEST(i32_to_i16_tr, int32_t, int16_t, ConvertI32ToI16, -2138718315, -16491);
-CONV_TEST(i32_to_i64, int32_t, int64_t, ConvertI32ToI64, 2107480648, 2107480648);
+CONV_TEST(i32_to_i64, int32_t, int64_t, ConvertI32ToI64, -2107480648, -2107480648);
+CONV_TEST(i32_to_u8, int32_t, uint8_t, ConvertI32ToU8, 212, 212);
+CONV_TEST(i32_to_u16, int32_t, uint16_t, ConvertI32ToU16, 32011, 32011);
+CONV_TEST(i32_to_u64, int32_t, uint64_t, ConvertI32ToU64, 2107480648, 2107480648);
 CONV_TEST(i32_to_float, int32_t, float, ConvertI32ToFloat, -8088608, -8088608);
 CONV_TEST(i32_to_double, int32_t, double, ConvertI32ToDouble, -2147000001, -2147000001);
 
 #define OP_TEST(name, type, instr, op1, op2, res)                                                                      \
     TEST_F(InterpTest, name)                                                                                           \
     {                                                                                                                  \
-        newInterp(1);                                                                                                  \
-        appendInstrHeader(Interpreter::instr);                                                                                      \
+        newInterp(1, sizeof(type) * 2);                                                                                \
+        appendInstrHeader(Interpreter::instr);                                                                         \
         appendStack<type>(op1);                                                                                        \
         appendStack<type>(op2);                                                                                        \
         execNextCmd();                                                                                                 \
         expectStack<type>(res);                                                                                        \
+    }                                                                                                                  \
+                                                                                                                       \
+    TEST_F(InterpTest, name##_not_enough_stack_data)                                                                   \
+    {                                                                                                                  \
+        newInterp(1, sizeof(type) * 2 - 1);                                                                            \
+        appendInstrHeader(Interpreter::instr);                                                                         \
+        appendStackBytes(0xff, sizeof(type) * 2 - 1);                                                                  \
+        expectNextCmdError(Status::NotEnoughStackData);                                                                \
     }
 
 OP_TEST(add_i8, int8_t, AddI8, -53, -5, -58);

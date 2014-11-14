@@ -26,7 +26,7 @@ public:
     virtual void write(const void* data, std::size_t size) = 0;
 
     template <typename T>
-    void writeType(T value)
+    inline void writeType(T value)
     {
         write(&value, sizeof(value));
     }
