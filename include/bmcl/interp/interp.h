@@ -4,6 +4,8 @@
 #include "bmcl/core/memreader.h"
 #include "bmcl/core/status.h"
 
+#include <limits>
+
 namespace bmcl {
 namespace interp {
 
@@ -98,10 +100,14 @@ public:
         DivDouble,
     };
 
+    //TODO: static assert
+
     Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize)
         : _bytecode(bytecode, bytecodeSize)
         , _stack(stack, stackSize)
     {
+        assert(std::numeric_limits<double>::is_iec559);
+        assert(std::numeric_limits<float>::is_iec559);
     }
 
 #if BMCL_HAVE_MALLOC
@@ -110,6 +116,8 @@ public:
         : _bytecode(bytecode, bytecodeSize)
         , _stack(stackSize)
     {
+        assert(std::numeric_limits<double>::is_iec559);
+        assert(std::numeric_limits<float>::is_iec559);
     }
 
 #endif

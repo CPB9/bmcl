@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "bmcl/core/endian.h"
 #include "bmcl/core/status.h"
 
 #include <cstddef>
