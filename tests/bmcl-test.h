@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include <cstddef>
-#include <cstdint>
+#include <stdint.h>
 
 static inline void print_mem(const void* mem, std::size_t size)
 {

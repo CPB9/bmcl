@@ -33,7 +33,7 @@ protected:
 
     void execNextCmd()
     {
-        auto status = _interp->execNext();
+        Status::Msg status = _interp->execNext();
         EXPECT_EQ(Status::Success, status) << Status::toCString(status);
     }
 
@@ -61,7 +61,7 @@ protected:
 
     void expectNextCmdError(Status::Msg err)
     {
-        auto status = _interp->execNext();
+        Status::Msg status = _interp->execNext();
         EXPECT_EQ(err, status);
     }
 
