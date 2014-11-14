@@ -26,7 +26,7 @@ const char* Status::toCString(Status::Msg status)
         return "Not enough stack data";
     case Status::InvalidInstruction:
         return "Invalid instruction";
-    case Status::UnexpectedEndOFBytecode:
+    case Status::UnexpectedEndOfBytecode:
         return "Unexpected end of bytecode";
     }
     return "Undefined error";

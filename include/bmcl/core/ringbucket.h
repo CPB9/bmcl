@@ -70,7 +70,7 @@ public:
         eraseElement();
     }
 
-    void append(const void* data, std::size_t data_size);
+    void append(const void* data, std::size_t dataSize);
 
     std::size_t firstSize() const;
 
@@ -78,7 +78,7 @@ public:
 
 
 private:
-    void prepareForAppend(std::size_t data_size);
+    void prepareForAppend(std::size_t dataSize);
 
     std::size_t eraseElement();
 

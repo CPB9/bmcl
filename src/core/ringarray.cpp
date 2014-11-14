@@ -31,7 +31,7 @@ void RingArray::append(const void* element)
         eraseFirstElement();
     }
     std::memcpy(writePtr(), element, _elementSize);
-    intWritePtr();
+    incWritePtr();
     _count++;
 }
 
@@ -43,7 +43,7 @@ void RingArray::incReadPtr()
     }
 }
 
-void RingArray::intWritePtr()
+void RingArray::incWritePtr()
 {
     _writeOffset++;
     if (_writeOffset >= _size) {

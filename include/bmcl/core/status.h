@@ -20,10 +20,10 @@ public:
         StackOverflow,
         NotEnoughStackData,
         InvalidInstruction,
-        UnexpectedEndOFBytecode,
+        UnexpectedEndOfBytecode,
     };
 
-    const char* toCString(Status::Msg msg);
+    static const char* toCString(Status::Msg msg);
 
 };
 }

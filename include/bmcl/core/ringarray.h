@@ -111,7 +111,7 @@ private:
 
     void incReadPtr();
 
-    void intWritePtr();
+    void incWritePtr();
 
     uint8_t* _data;
     std::size_t _elementSize;

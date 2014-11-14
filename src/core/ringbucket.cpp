@@ -38,26 +38,26 @@ void RingBucket::copyFirst(void* dest) const
     _ringbuf.peek(dest, first_size, sizeof(first_size));
 }
 
-void RingBucket::prepareForAppend(std::size_t data_size)
+void RingBucket::prepareForAppend(std::size_t dataSize)
 {
-    RingBucketHeaderSize element_size = data_size + sizeof(element_size);
+    RingBucketHeaderSize elementSize = dataSize + sizeof(elementSize);
 
-    assert(element_size <= _ringbuf.size());
+    assert(elementSize <= _ringbuf.size());
 
-    if (freeSpace() < element_size)
-        eraseElementsToFitSize(element_size);
+    if (freeSpace() < elementSize)
+        eraseElementsToFitSize(elementSize);
 
-    _ringbuf.write(&data_size, sizeof(data_size));
+    _ringbuf.write(&dataSize, sizeof(dataSize));
 }
 
 std::size_t RingBucket::eraseElement()
 {
-    RingBucketHeaderSize element_size;
-    _ringbuf.peek(&element_size, sizeof(element_size));
-    element_size += sizeof(element_size);
-    _ringbuf.erase(element_size);
+    RingBucketHeaderSize elementSize;
+    _ringbuf.peek(&elementSize, sizeof(elementSize));
+    elementSize += sizeof(RingBucketHeaderSize);
+    _ringbuf.erase(elementSize);
     _count--;
-    return element_size;
+    return elementSize;
 }
 
 void RingBucket::eraseElementsToFitSize(std::size_t size)

@@ -23,7 +23,7 @@ public:
     {
     }
 
-    virtual void read(void* dest, std::size_t) = 0;
+    virtual void read(void* dest, std::size_t size) = 0;
 
     template <typename T>
     T readType()
