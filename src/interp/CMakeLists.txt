@@ -1,5 +1,5 @@
 set(BMCL_INTERP_SRCS
-    interp.c
+    interp.cpp
 )
 
 set(BMCL_INTERP_HDRS

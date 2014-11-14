@@ -4,117 +4,135 @@
 #include "bmcl/core/memreader.h"
 #include "bmcl/core/status.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace bmcl {
+namespace interp {
 
-typedef enum {
-    BMCL_INSTR_PUSH8 = 0,
-    BMCL_INSTR_PUSH16,
-    BMCL_INSTR_PUSH32,
-    BMCL_INSTR_PUSH64,
-    BMCL_INSTR_CONVERT_I8_TO_I32,
-    BMCL_INSTR_CONVERT_I8_TO_U32,
-    BMCL_INSTR_CONVERT_U8_TO_I32,
-    BMCL_INSTR_CONVERT_U8_TO_U32,
-    BMCL_INSTR_CONVERT_I16_TO_I32,
-    BMCL_INSTR_CONVERT_I16_TO_U32,
-    BMCL_INSTR_CONVERT_U16_TO_I32,
-    BMCL_INSTR_CONVERT_U16_TO_U32,
-    BMCL_INSTR_CONVERT_I32_TO_I8,
-    BMCL_INSTR_CONVERT_I32_TO_U8,
-    BMCL_INSTR_CONVERT_I32_TO_I16,
-    BMCL_INSTR_CONVERT_I32_TO_U16,
-    BMCL_INSTR_CONVERT_I32_TO_I64,
-    BMCL_INSTR_CONVERT_I32_TO_U64,
-    BMCL_INSTR_CONVERT_I32_TO_FLOAT,
-    BMCL_INSTR_CONVERT_I32_TO_DOUBLE,
-    BMCL_INSTR_CONVERT_U32_TO_I8,
-    BMCL_INSTR_CONVERT_U32_TO_U8,
-    BMCL_INSTR_CONVERT_U32_TO_I16,
-    BMCL_INSTR_CONVERT_U32_TO_U16,
-    BMCL_INSTR_CONVERT_U32_TO_U64,
-    BMCL_INSTR_CONVERT_U32_TO_I64,
-    BMCL_INSTR_CONVERT_U32_TO_FLOAT,
-    BMCL_INSTR_CONVERT_U32_TO_DOUBLE,
-    BMCL_INSTR_CONVERT_I64_TO_I32,
-    BMCL_INSTR_CONVERT_I64_TO_U32,
-    BMCL_INSTR_CONVERT_I64_TO_FLOAT,
-    BMCL_INSTR_CONVERT_I64_TO_DOUBLE,
-    BMCL_INSTR_CONVERT_U64_TO_I32,
-    BMCL_INSTR_CONVERT_U64_TO_U32,
-    BMCL_INSTR_CONVERT_U64_TO_FLOAT,
-    BMCL_INSTR_CONVERT_U64_TO_DOUBLE,
-    BMCL_INSTR_CONVERT_FLOAT_TO_I32,
-    BMCL_INSTR_CONVERT_FLOAT_TO_U32,
-    BMCL_INSTR_CONVERT_FLOAT_TO_I64,
-    BMCL_INSTR_CONVERT_FLOAT_TO_U64,
-    BMCL_INSTR_CONVERT_FLOAT_TO_DOUBLE,
-    BMCL_INSTR_CONVERT_DOUBLE_TO_I32,
-    BMCL_INSTR_CONVERT_DOUBLE_TO_U32,
-    BMCL_INSTR_CONVERT_DOUBLE_TO_I64,
-    BMCL_INSTR_CONVERT_DOUBLE_TO_U64,
-    BMCL_INSTR_CONVERT_DOUBLE_TO_FLOAT,
-    BMCL_INSTR_ADD_I8,
-    BMCL_INSTR_ADD_I16,
-    BMCL_INSTR_ADD_I32,
-    BMCL_INSTR_ADD_I64,
-    BMCL_INSTR_ADD_U8,
-    BMCL_INSTR_ADD_U16,
-    BMCL_INSTR_ADD_U32,
-    BMCL_INSTR_ADD_U64,
-    BMCL_INSTR_ADD_FLOAT,
-    BMCL_INSTR_ADD_DOUBLE,
-    BMCL_INSTR_SUB_I8,
-    BMCL_INSTR_SUB_I16,
-    BMCL_INSTR_SUB_I32,
-    BMCL_INSTR_SUB_I64,
-    BMCL_INSTR_SUB_U8,
-    BMCL_INSTR_SUB_U16,
-    BMCL_INSTR_SUB_U32,
-    BMCL_INSTR_SUB_U64,
-    BMCL_INSTR_SUB_FLOAT,
-    BMCL_INSTR_SUB_DOUBLE,
-    BMCL_INSTR_MULT_I8,
-    BMCL_INSTR_MULT_I16,
-    BMCL_INSTR_MULT_I32,
-    BMCL_INSTR_MULT_I64,
-    BMCL_INSTR_MULT_U8,
-    BMCL_INSTR_MULT_U16,
-    BMCL_INSTR_MULT_U32,
-    BMCL_INSTR_MULT_U64,
-    BMCL_INSTR_MULT_FLOAT,
-    BMCL_INSTR_MULT_DOUBLE,
-    BMCL_INSTR_DIV_I8,
-    BMCL_INSTR_DIV_I16,
-    BMCL_INSTR_DIV_I32,
-    BMCL_INSTR_DIV_I64,
-    BMCL_INSTR_DIV_U8,
-    BMCL_INSTR_DIV_U16,
-    BMCL_INSTR_DIV_U32,
-    BMCL_INSTR_DIV_U64,
-    BMCL_INSTR_DIV_FLOAT,
-    BMCL_INSTR_DIV_DOUBLE,
-} bmcl_sci_instr_type_t;
+class Interpreter {
+public:
+    enum Instruction {
+        Push8 = 0,
+        Push16,
+        Push32,
+        Push64,
+        ConvertI8ToI32,
+        ConvertI8ToU32,
+        ConvertU8ToI32,
+        ConvertU8ToU32,
+        ConvertI16ToI32,
+        ConvertI16ToU32,
+        ConvertU16ToI32,
+        ConvertU16ToU32,
+        ConvertI32ToI8,
+        ConvertI32ToU8,
+        ConvertI32ToI16,
+        ConvertI32ToU16,
+        ConvertI32ToI64,
+        ConvertI32ToU64,
+        ConvertI32ToFloat,
+        ConvertI32ToDouble,
+        ConvertU32ToI8,
+        ConvertU32ToU8,
+        ConvertU32ToI16,
+        ConvertU32ToU16,
+        ConvertU32ToI64,
+        ConvertU32ToU64,
+        ConvertU32ToFloat,
+        ConvertU32ToDouble,
+        ConvertI64ToI32,
+        ConvertI64ToU32,
+        ConvertI64ToFloat,
+        ConvertI64ToDouble,
+        ConvertU64ToI32,
+        ConvertU64ToU32,
+        ConvertU64ToFloat,
+        ConvertU64ToDouble,
+        ConvertFloatToI32,
+        ConvertFloatToU32,
+        ConvertFloatToI64,
+        ConvertFloatToU64,
+        ConvertFloatToDouble,
+        ConvertDoubleToI32,
+        ConvertDoubleToU32,
+        ConvertDoubleToI64,
+        ConvertDoubleToU64,
+        ConvertDoubleToFloat,
+        AddI8,
+        AddI16,
+        AddI32,
+        AddI64,
+        AddU8,
+        AddU16,
+        AddU32,
+        AddU64,
+        AddFloat,
+        AddDouble,
+        SubI8,
+        SubI16,
+        SubI32,
+        SubI64,
+        SubU8,
+        SubU16,
+        SubU32,
+        SubU64,
+        SubFloat,
+        SubDouble,
+        MultI8,
+        MultI16,
+        MultI32,
+        MultI64,
+        MultU8,
+        MultU16,
+        MultU32,
+        MultU64,
+        MultFloat,
+        MultDouble,
+        DivI8,
+        DivI16,
+        DivI32,
+        DivI64,
+        DivU8,
+        DivU16,
+        DivU32,
+        DivU64,
+        DivFloat,
+        DivDouble,
+    };
 
-typedef struct {
-    bmcl_memreader_t bytecode;
-    bmcl_memwriter_t stack;
-} bmcl_sci_interp_t;
-
-void bmcl_sci_interp_init(bmcl_sci_interp_t* self, const void* bytecode, size_t bytecode_size, void* stack,
-                          size_t stack_size);
+    Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize)
+        : _bytecode(bytecode, bytecodeSize)
+        , _stack(stack, stackSize)
+    {
+    }
 
 #if BMCL_HAVE_MALLOC
 
-bmcl_sci_interp_t* bmcl_sci_interp_create(const void* bytecode, size_t bytecode_size, size_t stack_size);
-
-void bmcl_sci_interp_destroy(bmcl_sci_interp_t* self);
+    Interpreter(const void* bytecode, std::size_t bytecodeSize, std::size_t stackSize)
+        : _bytecode(bytecode, bytecodeSize)
+        , _stack(stackSize)
+    {
+    }
 
 #endif
 
-bmcl_status_t bmcl_sci_interp_exec_next(bmcl_sci_interp_t* self);
+    bmcl::core::Status::Msg execNext();
 
-#ifdef __cplusplus
+    bmcl::core::MemWriter* stack()
+    {
+        return &_stack;
+    }
+
+private:
+    template <typename T>
+    inline bmcl::core::Status::Msg stackPush();
+
+    template <typename T1, typename T2>
+    inline bmcl::core::Status::Msg stackConvert();
+
+    template <typename T, typename F>
+    inline bmcl::core::Status::Msg stackOp(F func);
+
+    bmcl::core::MemReader _bytecode;
+    bmcl::core::MemWriter _stack;
+};
 }
-#endif
+}

@@ -41,7 +41,7 @@ add_unit_test(ringbucket_tests ringbucket.cpp)
 add_unit_test(ringbuf_tests ringbuf.cpp)
 add_unit_test(writer_tests writer.cpp)
 #
-# add_unit_test(interp interp.cpp bmcl-interp)
+add_unit_test(interp_tests interp.cpp bmcl-interp)
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests

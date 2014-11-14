@@ -1,275 +1,277 @@
 #include "bmcl/interp/interp.h"
 
-#include <assert.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 
-#define MAKE_STACK_PUSH_FUNC(type, func_suffix, read_suffix, write_suffix)                                             \
-    static bmcl_status_t stack_push##func_suffix(bmcl_sci_interp_t* interp)                                            \
-    {                                                                                                                  \
-        if (bmcl_memreader_size_left(&interp->bytecode) < sizeof(type)) {                                              \
-            return BMCL_ERR_UNEXPECTED_END_OF_BYTECODE;                                                                \
-        }                                                                                                              \
-        if (bmcl_memwriter_size_left(&interp->stack) < sizeof(type)) {                                                 \
-            return BMCL_ERR_STACK_OVERFLOW;                                                                            \
-        }                                                                                                              \
-        type value = bmcl_memreader_read_##read_suffix(&interp->bytecode);                                             \
-        bmcl_memwriter_write_##write_suffix(&interp->stack, value);                                                    \
-        return BMCL_SUCCESS;                                                                                           \
+namespace bmcl {
+namespace interp {
+
+using namespace bmcl::core;
+
+template <typename T>
+Status::Msg Interpreter::stackPush()
+{
+    if (_bytecode.sizeLeft() < sizeof(T)) {
+        return Status::UnexpectedEndOfBytecode;
     }
 
-MAKE_STACK_PUSH_FUNC(int8_t, 8, uint8, uint8);
-MAKE_STACK_PUSH_FUNC(int16_t, 16, uint16be, uint16);
-MAKE_STACK_PUSH_FUNC(int32_t, 32, uint32be, uint32);
-MAKE_STACK_PUSH_FUNC(int64_t, 64, uint64be, uint64);
-
-#define MAKE_CONVERT_FUNCTION(type1, name1, type2, name2)                                                              \
-    static bmcl_status_t convert_##name1##_to_##name2(bmcl_sci_interp_t* interp)                                       \
-    {                                                                                                                  \
-        if (bmcl_memwriter_size(&interp->stack) < sizeof(type1)) {                                                     \
-            return BMCL_ERR_NOT_ENOUGH_STACK_DATA;                                                                     \
-        }                                                                                                              \
-                                                                                                                       \
-        type1 var1;                                                                                                    \
-        bmcl_memwriter_pop(&interp->stack, &var1, sizeof(type1));                                                      \
-                                                                                                                       \
-        if (bmcl_memwriter_size_left(&interp->stack) < sizeof(type2)) {                                                \
-            return BMCL_ERR_STACK_OVERFLOW;                                                                            \
-        }                                                                                                              \
-                                                                                                                       \
-        type2 var2 = (type2)var1;                                                                                      \
-        bmcl_memwriter_write(&interp->stack, &var2, sizeof(type2));                                                    \
-        return BMCL_SUCCESS;                                                                                           \
+    if (_stack.sizeLeft() < sizeof(T)) {
+        return Status::StackOverflow;
     }
 
-MAKE_CONVERT_FUNCTION(int8_t, i8, int32_t, i32);
-MAKE_CONVERT_FUNCTION(int8_t, i8, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(uint8_t, u8, int32_t, i32);
-MAKE_CONVERT_FUNCTION(uint8_t, u8, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(int16_t, i16, int32_t, i32);
-MAKE_CONVERT_FUNCTION(int16_t, i16, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(uint16_t, u16, int32_t, i32);
-MAKE_CONVERT_FUNCTION(uint16_t, u16, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(int32_t, i32, int8_t, i8);
-MAKE_CONVERT_FUNCTION(int32_t, i32, uint8_t, u8);
-MAKE_CONVERT_FUNCTION(int32_t, i32, int16_t, i16);
-MAKE_CONVERT_FUNCTION(int32_t, i32, uint16_t, u16);
-MAKE_CONVERT_FUNCTION(int32_t, i32, int64_t, i64);
-MAKE_CONVERT_FUNCTION(int32_t, i32, uint64_t, u64);
-MAKE_CONVERT_FUNCTION(int32_t, i32, float, float);
-MAKE_CONVERT_FUNCTION(int32_t, i32, double, double);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, int8_t, i8);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, uint8_t, u8);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, int16_t, i16);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, uint16_t, u16);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, int64_t, i64);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, uint64_t, u64);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, float, float);
-MAKE_CONVERT_FUNCTION(uint32_t, u32, double, double);
-MAKE_CONVERT_FUNCTION(int64_t, i64, int32_t, i32);
-MAKE_CONVERT_FUNCTION(int64_t, i64, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(int64_t, i64, float, float);
-MAKE_CONVERT_FUNCTION(int64_t, i64, double, double);
-MAKE_CONVERT_FUNCTION(uint64_t, u64, int32_t, i32);
-MAKE_CONVERT_FUNCTION(uint64_t, u64, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(uint64_t, u64, float, float);
-MAKE_CONVERT_FUNCTION(uint64_t, u64, double, double);
-MAKE_CONVERT_FUNCTION(float, float, int32_t, i32);
-MAKE_CONVERT_FUNCTION(float, float, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(float, float, int64_t, i64);
-MAKE_CONVERT_FUNCTION(float, float, uint64_t, u64);
-MAKE_CONVERT_FUNCTION(float, float, double, double);
-MAKE_CONVERT_FUNCTION(double, double, int32_t, i32);
-MAKE_CONVERT_FUNCTION(double, double, uint32_t, u32);
-MAKE_CONVERT_FUNCTION(double, double, int64_t, i64);
-MAKE_CONVERT_FUNCTION(double, double, uint64_t, u64);
-MAKE_CONVERT_FUNCTION(double, double, float, float);
+    T value = _bytecode.readType<T>();
+    _stack.writeType<T>(value);
+    return Status::Success;
+}
 
-
-#define MAKE_MATH_FUNCTION(type, prefix, suffix, op)                                                                   \
-    static bmcl_status_t prefix##_##suffix(bmcl_sci_interp_t* interp)                                                  \
-    {                                                                                                                  \
-        if (bmcl_memwriter_size(&interp->stack) < 2 * sizeof(type)) {                                                  \
-            return BMCL_ERR_NOT_ENOUGH_STACK_DATA;                                                                     \
-        }                                                                                                              \
-        type op1, op2;                                                                                                 \
-        bmcl_memwriter_pop(&interp->stack, &op1, sizeof(type));                                                        \
-        bmcl_memwriter_pop(&interp->stack, &op2, sizeof(type));                                                        \
-        type result = op1 op op2;                                                                                      \
-        bmcl_memwriter_write(&interp->stack, &result, sizeof(type));                                                   \
-        return BMCL_SUCCESS;                                                                                           \
+template <typename T1, typename T2>
+Status::Msg Interpreter::stackConvert()
+{
+    if (_stack.sizeLeft() < sizeof(T1)) {
+        return Status::NotEnoughStackData;
     }
 
-MAKE_MATH_FUNCTION(int8_t, add, i8, +);
-MAKE_MATH_FUNCTION(int16_t, add, i16, +);
-MAKE_MATH_FUNCTION(int32_t, add, i32, +);
-MAKE_MATH_FUNCTION(int64_t, add, i64, +);
-MAKE_MATH_FUNCTION(uint8_t, add, u8, +);
-MAKE_MATH_FUNCTION(uint16_t, add, u16, +);
-MAKE_MATH_FUNCTION(uint32_t, add, u32, +);
-MAKE_MATH_FUNCTION(uint64_t, add, u64, +);
-MAKE_MATH_FUNCTION(float, add, float, +);
-MAKE_MATH_FUNCTION(double, add, double, +);
+    T1 var1 = _stack.popType<T1>();
+    if (_stack.sizeLeft() < sizeof(T2)) {
+        return Status::StackOverflow;
+    }
 
-MAKE_MATH_FUNCTION(int8_t, sub, i8, -);
-MAKE_MATH_FUNCTION(int16_t, sub, i16, -);
-MAKE_MATH_FUNCTION(int32_t, sub, i32, -);
-MAKE_MATH_FUNCTION(int64_t, sub, i64, -);
-MAKE_MATH_FUNCTION(uint8_t, sub, u8, -);
-MAKE_MATH_FUNCTION(uint16_t, sub, u16, -);
-MAKE_MATH_FUNCTION(uint32_t, sub, u32, -);
-MAKE_MATH_FUNCTION(uint64_t, sub, u64, -);
-MAKE_MATH_FUNCTION(float, sub, float, -);
-MAKE_MATH_FUNCTION(double, sub, double, -);
-
-MAKE_MATH_FUNCTION(int8_t, mult, i8, *);
-MAKE_MATH_FUNCTION(int16_t, mult, i16, *);
-MAKE_MATH_FUNCTION(int32_t, mult, i32, *);
-MAKE_MATH_FUNCTION(int64_t, mult, i64, *);
-MAKE_MATH_FUNCTION(uint8_t, mult, u8, *);
-MAKE_MATH_FUNCTION(uint16_t, mult, u16, *);
-MAKE_MATH_FUNCTION(uint32_t, mult, u32, *);
-MAKE_MATH_FUNCTION(uint64_t, mult, u64, *);
-MAKE_MATH_FUNCTION(float, mult, float, *);
-MAKE_MATH_FUNCTION(double, mult, double, *);
-
-MAKE_MATH_FUNCTION(int8_t, div, i8, /);
-MAKE_MATH_FUNCTION(int16_t, div, i16, /);
-MAKE_MATH_FUNCTION(int32_t, div, i32, /);
-MAKE_MATH_FUNCTION(int64_t, div, i64, /);
-MAKE_MATH_FUNCTION(uint8_t, div, u8, /);
-MAKE_MATH_FUNCTION(uint16_t, div, u16, /);
-MAKE_MATH_FUNCTION(uint32_t, div, u32, /);
-MAKE_MATH_FUNCTION(uint64_t, div, u64, /);
-MAKE_MATH_FUNCTION(float, div, float, /);
-MAKE_MATH_FUNCTION(double, div, double, /);
-
-void bmcl_sci_interp_init(bmcl_sci_interp_t* self, const void* bytecode, size_t bytecode_size, void* stack,
-                          size_t stack_size)
-{
-    bmcl_memreader_init(&self->bytecode, bytecode, bytecode_size);
-    bmcl_memwriter_init(&self->stack, stack, stack_size);
+    T2 var2 = (T2)var1;
+    _stack.writeType<T2>(var2);
+    return Status::Success;
 }
 
-#if BMCL_HAVE_MALLOC
-
-bmcl_sci_interp_t* bmcl_sci_interp_create(const void* bytecode, size_t bytecode_size, size_t stack_size)
+template <typename T, typename F>
+Status::Msg Interpreter::stackOp(F func)
 {
-    bmcl_sci_interp_t* self = malloc(sizeof(bmcl_sci_interp_t) + stack_size);
-    uint8_t* stack = (uint8_t*)self + sizeof(bmcl_sci_interp_t);
-    bmcl_sci_interp_init(self, bytecode, bytecode_size, stack, stack_size);
-    return self;
+    if (_stack.sizeUsed() < 2 * sizeof(T)) {
+        return Status::NotEnoughStackData;
+    }
+    T op1 = _stack.popType<T>();
+    T op2 = _stack.popType<T>();
+    T result = func(op1, op2);
+    _stack.pushType<T>(result);
+    return Status::Success;
 }
 
-void bmcl_sci_interp_destroy(bmcl_sci_interp_t* self)
-{
-    free(self);
-}
+// avoiding STL
 
-#endif
-
-static bmcl_status_t (*jump_table[])(bmcl_sci_interp_t*) = {
-    stack_push8,
-    stack_push16,
-    stack_push32,
-    stack_push64,
-    // float, double?
-    convert_i8_to_i32,
-    convert_i8_to_u32,
-    convert_u8_to_i32,
-    convert_u8_to_u32,
-    convert_i16_to_i32,
-    convert_i16_to_u32,
-    convert_u16_to_i32,
-    convert_u16_to_u32,
-    convert_i32_to_i8,
-    convert_i32_to_u8,
-    convert_i32_to_i16,
-    convert_i32_to_u16,
-    convert_i32_to_i64,
-    convert_i32_to_u64,
-    convert_i32_to_float,
-    convert_i32_to_double,
-    convert_u32_to_i8,
-    convert_u32_to_u8,
-    convert_u32_to_i16,
-    convert_u32_to_u16,
-    convert_u32_to_i64,
-    convert_u32_to_u64,
-    convert_u32_to_float,
-    convert_u32_to_double,
-    convert_i64_to_i32,
-    convert_i64_to_u32,
-    convert_i64_to_float,
-    convert_i64_to_double,
-    convert_u64_to_i32,
-    convert_u64_to_u32,
-    convert_u64_to_float,
-    convert_u64_to_double,
-    convert_float_to_i32,
-    convert_float_to_u32,
-    convert_float_to_i64,
-    convert_float_to_u64,
-    convert_float_to_double,
-    convert_double_to_i32,
-    convert_double_to_u32,
-    convert_double_to_i64,
-    convert_double_to_u64,
-    convert_double_to_float,
-    add_i8,
-    add_i16,
-    add_i32,
-    add_i64,
-    add_u8,
-    add_u16,
-    add_u32,
-    add_u64,
-    add_float,
-    add_double,
-    sub_i8,
-    sub_i16,
-    sub_i32,
-    sub_i64,
-    sub_u8,
-    sub_u16,
-    sub_u32,
-    sub_u64,
-    sub_float,
-    sub_double,
-    mult_i8,
-    mult_i16,
-    mult_i32,
-    mult_i64,
-    mult_u8,
-    mult_u16,
-    mult_u32,
-    mult_u64,
-    mult_float,
-    mult_double,
-    div_i8,
-    div_i16,
-    div_i32,
-    div_i64,
-    div_u8,
-    div_u16,
-    div_u32,
-    div_u64,
-    div_float,
-    div_double,
+template <typename T>
+struct OpAdd {
+    inline T operator()(T val1, T val2)
+    {
+        return val1 + val2;
+    }
 };
 
-bmcl_status_t bmcl_sci_interp_exec_next(bmcl_sci_interp_t* interp)
+template <typename T>
+struct OpSub {
+    inline T operator()(T val1, T val2)
+    {
+        return val1 - val2;
+    }
+};
+
+template <typename T>
+struct OpMult {
+    inline T operator()(T val1, T val2)
+    {
+        return val1 * val2;
+    }
+};
+
+template <typename T>
+struct OpDiv {
+    inline T operator()(T val1, T val2)
+    {
+        return val1 / val2;
+    }
+};
+
+Status::Msg Interpreter::execNext()
 {
-    if (bmcl_memreader_is_empty(&interp->bytecode)) {
-        return BMCL_ERR_BUFFER_OVERFLOW; //TODO: eof
+    if (_bytecode.isEmpty()) {
+        return Status::UnexpectedEndOfBytecode; // TODO: eof
     }
 
-    uint8_t instr_id = bmcl_memreader_read_uint8(&interp->bytecode);
-    size_t instr_count = sizeof(jump_table) / sizeof(jump_table[0]);
-    assert(instr_count <= 256);
-    if (instr_id >= instr_count) {
-        return BMCL_ERR_INVALID_INSTRUCTION;
+    uint8_t instrId = _bytecode.readUint8();
+
+    switch (instrId) {
+    case Instruction::Push8:
+        return stackPush<uint8_t>();
+    case Instruction::Push16:
+        return stackPush<uint16_t>();
+    case Instruction::Push32:
+        return stackPush<uint32_t>();
+    case Instruction::Push64:
+        return stackPush<uint64_t>();
+    case Instruction::ConvertI8ToI32:
+        return stackConvert<int8_t, int32_t>();
+    case Instruction::ConvertI8ToU32:
+        return stackConvert<int8_t, uint32_t>();
+    case Instruction::ConvertU8ToI32:
+        return stackConvert<uint8_t, int32_t>();
+    case Instruction::ConvertU8ToU32:
+        return stackConvert<uint8_t, uint32_t>();
+    case Instruction::ConvertI16ToI32:
+        return stackConvert<int16_t, int32_t>();
+    case Instruction::ConvertI16ToU32:
+        return stackConvert<int16_t, uint32_t>();
+    case Instruction::ConvertU16ToI32:
+        return stackConvert<uint16_t, int32_t>();
+    case Instruction::ConvertU16ToU32:
+        return stackConvert<uint16_t, uint32_t>();
+    case Instruction::ConvertI32ToI8:
+        return stackConvert<int32_t, int8_t>();
+    case Instruction::ConvertI32ToU8:
+        return stackConvert<int32_t, uint8_t>();
+    case Instruction::ConvertI32ToI16:
+        return stackConvert<int32_t, int16_t>();
+    case Instruction::ConvertI32ToU16:
+        return stackConvert<int32_t, uint16_t>();
+    case Instruction::ConvertI32ToI64:
+        return stackConvert<int32_t, int64_t>();
+    case Instruction::ConvertI32ToU64:
+        return stackConvert<int32_t, uint64_t>();
+    case Instruction::ConvertI32ToFloat:
+        return stackConvert<int32_t, float>();
+    case Instruction::ConvertI32ToDouble:
+        return stackConvert<int32_t, double>();
+    case Instruction::ConvertU32ToI8:
+        return stackConvert<uint32_t, int8_t>();
+    case Instruction::ConvertU32ToU8:
+        return stackConvert<uint32_t, uint8_t>();
+    case Instruction::ConvertU32ToI16:
+        return stackConvert<uint32_t, int16_t>();
+    case Instruction::ConvertU32ToU16:
+        return stackConvert<uint32_t, uint16_t>();
+    case Instruction::ConvertU32ToI64:
+        return stackConvert<uint32_t, int64_t>();
+    case Instruction::ConvertU32ToU64:
+        return stackConvert<uint32_t, uint64_t>();
+    case Instruction::ConvertU32ToFloat:
+        return stackConvert<uint32_t, float>();
+    case Instruction::ConvertU32ToDouble:
+        return stackConvert<uint32_t, double>();
+    case Instruction::ConvertI64ToI32:
+        return stackConvert<int64_t, int32_t>();
+    case Instruction::ConvertI64ToU32:
+        return stackConvert<int64_t, uint32_t>();
+    case Instruction::ConvertI64ToFloat:
+        return stackConvert<int64_t, float>();
+    case Instruction::ConvertI64ToDouble:
+        return stackConvert<int64_t, double>();
+    case Instruction::ConvertU64ToI32:
+        return stackConvert<uint64_t, int32_t>();
+    case Instruction::ConvertU64ToU32:
+        return stackConvert<uint64_t, uint32_t>();
+    case Instruction::ConvertU64ToFloat:
+        return stackConvert<uint64_t, float>();
+    case Instruction::ConvertU64ToDouble:
+        return stackConvert<uint64_t, double>();
+    case Instruction::ConvertFloatToI32:
+        return stackConvert<float, int32_t>();
+    case Instruction::ConvertFloatToU32:
+        return stackConvert<float, uint32_t>();
+    case Instruction::ConvertFloatToI64:
+        return stackConvert<float, int64_t>();
+    case Instruction::ConvertFloatToU64:
+        return stackConvert<float, uint64_t>();
+    case Instruction::ConvertFloatToDouble:
+        return stackConvert<float, double>();
+    case Instruction::ConvertDoubleToI32:
+        return stackConvert<double, int32_t>();
+    case Instruction::ConvertDoubleToU32:
+        return stackConvert<double, uint32_t>();
+    case Instruction::ConvertDoubleToI64:
+        return stackConvert<double, int64_t>();
+    case Instruction::ConvertDoubleToU64:
+        return stackConvert<double, uint64_t>();
+    case Instruction::ConvertDoubleToFloat:
+        return stackConvert<double, float>();
+    case Instruction::AddI8:
+        return stackOp<int8_t>(OpAdd<int8_t>());
+    case Instruction::AddI16:
+        return stackOp<int16_t>(OpAdd<int16_t>());
+    case Instruction::AddI32:
+        return stackOp<int32_t>(OpAdd<int32_t>());
+    case Instruction::AddI64:
+        return stackOp<int64_t>(OpAdd<int64_t>());
+    case Instruction::AddU8:
+        return stackOp<uint8_t>(OpAdd<uint8_t>());
+    case Instruction::AddU16:
+        return stackOp<uint16_t>(OpAdd<uint16_t>());
+    case Instruction::AddU32:
+        return stackOp<uint32_t>(OpAdd<uint32_t>());
+    case Instruction::AddU64:
+        return stackOp<uint64_t>(OpAdd<uint64_t>());
+    case Instruction::AddFloat:
+        return stackOp<float>(OpAdd<float>());
+    case Instruction::AddDouble:
+        return stackOp<double>(OpAdd<double>());
+    case Instruction::SubI8:
+        return stackOp<int8_t>(OpSub<int8_t>());
+    case Instruction::SubI16:
+        return stackOp<int16_t>(OpSub<int16_t>());
+    case Instruction::SubI32:
+        return stackOp<int32_t>(OpSub<int32_t>());
+    case Instruction::SubI64:
+        return stackOp<int64_t>(OpSub<int64_t>());
+    case Instruction::SubU8:
+        return stackOp<uint8_t>(OpSub<uint8_t>());
+    case Instruction::SubU16:
+        return stackOp<uint16_t>(OpSub<uint16_t>());
+    case Instruction::SubU32:
+        return stackOp<uint32_t>(OpSub<uint32_t>());
+    case Instruction::SubU64:
+        return stackOp<uint64_t>(OpSub<uint64_t>());
+    case Instruction::SubFloat:
+        return stackOp<float>(OpSub<float>());
+    case Instruction::SubDouble:
+        return stackOp<double>(OpSub<double>());
+    case Instruction::MultI8:
+        return stackOp<int8_t>(OpMult<int8_t>());
+    case Instruction::MultI16:
+        return stackOp<int16_t>(OpMult<int16_t>());
+    case Instruction::MultI32:
+        return stackOp<int32_t>(OpMult<int32_t>());
+    case Instruction::MultI64:
+        return stackOp<int64_t>(OpMult<int64_t>());
+    case Instruction::MultU8:
+        return stackOp<uint8_t>(OpMult<uint8_t>());
+    case Instruction::MultU16:
+        return stackOp<uint16_t>(OpMult<uint16_t>());
+    case Instruction::MultU32:
+        return stackOp<uint32_t>(OpMult<uint32_t>());
+    case Instruction::MultU64:
+        return stackOp<uint64_t>(OpMult<uint64_t>());
+    case Instruction::MultFloat:
+        return stackOp<float>(OpMult<float>());
+    case Instruction::MultDouble:
+        return stackOp<double>(OpMult<double>());
+    case Instruction::DivI8:
+        return stackOp<int8_t>(OpDiv<int8_t>());
+    case Instruction::DivI16:
+        return stackOp<int16_t>(OpDiv<int16_t>());
+    case Instruction::DivI32:
+        return stackOp<int32_t>(OpDiv<int32_t>());
+    case Instruction::DivI64:
+        return stackOp<int64_t>(OpDiv<int64_t>());
+    case Instruction::DivU8:
+        return stackOp<uint8_t>(OpDiv<uint8_t>());
+    case Instruction::DivU16:
+        return stackOp<uint16_t>(OpDiv<uint16_t>());
+    case Instruction::DivU32:
+        return stackOp<uint32_t>(OpDiv<uint32_t>());
+    case Instruction::DivU64:
+        return stackOp<uint64_t>(OpDiv<uint64_t>());
+    case Instruction::DivFloat:
+        return stackOp<float>(OpDiv<float>());
+    case Instruction::DivDouble:
+        return stackOp<double>(OpDiv<double>());
     }
 
-    return jump_table[instr_id](interp);
+    return Status::InvalidInstruction;
 }
-
+}
+}
