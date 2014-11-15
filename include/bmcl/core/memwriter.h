@@ -19,7 +19,7 @@
 namespace bmcl {
 namespace core {
 
-class MemWriter : public Writer, public Stack {
+class MemWriter : public bmcl::core::Writer, public bmcl::core::Stack {
 public:
     MemWriter(void* dest, std::size_t maxSize)
     {
@@ -72,7 +72,7 @@ public:
         return _end - _start;
     }
 
-    std::size_t sizeLeft() const
+    virtual std::size_t sizeLeft() const
     {
         return _end - _current;
     }

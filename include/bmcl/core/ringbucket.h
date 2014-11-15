@@ -15,7 +15,7 @@
 namespace bmcl {
 namespace core {
 
-typedef std::size_t RingBucketHeaderSize;
+typedef std::size_t RingBucketHeader;
 
 class RingBucket {
 public:
@@ -44,7 +44,7 @@ public:
 
     static std::size_t headerSize()
     {
-        return sizeof(RingBucketHeaderSize);
+        return sizeof(RingBucketHeader);
     }
 
     bool isEmpty() const

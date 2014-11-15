@@ -19,7 +19,7 @@
 namespace bmcl {
 namespace core {
 
-class RingBuf: public Reader, public Writer {
+class RingBuf: public bmcl::core::Reader, public bmcl::core::Writer {
 public:
     RingBuf(void* data, std::size_t size)
     {
@@ -62,6 +62,11 @@ public:
     std::size_t usedSpace() const
     {
         return _size - _free_space;
+    }
+
+    virtual std::size_t sizeLeft() const
+    {
+        return freeSpace();
     }
 
     bool isFull() const

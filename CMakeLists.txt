@@ -28,7 +28,7 @@ if(NOT ARDUINO_BOARD)
         add_definitions(/DBMCL_HAVE_MALLOC=1) # temp
     else()
         add_definitions(-std=c++98)
-        add_definitions(-Wall -Wextra -O0 -g -ggdb -pipe)
+        add_definitions(-Wall -Wextra -O0 -ggdb3 -pipe)
         add_definitions(-DBMCL_HAVE_MALLOC=1) # temp
     endif()
 

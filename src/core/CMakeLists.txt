@@ -14,6 +14,7 @@ set(BMCL_CORE_HDRS
     ${BMCL_INCLUDE_DIRS}/bmcl/core/ringarray.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbucket.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/ringbuf.h
+    ${BMCL_INCLUDE_DIRS}/bmcl/core/stack.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/status.h
     ${BMCL_INCLUDE_DIRS}/bmcl/core/writer.h
 )

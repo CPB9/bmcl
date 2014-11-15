@@ -26,6 +26,8 @@ public:
 
     virtual void write(const void* data, std::size_t size) = 0;
 
+    virtual std::size_t sizeLeft() const = 0;
+
     template <typename T>
     inline void writeType(T value)
     {

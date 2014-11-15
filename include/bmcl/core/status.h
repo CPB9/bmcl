@@ -23,7 +23,7 @@ public:
         UnexpectedEndOfBytecode,
     };
 
-    static const char* toCString(Status::Msg msg);
+    static const char* toCString(bmcl::core::Status::Msg msg);
 
 };
 }
