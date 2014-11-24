@@ -108,7 +108,7 @@ public:
         DivDouble,
     };
 
-    //TODO: static assert
+    // TODO: static assert
 
     Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize)
         : _bytecode(bytecode, bytecodeSize)

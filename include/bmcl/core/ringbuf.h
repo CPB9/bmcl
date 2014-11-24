@@ -19,7 +19,7 @@
 namespace bmcl {
 namespace core {
 
-class RingBuf: public bmcl::core::Reader, public bmcl::core::Writer {
+class RingBuf : public bmcl::core::Reader, public bmcl::core::Writer {
 public:
     RingBuf(void* data, std::size_t size)
     {
@@ -49,19 +49,19 @@ public:
 
     void clear()
     {
-        _write_offset = 0;
-        _read_offset = 0;
-        _free_space = _size;
+        _writeOffset = 0;
+        _readOffset = 0;
+        _freeSpace = _size;
     }
 
     std::size_t freeSpace() const
     {
-        return _free_space;
+        return _freeSpace;
     }
 
     std::size_t usedSpace() const
     {
-        return _size - _free_space;
+        return _size - _freeSpace;
     }
 
     virtual std::size_t sizeLeft() const
@@ -71,21 +71,21 @@ public:
 
     bool isFull() const
     {
-        return _free_space == 0;
+        return _freeSpace == 0;
     }
 
     bool isEmpty() const
     {
-        return _free_space == _size;
+        return _freeSpace == _size;
     }
 
     void erase(std::size_t size)
     {
-        assert(_size - _free_space >= size);
-        _free_space += size;
-        _read_offset += size;
-        if (_read_offset >= _size) {
-            _read_offset -= _size;
+        assert(_size - _freeSpace >= size);
+        _freeSpace += size;
+        _readOffset += size;
+        if (_readOffset >= _size) {
+            _readOffset -= _size;
         }
     }
 
@@ -110,24 +110,24 @@ private:
         assert(size > 0);
         _data = (uint8_t*)data;
         _size = size;
-        _free_space = size;
-        _read_offset = 0;
-        _write_offset = 0;
+        _freeSpace = size;
+        _readOffset = 0;
+        _writeOffset = 0;
     }
 
     void extend(std::size_t size)
     {
-        _write_offset += size;
-        if (_write_offset >= _size) {
-            _write_offset -= _size;
+        _writeOffset += size;
+        if (_writeOffset >= _size) {
+            _writeOffset -= _size;
         }
-        _free_space -= size;
+        _freeSpace -= size;
     }
 
-    std::size_t _read_offset;
-    std::size_t _write_offset;
+    std::size_t _readOffset;
+    std::size_t _writeOffset;
     std::size_t _size;
-    std::size_t _free_space;
+    std::size_t _freeSpace;
     uint8_t* _data;
 #if BMCL_HAVE_MALLOC
     bool hasAllocatedMem;

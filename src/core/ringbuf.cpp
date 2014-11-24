@@ -22,16 +22,16 @@ void RingBuf::write(const void* data, std::size_t size)
 {
     assert(size > 0);
     assert(size <= _size);
-    if (_free_space < size) {
-        erase(size - _free_space);
+    if (_freeSpace < size) {
+        erase(size - _freeSpace);
     }
 
-    if (_read_offset > _write_offset) { /* *********w---------------r************ */
-        std::memcpy(_data + _write_offset, data, size);
+    if (_readOffset > _writeOffset) { /* *********w---------------r************ */
+        std::memcpy(_data + _writeOffset, data, size);
     } else { /* ----------r**************w---------- */
-        std::size_t rightData = _size - _write_offset;
+        std::size_t rightData = _size - _writeOffset;
         std::size_t firstChunkSize = min(size, rightData);
-        std::memcpy(_data + _write_offset, data, firstChunkSize);
+        std::memcpy(_data + _writeOffset, data, firstChunkSize);
         if (size > firstChunkSize) {
             std::size_t secondChunkSize = size - firstChunkSize;
             std::memcpy(_data, (const uint8_t*)data + firstChunkSize, secondChunkSize);
@@ -42,18 +42,18 @@ void RingBuf::write(const void* data, std::size_t size)
 
 void RingBuf::peek(void* dest, std::size_t size, std::size_t offset) const
 {
-    std::size_t read_offset = _read_offset + offset;
-    if (read_offset >= _size) {
-        read_offset -= _size;
+    std::size_t readOffset = _readOffset + offset;
+    if (readOffset >= _size) {
+        readOffset -= _size;
     }
     assert(size > 0);
-    assert(size + offset <= _size - _free_space);
-    if (read_offset < _write_offset) { /* ----------r**************w---------- */
-        std::memcpy(dest, _data + read_offset, size);
+    assert(size + offset <= _size - _freeSpace);
+    if (readOffset < _writeOffset) { /* ----------r**************w---------- */
+        std::memcpy(dest, _data + readOffset, size);
     } else { /* *********w---------------r************ */
-        std::size_t rightData = _size - read_offset;
+        std::size_t rightData = _size - readOffset;
         std::size_t firstChunkSize = min(size, rightData);
-        std::memcpy(dest, _data + read_offset, firstChunkSize);
+        std::memcpy(dest, _data + readOffset, firstChunkSize);
         if (size > firstChunkSize) {
             std::size_t secondChunkSize = size - firstChunkSize;
             std::memcpy((uint8_t*)dest + firstChunkSize, _data, secondChunkSize);

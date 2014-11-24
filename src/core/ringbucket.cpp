@@ -14,10 +14,10 @@
 namespace bmcl {
 namespace core {
 
-void RingBucket::append(const void* data, std::size_t data_size)
+void RingBucket::append(const void* data, std::size_t dataSize)
 {
-    prepareForAppend(data_size);
-    _ringbuf.write(data, data_size);
+    prepareForAppend(dataSize);
+    _ringbuf.write(data, dataSize);
 
     _count++;
 }
@@ -33,9 +33,9 @@ std::size_t RingBucket::firstSize() const
 void RingBucket::copyFirst(void* dest) const
 {
     assert(!isEmpty());
-    RingBucketHeader first_size;
-    _ringbuf.peek(&first_size, sizeof(first_size));
-    _ringbuf.peek(dest, first_size, sizeof(first_size));
+    RingBucketHeader firstSize;
+    _ringbuf.peek(&firstSize, sizeof(firstSize));
+    _ringbuf.peek(dest, firstSize, sizeof(firstSize));
 }
 
 void RingBucket::prepareForAppend(std::size_t dataSize)

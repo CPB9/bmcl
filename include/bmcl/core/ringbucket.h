@@ -29,7 +29,8 @@ public:
 
 #if BMCL_HAVE_MALLOC
 
-    RingBucket(std::size_t size): _ringbuf(size)
+    RingBucket(std::size_t size)
+        : _ringbuf(size)
     {
         assert(size != 0);
         _count = 0;
@@ -74,7 +75,6 @@ public:
     std::size_t firstSize() const;
 
     void copyFirst(void* dest) const;
-
 
 private:
     void prepareForAppend(std::size_t dataSize);

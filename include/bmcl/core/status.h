@@ -24,7 +24,6 @@ public:
     };
 
     static const char* toCString(bmcl::core::Status::Msg msg);
-
 };
 }
 }
