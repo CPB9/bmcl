@@ -59,9 +59,8 @@ if(NOT ARDUINO_BOARD)
     endif()
 endif()
 
-set(BMCL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-add_subdirectory(src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_subdirectory(src/bmcl)
 
 if(NOT ARDUINO_BOARD)
     set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)

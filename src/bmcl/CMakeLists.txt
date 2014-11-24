@@ -1,5 +1,3 @@
-include_directories(${BMCL_INCLUDE_DIRS})
-
 function(ADD_BMCL_LIBRARY lib)
     cmake_parse_arguments(ADD_BMCL_LIBRARY "" "" "SRCS;HDRS" ${ARGN})
     if(ARDUINO_BOARD)
