@@ -19,68 +19,29 @@ typedef std::size_t RingBucketHeader;
 
 class RingBucket {
 public:
-    RingBucket(void* data, std::size_t size)
-        : _ringbuf(data, size)
-    {
-        assert(data != 0);
-        assert(size != 0);
-        _count = 0;
-    }
+    RingBucket(void* data, std::size_t size);
 
 #if BMCL_HAVE_MALLOC
 
-    RingBucket(std::size_t size)
-        : _ringbuf(size)
-    {
-        assert(size != 0);
-        _count = 0;
-    }
+    RingBucket(std::size_t size);
 
 #endif
 
-    std::size_t freeSpace() const
-    {
-        return _ringbuf.freeSpace();
-    }
+    bool isEmpty() const { return _count == 0; }
 
-    static std::size_t headerSize()
-    {
-        return sizeof(RingBucketHeader);
-    }
-
-    bool isEmpty() const
-    {
-        return _count == 0;
-    }
-
-    void reset()
-    {
-        _ringbuf.clear();
-        _count = 0;
-    }
-
-    std::size_t count() const
-    {
-        return _count;
-    }
-
-    void removeFirst()
-    {
-        assert(!isEmpty());
-        eraseElement();
-    }
-
-    void append(const void* data, std::size_t dataSize);
-
+    std::size_t freeSpace() const { return _ringbuf.freeSpace(); }
+    std::size_t count() const { return _count; }
     std::size_t firstSize() const;
+    static std::size_t headerSize() { return sizeof(RingBucketHeader); }
 
+    void reset();
+    void removeFirst() { eraseElement(); }
+    void append(const void* data, std::size_t dataSize);
     void copyFirst(void* dest) const;
 
 private:
-    void prepareForAppend(std::size_t dataSize);
-
     std::size_t eraseElement();
-
+    void prepareForAppend(std::size_t dataSize);
     void eraseElementsToFitSize(std::size_t size);
 
     RingBuf _ringbuf;

@@ -11,10 +11,7 @@ protected:
     {
     }
 
-    void SetUp()
-    {
-        _ringbuf = 0;
-    }
+    void SetUp() { _ringbuf = 0; }
 
     void TearDown()
     {
@@ -43,20 +40,11 @@ protected:
         _ringbuf->write(array, sizeof(R) * n);
     }
 
-    void erase(std::size_t size)
-    {
-        _ringbuf->erase(size);
-    }
+    void erase(std::size_t size) { _ringbuf->erase(size); }
 
-    void clear()
-    {
-        _ringbuf->clear();
-    }
+    void clear() { _ringbuf->clear(); }
 
-    void appendByte(uint8_t byte)
-    {
-        _ringbuf->write(&byte, 1);
-    }
+    void appendByte(uint8_t byte) { _ringbuf->write(&byte, 1); }
 
     uint8_t readByte()
     {
@@ -65,30 +53,15 @@ protected:
         return data;
     }
 
-    void peek(void* dest, std::size_t size, std::size_t offset = 0)
-    {
-        _ringbuf->peek(dest, size, offset);
-    }
+    void peek(void* dest, std::size_t size, std::size_t offset = 0) { _ringbuf->peek(dest, size, offset); }
 
-    void read(void* dest, std::size_t size)
-    {
-        _ringbuf->read(dest, size);
-    }
+    void read(void* dest, std::size_t size) { _ringbuf->read(dest, size); }
 
-    void expectFreeSpace(std::size_t freeSpace)
-    {
-        EXPECT_EQ(_ringbuf->freeSpace(), freeSpace);
-    }
+    void expectFreeSpace(std::size_t freeSpace) { EXPECT_EQ(_ringbuf->freeSpace(), freeSpace); }
 
-    void expectFull()
-    {
-        EXPECT_TRUE(_ringbuf->isFull());
-    }
+    void expectFull() { EXPECT_TRUE(_ringbuf->isFull()); }
 
-    void expectEmpty()
-    {
-        EXPECT_TRUE(_ringbuf->isEmpty());
-    }
+    void expectEmpty() { EXPECT_TRUE(_ringbuf->isEmpty()); }
 
     template <std::size_t n, typename R>
     void expect(const R (&array)[n])

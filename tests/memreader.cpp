@@ -6,10 +6,7 @@ using namespace bmcl::core;
 
 class MemReaderTest : public ::testing::Test {
 protected:
-    void SetUp()
-    {
-        _reader = 0;
-    }
+    void SetUp() { _reader = 0; }
 
     void TearDown()
     {
@@ -35,20 +32,11 @@ protected:
         EXPECT_EQ((uint8_t*)data, _reader->currentPtr());
     }
 
-    void skip(std::size_t size)
-    {
-        _reader->skip(size);
-    }
+    void skip(std::size_t size) { _reader->skip(size); }
 
-    void peek(void* dest, std::size_t size, std::size_t offset)
-    {
-        _reader->peek(dest, size, offset);
-    }
+    void peek(void* dest, std::size_t size, std::size_t offset) { _reader->peek(dest, size, offset); }
 
-    void read(void* dest, std::size_t size)
-    {
-        _reader->read(dest, size);
-    }
+    void read(void* dest, std::size_t size) { _reader->read(dest, size); }
 
     void expectNextUint8(uint8_t expected)
     {

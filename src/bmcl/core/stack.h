@@ -15,12 +15,9 @@ namespace core {
 
 class Stack {
 public:
-    virtual ~Stack()
-    {
-    }
+    virtual ~Stack() {}
 
     virtual void pop(void* dest, std::size_t size) = 0;
-
     virtual void push(const void* src, std::size_t size) = 0;
 
     template <typename T>

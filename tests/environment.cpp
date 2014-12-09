@@ -39,6 +39,7 @@ protected:
         } test = {0x1234};
         return test.u8[0] == 0x34;
     }
+
 protected:
     // host, little-endian, big-endian, target
     uint16_t h16, le16, be16, t16;

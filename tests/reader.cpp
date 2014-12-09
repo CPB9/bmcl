@@ -9,14 +9,9 @@ using namespace bmcl::core;
 
 class ReaderShell {
 public:
-    virtual ~ReaderShell()
-    {
-    }
+    virtual ~ReaderShell() {}
 
-    Reader* get()
-    {
-        return _reader;
-    }
+    Reader* get() { return _reader; }
 
 protected:
     Reader* _reader;
@@ -24,15 +19,9 @@ protected:
 
 class MemReaderShell : public ReaderShell {
 public:
-    MemReaderShell(const void* ptr, std::size_t size)
-    {
-        _reader = new MemReader(ptr, size);
-    }
+    MemReaderShell(const void* ptr, std::size_t size) { _reader = new MemReader(ptr, size); }
 
-    ~MemReaderShell()
-    {
-        delete _reader;
-    }
+    ~MemReaderShell() { delete _reader; }
 };
 
 class RingBufReaderShell : public ReaderShell {
@@ -48,10 +37,7 @@ public:
         delete[] filler;
     }
 
-    ~RingBufReaderShell()
-    {
-        delete _reader;
-    }
+    ~RingBufReaderShell() { delete _reader; }
 
 private:
     RingBuf* _ringbuf;
@@ -74,10 +60,7 @@ protected:
         _reader = _shell->get();
     }
 
-    void SetUp()
-    {
-        _shell = 0;
-    }
+    void SetUp() { _shell = 0; }
 
     template <std::size_t n, typename R>
     void expectNextData(const R (&array)[n])
@@ -88,40 +71,19 @@ protected:
         EXPECT_EQ_MEM(array, tmp, size);
     }
 
-    void expectNextUint8(uint8_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint8());
-    }
+    void expectNextUint8(uint8_t value) { EXPECT_EQ(value, _reader->readUint8()); }
 
-    void expectNextUint16be(uint16_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint16Be());
-    }
+    void expectNextUint16be(uint16_t value) { EXPECT_EQ(value, _reader->readUint16Be()); }
 
-    void expectNextUint32be(uint32_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint32Be());
-    }
+    void expectNextUint32be(uint32_t value) { EXPECT_EQ(value, _reader->readUint32Be()); }
 
-    void expectNextUint64be(uint64_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint64Be());
-    }
+    void expectNextUint64be(uint64_t value) { EXPECT_EQ(value, _reader->readUint64Be()); }
 
-    void expectNextUint16le(uint16_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint16Le());
-    }
+    void expectNextUint16le(uint16_t value) { EXPECT_EQ(value, _reader->readUint16Le()); }
 
-    void expectNextUint32le(uint32_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint32Le());
-    }
+    void expectNextUint32le(uint32_t value) { EXPECT_EQ(value, _reader->readUint32Le()); }
 
-    void expectNextUint64le(uint64_t value)
-    {
-        EXPECT_EQ(value, _reader->readUint64Le());
-    }
+    void expectNextUint64le(uint64_t value) { EXPECT_EQ(value, _reader->readUint64Le()); }
 
     void TearDown()
     {

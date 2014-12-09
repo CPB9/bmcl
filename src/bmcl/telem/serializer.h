@@ -21,7 +21,7 @@ class Serializer {
 public:
     virtual bmcl::core::Status::Msg serialize(const bmcl::telem::Frame* frame, bmcl::core::Writer* dest)
     {
-        if (dest->sizeLeft() < frame->totalSize()) {
+        if (dest->availableSize() < frame->totalSize()) {
             return bmcl::core::Status::BufferOverflow;
         }
         copyFrameUnsafe(frame, dest);

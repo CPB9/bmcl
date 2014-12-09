@@ -21,108 +21,33 @@ namespace core {
 
 class MemWriter : public bmcl::core::Writer, public bmcl::core::Stack {
 public:
-    MemWriter(void* dest, std::size_t maxSize)
-    {
-        init(dest, maxSize);
-#if BMCL_HAVE_MALLOC
-        hasAllocatedMem = false;
-#endif
-    }
+    MemWriter(void* dest, std::size_t maxSize);
 
 #if BMCL_HAVE_MALLOC
 
-    MemWriter(std::size_t maxSize)
-    {
-        uint8_t* dest = new uint8_t[maxSize];
-        init(dest, maxSize);
-        hasAllocatedMem = true;
-    }
-
-    ~MemWriter()
-    {
-        if (hasAllocatedMem) {
-            delete[] _start;
-        }
-    }
+    MemWriter(std::size_t maxSize);
+    ~MemWriter();
 
 #endif
 
-    uint8_t* ptr() const
-    {
-        return _start;
-    }
+    bool isFull() const { return _current >= _end; }
 
-    uint8_t* currentPtr() const
-    {
-        return _current;
-    }
+    uint8_t* ptr() const { return _start; }
+    uint8_t* currentPtr() const { return _current; }
 
-    std::size_t sizeUsed() const
-    {
-        return _current - _start;
-    }
+    std::size_t sizeUsed() const { return _current - _start; }
+    std::size_t maxSize() const { return _end - _start; }
+    virtual std::size_t availableSize() const;
 
-    bool isFull() const
-    {
-        return _current >= _end;
-    }
-
-    std::size_t maxSize() const
-    {
-        return _end - _start;
-    }
-
-    virtual std::size_t sizeLeft() const
-    {
-        return _end - _current;
-    }
-
-    void advance(std::size_t size)
-    {
-        assert(sizeLeft() >= size);
-        _current += size;
-    }
-
-    virtual void write(const void* data, std::size_t size)
-    {
-        assert(sizeLeft() >= size);
-        std::memcpy(_current, data, size);
-        _current += size;
-    }
-
-    virtual void push(const void* src, std::size_t size)
-    {
-        write(src, size);
-    }
-
-    virtual void pop(void* dest, std::size_t size)
-    {
-        assert(sizeUsed() >= size);
-        _current -= size;
-        std::memcpy(dest, _current, size);
-    }
-
-    void fill(uint8_t byte, std::size_t size)
-    {
-        assert(sizeLeft() >= size);
-        std::memset(_current, byte, size);
-        _current += size;
-    }
-
-    void fillUp(uint8_t byte)
-    {
-        std::size_t size = _end - _current;
-        std::memset(_current, byte, size);
-        _current += size;
-    }
+    void advance(std::size_t size);
+    void fillUp(uint8_t byte);
+    void fill(uint8_t byte, std::size_t size);
+    virtual void write(const void* data, std::size_t size);
+    virtual void push(const void* src, std::size_t size);
+    virtual void pop(void* dest, std::size_t size);
 
 private:
-    void init(void* dest, std::size_t maxSize)
-    {
-        _start = (uint8_t*)dest;
-        _current = _start;
-        _end = _start + maxSize;
-    }
+    void init(void* dest, std::size_t maxSize);
 
     uint8_t* _start;
     uint8_t* _current;

@@ -1,4 +1,6 @@
 set(BMCL_CORE_SRCS
+    memreader.cpp
+    memwriter.cpp
     ringarray.cpp
     ringbucket.cpp
     ringbuf.cpp

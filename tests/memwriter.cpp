@@ -12,10 +12,7 @@ protected:
     {
     }
 
-    void SetUp()
-    {
-        _writer = 0;
-    }
+    void SetUp() { _writer = 0; }
 
     void TearDown()
     {
@@ -54,7 +51,7 @@ protected:
     void expectSizes(std::size_t used, std::size_t left)
     {
         EXPECT_EQ(used, _writer->sizeUsed());
-        EXPECT_EQ(left, _writer->sizeLeft());
+        EXPECT_EQ(left, _writer->availableSize());
         EXPECT_EQ(used + left, _writer->maxSize());
         bool isFull = used == _writer->maxSize();
         EXPECT_EQ(isFull, _writer->isFull());
@@ -67,20 +64,11 @@ protected:
         _writer->write(array, sizeof(R) * n);
     }
 
-    void appendUint8(uint8_t data)
-    {
-        _writer->write(&data, 1);
-    }
+    void appendUint8(uint8_t data) { _writer->write(&data, 1); }
 
-    void fillUp(uint8_t data)
-    {
-        _writer->fillUp(data);
-    }
+    void fillUp(uint8_t data) { _writer->fillUp(data); }
 
-    void fill(uint8_t data, std::size_t size)
-    {
-        _writer->fill(data, size);
-    }
+    void fill(uint8_t data, std::size_t size) { _writer->fill(data, size); }
 
 private:
     MemWriter* _writer;

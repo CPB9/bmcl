@@ -19,9 +19,7 @@ namespace core {
 
 class Reader {
 public:
-    virtual ~Reader()
-    {
-    }
+    virtual ~Reader() {}
 
     virtual void read(void* dest, std::size_t size) = 0;
 
@@ -33,55 +31,16 @@ public:
         return value;
     }
 
-    uint8_t readUint8()
-    {
-        return readType<uint8_t>();
-    }
-
-    uint16_t readUint16()
-    {
-        return readType<uint16_t>();
-    }
-
-    uint32_t readUint32()
-    {
-        return readType<uint32_t>();
-    }
-
-    uint64_t readUint64()
-    {
-        return readType<uint64_t>();
-    }
-
-    uint16_t readUint16Le()
-    {
-        return le16toh(readType<uint16_t>());
-    }
-
-    uint32_t readUint32Le()
-    {
-        return le32toh(readType<uint32_t>());
-    }
-
-    uint64_t readUint64Le()
-    {
-        return le64toh(readType<uint64_t>());
-    }
-
-    uint16_t readUint16Be()
-    {
-        return be16toh(readType<uint16_t>());
-    }
-
-    uint32_t readUint32Be()
-    {
-        return be32toh(readType<uint32_t>());
-    }
-
-    uint64_t readUint64Be()
-    {
-        return be64toh(readType<uint64_t>());
-    }
+    uint8_t readUint8() { return readType<uint8_t>(); }
+    uint16_t readUint16() { return readType<uint16_t>(); }
+    uint32_t readUint32() { return readType<uint32_t>(); }
+    uint64_t readUint64() { return readType<uint64_t>(); }
+    uint16_t readUint16Le() { return le16toh(readType<uint16_t>()); }
+    uint32_t readUint32Le() { return le32toh(readType<uint32_t>()); }
+    uint64_t readUint64Le() { return le64toh(readType<uint64_t>()); }
+    uint16_t readUint16Be() { return be16toh(readType<uint16_t>()); }
+    uint32_t readUint32Be() { return be32toh(readType<uint32_t>()); }
+    uint64_t readUint64Be() { return be64toh(readType<uint64_t>()); }
 };
 }
 }

@@ -11,10 +11,7 @@ protected:
     {
     }
 
-    void SetUp()
-    {
-        _ringbucket = 0;
-    }
+    void SetUp() { _ringbucket = 0; }
 
     void TearDown()
     {
@@ -46,35 +43,17 @@ protected:
         EXPECT_EQ_MEM(array, tmp, elementSize);
     }
 
-    void expectCount(std::size_t count)
-    {
-        EXPECT_EQ(count, _ringbucket->count());
-    }
+    void expectCount(std::size_t count) { EXPECT_EQ(count, _ringbucket->count()); }
 
-    void expectFreeSpace(std::size_t size)
-    {
-        EXPECT_EQ(size, _ringbucket->freeSpace());
-    }
+    void expectFreeSpace(std::size_t size) { EXPECT_EQ(size, _ringbucket->freeSpace()); }
 
-    void expectEmpty(bool isEmpty = true)
-    {
-        EXPECT_EQ(isEmpty, _ringbucket->isEmpty());
-    }
+    void expectEmpty(bool isEmpty = true) { EXPECT_EQ(isEmpty, _ringbucket->isEmpty()); }
 
-    void expectFirstElementSize(std::size_t size)
-    {
-        EXPECT_EQ(size, _ringbucket->firstSize());
-    }
+    void expectFirstElementSize(std::size_t size) { EXPECT_EQ(size, _ringbucket->firstSize()); }
 
-    std::size_t fullSize(std::size_t elementSize)
-    {
-        return elementSize + _ringbucket->headerSize();
-    }
+    std::size_t fullSize(std::size_t elementSize) { return elementSize + _ringbucket->headerSize(); }
 
-    void reset()
-    {
-        _ringbucket->reset();
-    }
+    void reset() { _ringbucket->reset(); }
 
 private:
     RingBucket* _ringbucket;

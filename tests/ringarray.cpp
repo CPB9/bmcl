@@ -11,10 +11,7 @@ protected:
     {
     }
 
-    void SetUp()
-    {
-        _ringarray = 0;
-    }
+    void SetUp() { _ringarray = 0; }
 
     void TearDown()
     {
@@ -48,30 +45,15 @@ protected:
         EXPECT_EQ_MEM(array, tmp, elementSize);
     }
 
-    void expectEmpty(bool isEmpty = true)
-    {
-        EXPECT_EQ(isEmpty, _ringarray->isEmpty());
-    }
+    void expectEmpty(bool isEmpty = true) { EXPECT_EQ(isEmpty, _ringarray->isEmpty()); }
 
-    void expectFull(bool isFull = true)
-    {
-        EXPECT_EQ(isFull, _ringarray->isFull());
-    }
+    void expectFull(bool isFull = true) { EXPECT_EQ(isFull, _ringarray->isFull()); }
 
-    void expectCount(std::size_t count)
-    {
-        EXPECT_EQ(count, _ringarray->count());
-    }
+    void expectCount(std::size_t count) { EXPECT_EQ(count, _ringarray->count()); }
 
-    void expectSize(std::size_t size)
-    {
-        EXPECT_EQ(size, _ringarray->size());
-    }
+    void expectSize(std::size_t size) { EXPECT_EQ(size, _ringarray->size()); }
 
-    void expectElementSize(std::size_t size)
-    {
-        EXPECT_EQ(size, _ringarray->elementSize());
-    }
+    void expectElementSize(std::size_t size) { EXPECT_EQ(size, _ringarray->elementSize()); }
 
 private:
     RingArray* _ringarray;

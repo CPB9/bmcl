@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2014 CPB9 team. See the COPYRIGHT file at the top-level directory.
- *
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
-
 #include "bmcl/core/endian.h"
 #include "bmcl/core/ringbuf.h"
 
@@ -17,6 +9,76 @@
 
 namespace bmcl {
 namespace core {
+
+RingBuf::RingBuf(void* data, std::size_t size)
+{
+    init(data, size);
+#if BMCL_HAVE_MALLOC
+    _hasAllocatedMem = false;
+#endif
+}
+
+#if BMCL_HAVE_MALLOC
+
+RingBuf::RingBuf(std::size_t size)
+{
+    uint8_t* data = new uint8_t[size];
+    init(data, size);
+    _hasAllocatedMem = true;
+}
+
+RingBuf::~RingBuf()
+{
+    if (_hasAllocatedMem) {
+        delete[] _data;
+    }
+}
+
+#endif
+
+void RingBuf::clear()
+{
+    _writeOffset = 0;
+    _readOffset = 0;
+    _freeSpace = _size;
+}
+
+void RingBuf::erase(std::size_t size)
+{
+    assert(_size - _freeSpace >= size);
+    _freeSpace += size;
+    _readOffset += size;
+    if (_readOffset >= _size) {
+        _readOffset -= _size;
+    }
+}
+
+std::size_t RingBuf::availableSize() const { return freeSpace(); }
+
+void RingBuf::read(void* dest, std::size_t size)
+{
+    peek(dest, size, 0);
+    erase(size);
+}
+
+void RingBuf::init(void* data, std::size_t size)
+{
+    assert(size > 0);
+    _data = (uint8_t*)data;
+    _size = size;
+    _freeSpace = size;
+    _readOffset = 0;
+    _writeOffset = 0;
+}
+
+void RingBuf::extend(std::size_t size)
+{
+    _writeOffset += size;
+    if (_writeOffset >= _size) {
+        _writeOffset -= _size;
+    }
+    _freeSpace -= size;
+}
 
 void RingBuf::write(const void* data, std::size_t size)
 {

@@ -9,14 +9,9 @@ using namespace bmcl::core;
 
 class WriterShell {
 public:
-    virtual ~WriterShell()
-    {
-    }
+    virtual ~WriterShell() {}
 
-    Writer* get()
-    {
-        return _writer;
-    }
+    Writer* get() { return _writer; }
 
     virtual std::size_t dataSize() const = 0;
 
@@ -34,20 +29,11 @@ public:
         _writer = _memwriter;
     }
 
-    ~MemWriterShell()
-    {
-        delete _writer;
-    }
+    ~MemWriterShell() { delete _writer; }
 
-    std::size_t dataSize() const
-    {
-        return _memwriter->sizeUsed();
-    }
+    std::size_t dataSize() const { return _memwriter->sizeUsed(); }
 
-    void copyData(void* dest) const
-    {
-        std::memcpy(dest, _memwriter->ptr(), _memwriter->sizeUsed());
-    }
+    void copyData(void* dest) const { std::memcpy(dest, _memwriter->ptr(), _memwriter->sizeUsed()); }
 
 private:
     MemWriter* _memwriter;
@@ -61,20 +47,11 @@ public:
         _writer = _ringbuf;
     }
 
-    ~RingBufWriterShell()
-    {
-        delete _writer;
-    }
+    ~RingBufWriterShell() { delete _writer; }
 
-    std::size_t dataSize() const
-    {
-        return _ringbuf->usedSpace();
-    }
+    std::size_t dataSize() const { return _ringbuf->usedSpace(); }
 
-    void copyData(void* dest) const
-    {
-        _ringbuf->peek(dest, dataSize(), 0);
-    }
+    void copyData(void* dest) const { _ringbuf->peek(dest, dataSize(), 0); }
 
 private:
     RingBuf* _ringbuf;
@@ -98,10 +75,7 @@ protected:
         _writer = _shell->get();
     }
 
-    void SetUp()
-    {
-        _shell = 0;
-    }
+    void SetUp() { _shell = 0; }
 
     template <std::size_t n, typename R>
     void expectData(const R (&array)[n])
@@ -119,40 +93,19 @@ protected:
         _writer->write(array, sizeof(R) * n);
     }
 
-    void writeUint8(uint8_t value)
-    {
-        _writer->writeUint8(value);
-    }
+    void writeUint8(uint8_t value) { _writer->writeUint8(value); }
 
-    void writeUint16le(uint16_t value)
-    {
-        _writer->writeUint16Le(value);
-    }
+    void writeUint16le(uint16_t value) { _writer->writeUint16Le(value); }
 
-    void writeUint32le(uint32_t value)
-    {
-        _writer->writeUint32Le(value);
-    }
+    void writeUint32le(uint32_t value) { _writer->writeUint32Le(value); }
 
-    void writeUint64le(uint64_t value)
-    {
-        _writer->writeUint64Le(value);
-    }
+    void writeUint64le(uint64_t value) { _writer->writeUint64Le(value); }
 
-    void writeUint16be(uint16_t value)
-    {
-        _writer->writeUint16Be(value);
-    }
+    void writeUint16be(uint16_t value) { _writer->writeUint16Be(value); }
 
-    void writeUint32be(uint32_t value)
-    {
-        _writer->writeUint32Be(value);
-    }
+    void writeUint32be(uint32_t value) { _writer->writeUint32Be(value); }
 
-    void writeUint64be(uint64_t value)
-    {
-        _writer->writeUint64Be(value);
-    }
+    void writeUint64be(uint64_t value) { _writer->writeUint64Be(value); }
 
     void TearDown()
     {

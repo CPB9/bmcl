@@ -18,98 +18,34 @@ namespace core {
 
 class RingArray {
 public:
-    RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize)
-    {
-        init(ptr, bufSize, elementSize);
-#if BMCL_HAVE_MALLOC
-        hasAllocatedMem = false;
-#endif
-    }
+    RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize);
 
 #if BMCL_HAVE_MALLOC
 
-    RingArray(std::size_t numElements, std::size_t elementSize)
-    {
-        std::size_t bufSize = numElements * elementSize;
-        uint8_t* ptr = new uint8_t[bufSize];
-        init(ptr, bufSize, elementSize);
-        hasAllocatedMem = true;
-    }
-
-    ~RingArray()
-    {
-        if (hasAllocatedMem) {
-            delete[] _data;
-        }
-    }
+    RingArray(std::size_t numElements, std::size_t elementSize);
+    ~RingArray();
 
 #endif
 
-    void reset()
-    {
-        init(_data, _size, _elementSize);
-    }
+    bool isEmpty() const { return _count == 0; }
+    bool isFull() const { return !isEmpty() && (_readOffset == _writeOffset); }
 
+    std::size_t count() const { return _count; }
+    std::size_t size() const { return _size; }
+    std::size_t elementSize() const { return _elementSize; }
+
+    void reset() { init(_data, _size, _elementSize); }
     void append(const void* element);
-
-    std::size_t count() const
-    {
-        return _count;
-    }
-
-    std::size_t size() const
-    {
-        return _size;
-    }
-
-    bool isEmpty() const
-    {
-        return _count == 0;
-    }
-
-    bool isFull() const
-    {
-        return !isEmpty() && (_readOffset == _writeOffset);
-    }
-
-    std::size_t elementSize() const
-    {
-        return _elementSize;
-    }
-
-    void copyFirst(void* dest) const
-    {
-        assert(!isEmpty());
-        std::memcpy(dest, readPtr(), _elementSize);
-    }
-
-    void removeFirst()
-    {
-        assert(!isEmpty());
-        eraseFirstElement();
-    }
+    void copyFirst(void* dest) const;
+    void removeFirst() { eraseFirstElement(); }
 
 private:
+    void* writePtr() const { return _data + _writeOffset * _elementSize; }
+    void* readPtr() const { return _data + _readOffset * _elementSize; }
+
     void init(void* ptr, std::size_t bufSize, std::size_t elementSize);
-
-    void eraseFirstElement()
-    {
-        incReadPtr();
-        _count--;
-    }
-
-    void* writePtr() const
-    {
-        return _data + _writeOffset * _elementSize;
-    }
-
-    void* readPtr() const
-    {
-        return _data + _readOffset * _elementSize;
-    }
-
+    void eraseFirstElement();
     void incReadPtr();
-
     void incWritePtr();
 
     uint8_t* _data;
@@ -119,7 +55,7 @@ private:
     std::size_t _writeOffset;
     std::size_t _count;
 #if BMCL_HAVE_MALLOC
-    bool hasAllocatedMem;
+    bool _hasAllocatedMem;
 #endif
 };
 }

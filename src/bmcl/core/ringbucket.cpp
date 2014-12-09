@@ -14,6 +14,32 @@
 namespace bmcl {
 namespace core {
 
+RingBucket::RingBucket(void* data, std::size_t size)
+    : _ringbuf(data, size)
+{
+    assert(data != 0);
+    assert(size != 0);
+    _count = 0;
+}
+
+#if BMCL_HAVE_MALLOC
+
+RingBucket::RingBucket(std::size_t size)
+    : _ringbuf(size)
+{
+    assert(size != 0);
+    _count = 0;
+}
+
+#endif
+
+void RingBucket::reset()
+
+{
+    _ringbuf.clear();
+    _count = 0;
+}
+
 void RingBucket::append(const void* data, std::size_t dataSize)
 {
     prepareForAppend(dataSize);
@@ -41,7 +67,6 @@ void RingBucket::copyFirst(void* dest) const
 void RingBucket::prepareForAppend(std::size_t dataSize)
 {
     RingBucketHeader elementSize = dataSize + sizeof(elementSize);
-
     assert(elementSize <= _ringbuf.size());
 
     if (freeSpace() < elementSize)
@@ -52,6 +77,7 @@ void RingBucket::prepareForAppend(std::size_t dataSize)
 
 std::size_t RingBucket::eraseElement()
 {
+    assert(!isEmpty());
     RingBucketHeader elementSize;
     _ringbuf.peek(&elementSize, sizeof(elementSize));
     elementSize += sizeof(RingBucketHeader);

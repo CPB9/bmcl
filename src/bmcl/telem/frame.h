@@ -32,25 +32,10 @@ public:
         _vars = new Variable[maxSize];
     }
 
-    std::size_t maxCount() const
-    {
-        return _maxCount;
-    }
-
-    std::size_t count() const
-    {
-        return _count;
-    }
-
-    std::size_t totalSize() const
-    {
-        return _totalSize;
-    }
-
-    const Variable* vars() const
-    {
-        return _vars;
-    }
+    std::size_t maxCount() const { return _maxCount; }
+    std::size_t count() const { return _count; }
+    std::size_t totalSize() const { return _totalSize; }
+    const Variable* vars() const { return _vars; }
 
     void append(const void* ptr, std::size_t size)
     {

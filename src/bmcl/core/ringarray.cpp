@@ -11,6 +11,46 @@
 namespace bmcl {
 namespace core {
 
+RingArray::RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize)
+{
+    init(ptr, bufSize, elementSize);
+#if BMCL_HAVE_MALLOC
+    _hasAllocatedMem = false;
+#endif
+}
+
+#if BMCL_HAVE_MALLOC
+
+RingArray::RingArray(std::size_t numElements, std::size_t elementSize)
+{
+    std::size_t bufSize = numElements * elementSize;
+    uint8_t* ptr = new uint8_t[bufSize];
+    init(ptr, bufSize, elementSize);
+    _hasAllocatedMem = true;
+}
+
+RingArray::~RingArray()
+{
+    if (_hasAllocatedMem) {
+        delete[] _data;
+    }
+}
+
+#endif
+
+void RingArray::copyFirst(void* dest) const
+{
+    assert(!isEmpty());
+    std::memcpy(dest, readPtr(), _elementSize);
+}
+
+void RingArray::eraseFirstElement()
+{
+    assert(!isEmpty());
+    incReadPtr();
+    _count--;
+}
+
 void RingArray::init(void* ptr, std::size_t bufSize, std::size_t elementSize)
 {
     assert(ptr != 0);

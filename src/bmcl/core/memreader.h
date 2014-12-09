@@ -20,56 +20,19 @@ namespace core {
 
 class MemReader : public Reader {
 public:
-    MemReader(const void* ptr, std::size_t size)
-    {
-        _start = (uint8_t*)ptr;
-        _current = _start;
-        _end = _start + size;
-    }
+    MemReader(const void* ptr, std::size_t size);
 
-    const uint8_t* currentPtr() const
-    {
-        return _current;
-    }
+    bool isEmpty() const { return _current >= _end; }
 
-    std::size_t size() const
-    {
-        return _end - _start;
-    }
+    const uint8_t* currentPtr() const { return _current; }
 
-    std::size_t sizeLeft() const
-    {
-        return _end - _current;
-    }
+    std::size_t size() const { return _end - _start; }
+    std::size_t sizeLeft() const { return _end - _current; }
+    std::size_t sizeRead() const { return _current - _start; }
 
-    std::size_t sizeRead() const
-    {
-        return _current - _start;
-    }
-
-    bool isEmpty() const
-    {
-        return _current >= _end;
-    }
-
-    void skip(std::size_t size)
-    {
-        assert(sizeLeft() >= size);
-        _current += size;
-    }
-
-    void peek(void* dest, std::size_t size, std::size_t offset) const
-    {
-        assert(sizeLeft() >= size + offset);
-        std::memcpy(dest, _current + offset, size);
-    }
-
-    virtual void read(void* dest, std::size_t size)
-    {
-        assert(sizeLeft() >= size);
-        std::memcpy(dest, _current, size);
-        _current += size;
-    }
+    void skip(std::size_t size);
+    void peek(void* dest, std::size_t size, std::size_t offset) const;
+    virtual void read(void* dest, std::size_t size);
 
 private:
     const uint8_t* _start;

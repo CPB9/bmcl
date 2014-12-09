@@ -108,34 +108,16 @@ public:
         DivDouble,
     };
 
-    // TODO: static assert
-
-    Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize)
-        : _bytecode(bytecode, bytecodeSize)
-        , _stack(stack, stackSize)
-    {
-        assert(std::numeric_limits<double>::is_iec559);
-        assert(std::numeric_limits<float>::is_iec559);
-    }
+    Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize);
 
 #if BMCL_HAVE_MALLOC
 
-    Interpreter(const void* bytecode, std::size_t bytecodeSize, std::size_t stackSize)
-        : _bytecode(bytecode, bytecodeSize)
-        , _stack(stackSize)
-    {
-        assert(std::numeric_limits<double>::is_iec559);
-        assert(std::numeric_limits<float>::is_iec559);
-    }
+    Interpreter(const void* bytecode, std::size_t bytecodeSize, std::size_t stackSize);
 
 #endif
 
     bmcl::core::Status::Msg execNext();
-
-    bmcl::core::MemWriter* stack()
-    {
-        return &_stack;
-    }
+    bmcl::core::MemWriter* stack() { return &_stack; }
 
 private:
     template <typename T>

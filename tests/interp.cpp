@@ -9,10 +9,7 @@ using namespace bmcl::interp;
 
 class InterpTest : public ::testing::Test {
 protected:
-    void SetUp()
-    {
-        _interp = 0;
-    }
+    void SetUp() { _interp = 0; }
 
     void TearDown()
     {
@@ -43,10 +40,7 @@ protected:
         _bcWriter->writeType<T>(value);
     }
 
-    void appendInstrHeader(Interpreter::Instruction type)
-    {
-        _bcWriter->writeUint8((uint8_t)type);
-    }
+    void appendInstrHeader(Interpreter::Instruction type) { _bcWriter->writeUint8((uint8_t)type); }
 
     template <typename T>
     void appendStack(T value)
@@ -54,10 +48,7 @@ protected:
         _interp->stack()->writeType<T>(value);
     }
 
-    void appendStackBytes(uint8_t byte, std::size_t count)
-    {
-        _interp->stack()->fill(byte, count);
-    }
+    void appendStackBytes(uint8_t byte, std::size_t count) { _interp->stack()->fill(byte, count); }
 
     void expectNextCmdError(Status::Msg err)
     {

@@ -16,6 +16,24 @@ namespace interp {
 
 using namespace bmcl::core;
 
+// TODO: static assert
+
+Interpreter::Interpreter(const void* bytecode, std::size_t bytecodeSize, void* stack, std::size_t stackSize)
+    : _bytecode(bytecode, bytecodeSize)
+    , _stack(stack, stackSize)
+{
+    assert(std::numeric_limits<double>::is_iec559);
+    assert(std::numeric_limits<float>::is_iec559);
+}
+
+Interpreter::Interpreter(const void* bytecode, std::size_t bytecodeSize, std::size_t stackSize)
+    : _bytecode(bytecode, bytecodeSize)
+    , _stack(stackSize)
+{
+    assert(std::numeric_limits<double>::is_iec559);
+    assert(std::numeric_limits<float>::is_iec559);
+}
+
 template <typename T>
 Status::Msg Interpreter::stackPush()
 {
@@ -23,7 +41,7 @@ Status::Msg Interpreter::stackPush()
         return Status::UnexpectedEndOfBytecode;
     }
 
-    if (_stack.sizeLeft() < sizeof(T)) {
+    if (_stack.availableSize() < sizeof(T)) {
         return Status::StackOverflow;
     }
 
@@ -40,7 +58,7 @@ Status::Msg Interpreter::stackConvert()
     }
 
     T1 var1 = _stack.popType<T1>();
-    if (_stack.sizeLeft() < sizeof(T2)) {
+    if (_stack.availableSize() < sizeof(T2)) {
         return Status::StackOverflow;
     }
 
@@ -66,34 +84,22 @@ Status::Msg Interpreter::stackOp(F func)
 
 template <typename T>
 struct OpAdd {
-    inline T operator()(T val1, T val2) const
-    {
-        return val1 + val2;
-    }
+    inline T operator()(T val1, T val2) const { return val1 + val2; }
 };
 
 template <typename T>
 struct OpSub {
-    inline T operator()(T val1, T val2) const
-    {
-        return val1 - val2;
-    }
+    inline T operator()(T val1, T val2) const { return val1 - val2; }
 };
 
 template <typename T>
 struct OpMult {
-    inline T operator()(T val1, T val2) const
-    {
-        return val1 * val2;
-    }
+    inline T operator()(T val1, T val2) const { return val1 * val2; }
 };
 
 template <typename T>
 struct OpDiv {
-    inline T operator()(T val1, T val2) const
-    {
-        return val1 / val2;
-    }
+    inline T operator()(T val1, T val2) const { return val1 / val2; }
 };
 
 Status::Msg Interpreter::execNext()
