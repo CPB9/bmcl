@@ -1,6 +1,6 @@
-#include "bmcl/core/endian.h"
+#include "bmcl/core/Endian.h"
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 // environment sanity tests
 

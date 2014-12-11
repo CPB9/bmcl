@@ -1,6 +1,6 @@
-#include "bmcl/core/memreader.h"
+#include "bmcl/core/MemReader.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 

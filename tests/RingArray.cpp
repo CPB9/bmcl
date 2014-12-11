@@ -1,6 +1,6 @@
-#include "bmcl/core/ringarray.h"
+#include "bmcl/core/RingArray.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 

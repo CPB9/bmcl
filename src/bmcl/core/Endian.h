@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "bmcl/core/platform.h"
+#include "bmcl/core/Platform.h"
 
 #if defined(BMCL_PLATFORM_LINUX)
     #include <endian.h>

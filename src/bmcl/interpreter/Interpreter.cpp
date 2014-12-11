@@ -6,13 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/interp/interp.h"
+#include "bmcl/interpreter/Interpreter.h"
 
 #include <cassert>
 #include <cstdlib>
 
 namespace bmcl {
-namespace interp {
+namespace interpreter {
 
 using namespace bmcl::core;
 

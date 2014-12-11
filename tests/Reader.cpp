@@ -1,9 +1,9 @@
-#include "bmcl/core/endian.h"
-#include "bmcl/core/memreader.h"
-#include "bmcl/core/reader.h"
-#include "bmcl/core/ringbuf.h"
+#include "bmcl/core/Endian.h"
+#include "bmcl/core/MemReader.h"
+#include "bmcl/core/Reader.h"
+#include "bmcl/core/RingBuffer.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 
@@ -24,11 +24,11 @@ public:
     ~MemReaderShell() { delete _reader; }
 };
 
-class RingBufReaderShell : public ReaderShell {
+class RingBufferReaderShell : public ReaderShell {
 public:
-    RingBufReaderShell(const void* ptr, std::size_t size)
+    RingBufferReaderShell(const void* ptr, std::size_t size)
     {
-        _ringbuf = new RingBuf(size);
+        _ringbuf = new RingBuffer(size);
         std::size_t fillerSize = size / 2 + 1;
         uint8_t* filler = new uint8_t[fillerSize];
         _ringbuf->write(filler, fillerSize);
@@ -37,10 +37,10 @@ public:
         delete[] filler;
     }
 
-    ~RingBufReaderShell() { delete _reader; }
+    ~RingBufferReaderShell() { delete _reader; }
 
 private:
-    RingBuf* _ringbuf;
+    RingBuffer* _ringbuf;
 };
 
 template <typename T>
@@ -97,7 +97,7 @@ private:
     Reader* _reader;
 };
 
-typedef ::testing::Types<MemReaderShell, RingBufReaderShell> ReaderTypes;
+typedef ::testing::Types<MemReaderShell, RingBufferReaderShell> ReaderTypes;
 TYPED_TEST_CASE(ReaderTest, ReaderTypes);
 
 TYPED_TEST(ReaderTest, read)

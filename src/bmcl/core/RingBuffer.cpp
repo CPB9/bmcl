@@ -6,8 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/core/endian.h"
-#include "bmcl/core/ringbuf.h"
+#include "bmcl/core/Endian.h"
+#include "bmcl/core/RingBuffer.h"
 
 #include <cassert>
 #include <stdint.h>
@@ -18,7 +18,7 @@
 namespace bmcl {
 namespace core {
 
-RingBuf::RingBuf(void* data, std::size_t size)
+RingBuffer::RingBuffer(void* data, std::size_t size)
 {
     init(data, size);
 #if BMCL_HAVE_MALLOC
@@ -28,14 +28,14 @@ RingBuf::RingBuf(void* data, std::size_t size)
 
 #if BMCL_HAVE_MALLOC
 
-RingBuf::RingBuf(std::size_t size)
+RingBuffer::RingBuffer(std::size_t size)
 {
     uint8_t* data = new uint8_t[size];
     init(data, size);
     _hasAllocatedMem = true;
 }
 
-RingBuf::~RingBuf()
+RingBuffer::~RingBuffer()
 {
     if (_hasAllocatedMem) {
         delete[] _data;
@@ -44,14 +44,14 @@ RingBuf::~RingBuf()
 
 #endif
 
-void RingBuf::clear()
+void RingBuffer::clear()
 {
     _writeOffset = 0;
     _readOffset = 0;
     _freeSpace = _size;
 }
 
-void RingBuf::erase(std::size_t size)
+void RingBuffer::erase(std::size_t size)
 {
     assert(_size - _freeSpace >= size);
     _freeSpace += size;
@@ -61,15 +61,15 @@ void RingBuf::erase(std::size_t size)
     }
 }
 
-std::size_t RingBuf::availableSize() const { return freeSpace(); }
+std::size_t RingBuffer::availableSize() const { return freeSpace(); }
 
-void RingBuf::read(void* dest, std::size_t size)
+void RingBuffer::read(void* dest, std::size_t size)
 {
     peek(dest, size, 0);
     erase(size);
 }
 
-void RingBuf::init(void* data, std::size_t size)
+void RingBuffer::init(void* data, std::size_t size)
 {
     assert(size > 0);
     _data = (uint8_t*)data;
@@ -79,7 +79,7 @@ void RingBuf::init(void* data, std::size_t size)
     _writeOffset = 0;
 }
 
-void RingBuf::extend(std::size_t size)
+void RingBuffer::extend(std::size_t size)
 {
     _writeOffset += size;
     if (_writeOffset >= _size) {
@@ -88,7 +88,7 @@ void RingBuf::extend(std::size_t size)
     _freeSpace -= size;
 }
 
-void RingBuf::write(const void* data, std::size_t size)
+void RingBuffer::write(const void* data, std::size_t size)
 {
     assert(size > 0);
     assert(size <= _size);
@@ -110,7 +110,7 @@ void RingBuf::write(const void* data, std::size_t size)
     extend(size);
 }
 
-void RingBuf::peek(void* dest, std::size_t size, std::size_t offset) const
+void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
 {
     std::size_t readOffset = _readOffset + offset;
     if (readOffset >= _size) {

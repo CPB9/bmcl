@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "bmcl/core/ringbuf.h"
+#include "bmcl/core/RingBuffer.h"
 
 #include <cstddef>
 
@@ -44,7 +44,7 @@ private:
     void prepareForAppend(std::size_t dataSize);
     void eraseElementsToFitSize(std::size_t size);
 
-    RingBuf _ringbuf;
+    RingBuffer _ringbuf;
     std::size_t _count;
 };
 }

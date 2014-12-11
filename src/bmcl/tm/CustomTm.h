@@ -8,24 +8,24 @@
 
 #pragma once
 
-#include "bmcl/core/writer.h"
-#include "bmcl/telem/frame.h"
+#include "bmcl/core/Writer.h"
+#include "bmcl/tm/Frame.h"
 
 #include <cstddef>
 
 namespace bmcl {
-namespace telem {
+namespace tm {
 
 class CustomTelemetry {
 public:
     CustomTelemetry(std::size_t frameNum, std::size_t varsPerFrame)
     {
 
-        _frames = new bmcl::telem::Frame[frameNum];
+        _frames = new bmcl::tm::Frame[frameNum];
         _frameNum = frameNum;
     }
 
-    bmcl::telem::Frame* frameAt(std::size_t index)
+    bmcl::tm::Frame* frameAt(std::size_t index)
     {
         assert(index < _frameNum);
         return _frames[index];

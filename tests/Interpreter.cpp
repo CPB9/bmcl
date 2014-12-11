@@ -1,13 +1,13 @@
-#include "bmcl/interp/interp.h"
+#include "bmcl/interpreter/Interpreter.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 #include <algorithm>
 
 using namespace bmcl::core;
-using namespace bmcl::interp;
+using namespace bmcl::interpreter;
 
-class InterpTest : public ::testing::Test {
+class InterpreterTest : public ::testing::Test {
 protected:
     void SetUp() { _interp = 0; }
 
@@ -70,7 +70,7 @@ private:
 };
 
 #define PUSH_TEST(name, type, instr, value)                                                                            \
-    TEST_F(InterpTest, name)                                                                                           \
+    TEST_F(InterpreterTest, name)                                                                                           \
     {                                                                                                                  \
         newInterp(1 + sizeof(type));                                                                                   \
         appendInstrHeader(Interpreter::instr);                                                                         \
@@ -79,7 +79,7 @@ private:
         expectStack<type>(value);                                                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    TEST_F(InterpTest, name##_stack_overflow)                                                                          \
+    TEST_F(InterpreterTest, name##_stack_overflow)                                                                          \
     {                                                                                                                  \
         newInterp(1 + sizeof(type), sizeof(type) - 1);                                                                 \
         appendInstrHeader(Interpreter::instr);                                                                         \
@@ -87,7 +87,7 @@ private:
         expectNextCmdError(Status::StackOverflow);                                                                     \
     }                                                                                                                  \
                                                                                                                        \
-    TEST_F(InterpTest, name##_unexpected_end_of_bytecode)                                                              \
+    TEST_F(InterpreterTest, name##_unexpected_end_of_bytecode)                                                              \
     {                                                                                                                  \
         newInterp(1 + sizeof(type) - 1, sizeof(type));                                                                 \
         appendInstrHeader(Interpreter::instr);                                                                         \
@@ -100,7 +100,7 @@ PUSH_TEST(push32, uint32_t, Push32, 0xaabbccdd);
 PUSH_TEST(push64, uint64_t, Push64, 0x9988776655443322);
 
 #define CONV_TEST(name, type1, type2, instr, val, res)                                                                 \
-    TEST_F(InterpTest, convert_##name)                                                                                 \
+    TEST_F(InterpreterTest, convert_##name)                                                                                 \
     {                                                                                                                  \
         newInterp(1, std::max(sizeof(type1), sizeof(type2)));                                                          \
         appendInstrHeader(Interpreter::instr);                                                                         \
@@ -109,7 +109,7 @@ PUSH_TEST(push64, uint64_t, Push64, 0x9988776655443322);
         expectStack<type2>(res);                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
-    TEST_F(InterpTest, convert_##name##_invalid_stack_size)                                                            \
+    TEST_F(InterpreterTest, convert_##name##_invalid_stack_size)                                                            \
     {                                                                                                                  \
         if (sizeof(type2) > sizeof(type1)) {                                                                           \
             newInterp(1, sizeof(type2) - 1);                                                                           \
@@ -142,7 +142,7 @@ CONV_TEST(i32_to_float, int32_t, float, ConvertI32ToFloat, -8088608, -8088608);
 CONV_TEST(i32_to_double, int32_t, double, ConvertI32ToDouble, -2147000001, -2147000001);
 
 #define OP_TEST(name, type, instr, op1, op2, res)                                                                      \
-    TEST_F(InterpTest, name)                                                                                           \
+    TEST_F(InterpreterTest, name)                                                                                           \
     {                                                                                                                  \
         newInterp(1, sizeof(type) * 2);                                                                                \
         appendInstrHeader(Interpreter::instr);                                                                         \
@@ -152,7 +152,7 @@ CONV_TEST(i32_to_double, int32_t, double, ConvertI32ToDouble, -2147000001, -2147
         expectStack<type>(res);                                                                                        \
     }                                                                                                                  \
                                                                                                                        \
-    TEST_F(InterpTest, name##_not_enough_stack_data)                                                                   \
+    TEST_F(InterpreterTest, name##_not_enough_stack_data)                                                                   \
     {                                                                                                                  \
         newInterp(1, sizeof(type) * 2 - 1);                                                                            \
         appendInstrHeader(Interpreter::instr);                                                                         \

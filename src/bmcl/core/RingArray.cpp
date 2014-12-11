@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/core/ringarray.h"
+#include "bmcl/core/RingArray.h"
 
 namespace bmcl {
 namespace core {

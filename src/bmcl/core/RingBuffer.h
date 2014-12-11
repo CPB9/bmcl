@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "bmcl/core/reader.h"
-#include "bmcl/core/writer.h"
+#include "bmcl/core/Reader.h"
+#include "bmcl/core/Writer.h"
 
 #include <cassert>
 #include <cstddef>
@@ -19,14 +19,14 @@
 namespace bmcl {
 namespace core {
 
-class RingBuf : public bmcl::core::Reader, public bmcl::core::Writer {
+class RingBuffer : public bmcl::core::Reader, public bmcl::core::Writer {
 public:
-    RingBuf(void* data, std::size_t size);
+    RingBuffer(void* data, std::size_t size);
 
 #if BMCL_HAVE_MALLOC
 
-    RingBuf(std::size_t size);
-    ~RingBuf();
+    RingBuffer(std::size_t size);
+    ~RingBuffer();
 
 #endif
 

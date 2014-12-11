@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "bmcl/core/reader.h"
+#include "bmcl/core/Reader.h"
 
 #include <cassert>
 #include <cstddef>

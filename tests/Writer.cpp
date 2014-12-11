@@ -1,9 +1,9 @@
-#include "bmcl/core/endian.h"
-#include "bmcl/core/writer.h"
-#include "bmcl/core/memwriter.h"
-#include "bmcl/core/ringbuf.h"
+#include "bmcl/core/Endian.h"
+#include "bmcl/core/Writer.h"
+#include "bmcl/core/MemWriter.h"
+#include "bmcl/core/RingBuffer.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 
@@ -39,22 +39,22 @@ private:
     MemWriter* _memwriter;
 };
 
-class RingBufWriterShell : public WriterShell {
+class RingBufferWriterShell : public WriterShell {
 public:
-    RingBufWriterShell(std::size_t size)
+    RingBufferWriterShell(std::size_t size)
     {
-        _ringbuf = new RingBuf(size);
+        _ringbuf = new RingBuffer(size);
         _writer = _ringbuf;
     }
 
-    ~RingBufWriterShell() { delete _writer; }
+    ~RingBufferWriterShell() { delete _writer; }
 
     std::size_t dataSize() const { return _ringbuf->usedSpace(); }
 
     void copyData(void* dest) const { _ringbuf->peek(dest, dataSize(), 0); }
 
 private:
-    RingBuf* _ringbuf;
+    RingBuffer* _ringbuf;
 };
 
 template <typename T>
@@ -119,7 +119,7 @@ private:
     Writer* _writer;
 };
 
-typedef ::testing::Types<MemWriterShell, RingBufWriterShell> WriterTypes;
+typedef ::testing::Types<MemWriterShell, RingBufferWriterShell> WriterTypes;
 TYPED_TEST_CASE(WriterTest, WriterTypes);
 
 TYPED_TEST(WriterTest, write)

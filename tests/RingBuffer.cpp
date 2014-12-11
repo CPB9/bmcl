@@ -1,12 +1,12 @@
-#include "bmcl/core/ringbuf.h"
+#include "bmcl/core/RingBuffer.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 
-class RingBufTest : public ::testing::Test {
+class RingBufferTest : public ::testing::Test {
 protected:
-    RingBufTest()
+    RingBufferTest()
         : _ringbuf(0)
     {
     }
@@ -21,17 +21,17 @@ protected:
     }
 
     template <std::size_t n, typename R>
-    void initRingBufWithSizeOf(const R (&array)[n])
+    void initRingBufferWithSizeOf(const R (&array)[n])
     {
         (void)array;
         assert(_ringbuf == 0);
-        _ringbuf = new RingBuf(sizeof(R) * n);
+        _ringbuf = new RingBuffer(sizeof(R) * n);
     }
 
-    void initRingBufWithSize(std::size_t size)
+    void initRingBufferWithSize(std::size_t size)
     {
         assert(_ringbuf == 0);
-        _ringbuf = new RingBuf(size);
+        _ringbuf = new RingBuffer(size);
     }
 
     template <std::size_t n, typename R>
@@ -74,50 +74,50 @@ protected:
     }
 
 private:
-    RingBuf* _ringbuf;
+    RingBuffer* _ringbuf;
 };
 
-TEST_F(RingBufTest, init)
+TEST_F(RingBufferTest, init)
 {
-    initRingBufWithSize(4);
+    initRingBufferWithSize(4);
     expectFreeSpace(4);
 }
 
-TEST_F(RingBufTest, append_one_byte)
+TEST_F(RingBufferTest, append_one_byte)
 {
     uint8_t data[1] = {0xaf};
     uint8_t expected[1] = {0xaf};
-    initRingBufWithSize(3);
+    initRingBufferWithSize(3);
     append(data);
     expectFreeSpace(2);
     expect(expected);
 }
 
-TEST_F(RingBufTest, append_several)
+TEST_F(RingBufferTest, append_several)
 {
     uint8_t data[3] = {0x46, 0xa5, 0xfd};
     uint8_t expected[3] = {0x46, 0xa5, 0xfd};
-    initRingBufWithSize(5);
+    initRingBufferWithSize(5);
     append(data);
     expectFreeSpace(2);
     expect(expected);
 }
 
-TEST_F(RingBufTest, append_until_full)
+TEST_F(RingBufferTest, append_until_full)
 {
     uint8_t data[4] = {0x11, 0xbb, 0xaa, 0x47};
     uint8_t expected[4] = {0x11, 0xbb, 0xaa, 0x47};
-    initRingBufWithSizeOf(expected);
+    initRingBufferWithSizeOf(expected);
     append(data);
     expectFull();
     expect(expected);
 }
 
-TEST_F(RingBufTest, overwrite_one_byte)
+TEST_F(RingBufferTest, overwrite_one_byte)
 {
     uint8_t data[4] = {0x46, 0xa5, 0xfd, 0xcc};
     uint8_t expected[3] = {0xa5, 0xfd, 0xcc};
-    initRingBufWithSizeOf(expected);
+    initRingBufferWithSizeOf(expected);
     appendByte(data[0]);
     appendByte(data[1]);
     appendByte(data[2]);
@@ -126,13 +126,13 @@ TEST_F(RingBufTest, overwrite_one_byte)
     expect(expected);
 }
 
-TEST_F(RingBufTest, overwrite_twice)
+TEST_F(RingBufferTest, overwrite_twice)
 {
     uint8_t data1[2] = {0x46, 0xa5};
     uint8_t data2[2] = {0xfd, 0xbb};
     uint8_t data3[1] = {0xcc};
     uint8_t expected[2] = {0xbb, 0xcc};
-    initRingBufWithSizeOf(expected);
+    initRingBufferWithSizeOf(expected);
     append(data1);
     append(data2);
     append(data3);
@@ -140,87 +140,87 @@ TEST_F(RingBufTest, overwrite_twice)
     expect(expected);
 }
 
-TEST_F(RingBufTest, overwrite_split)
+TEST_F(RingBufferTest, overwrite_split)
 {
     uint8_t data1[2] = {0x46, 0xa5};
     uint8_t data2[2] = {0x58, 0xfa};
     uint8_t expected[3] = {0xa5, 0x58, 0xfa};
-    initRingBufWithSizeOf(expected);
+    initRingBufferWithSizeOf(expected);
     append(data1);
     append(data2);
     expectFull();
     expect(expected);
 }
 
-TEST_F(RingBufTest, read_one)
+TEST_F(RingBufferTest, read_one)
 {
     uint8_t data[3] = {0xaa, 0xbb, 0xcc};
     uint8_t expected[2] = {0xbb, 0xcc};
-    initRingBufWithSizeOf(data);
+    initRingBufferWithSizeOf(data);
     append(data);
     readByte();
     expectFreeSpace(1);
     expect(expected);
 }
 
-TEST_F(RingBufTest, read_until_free)
+TEST_F(RingBufferTest, read_until_free)
 {
     uint8_t data[2] = {0xbb, 0xcc};
-    initRingBufWithSizeOf(data);
+    initRingBufferWithSizeOf(data);
     append(data);
     readByte();
     readByte();
     expectEmpty();
 }
 
-TEST_F(RingBufTest, erase)
+TEST_F(RingBufferTest, erase)
 {
     uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
     uint8_t expected[2] = {0xcc, 0xdd};
-    initRingBufWithSizeOf(data);
+    initRingBufferWithSizeOf(data);
     append(data);
     erase(2);
     expect(expected);
 }
 
-TEST_F(RingBufTest, erase_all)
+TEST_F(RingBufferTest, erase_all)
 {
     uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
-    initRingBufWithSizeOf(data);
+    initRingBufferWithSizeOf(data);
     append(data);
     erase(4);
     expectEmpty();
 }
 
-TEST_F(RingBufTest, peek_with_offset)
+TEST_F(RingBufferTest, peek_with_offset)
 {
     uint8_t data1[4] = {0xaa, 0xbb, 0xcc, 0xdd};
     uint8_t data2[2] = {0xaa, 0xbb};
     uint8_t dest[2] = {0x00, 0x00};
     uint8_t expected[2] = {0xaa, 0xbb};
-    initRingBufWithSize(4);
+    initRingBufferWithSize(4);
     append(data1);
     append(data2);
     peek(dest, 2, 2);
     EXPECT_EQ_ARRAYS(expected, dest);
 }
 
-TEST_F(RingBufTest, read)
+TEST_F(RingBufferTest, read)
 {
     uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
     uint8_t dest[4] = {0x00, 0x00, 0x00, 0x00};
     uint8_t expected[4] = {0xaa, 0xbb, 0xcc, 0xdd};
-    initRingBufWithSizeOf(expected);
+    initRingBufferWithSizeOf(expected);
     append(data);
     read(dest, 4);
     expectEmpty();
     EXPECT_EQ_ARRAYS(expected, dest);
 }
 
-TEST_F(RingBufTest, clear)
+TEST_F(RingBufferTest, clear)
 {
     uint8_t data[4] = {0xaa, 0xbb, 0xcc, 0xdd};
-    initRingBufWithSizeOf(data);
+    initRingBufferWithSizeOf(data);
     append(data);
     clear();
     expectEmpty();

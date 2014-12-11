@@ -12,7 +12,7 @@
 #include <cstddef>
 
 namespace bmcl {
-namespace telem {
+namespace tm {
 
 struct Variable {
     Variable()

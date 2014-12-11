@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/core/memreader.h"
+#include "bmcl/core/MemReader.h"
 
 namespace bmcl {
 namespace core {

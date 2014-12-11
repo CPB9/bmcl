@@ -1,6 +1,7 @@
 #pragma once
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
+
 #include <cstddef>
 #include <stdint.h>
 
@@ -27,11 +28,11 @@ static inline void check_eq_mem(const uint8_t* expected, const uint8_t* actual, 
     }
 }
 
-template <std::size_t n1, typename R1, std::size_t n2, typename R2>
-static void expect_eq_arrays(const R1 (&array1)[n1], const R2 (&array2)[n2], const char* fname, std::size_t line)
+template <std::size_t nt, typename T, std::size_t nr, typename R>
+static void expect_eq_arrays(const T (&array1)[nt], const R (&array2)[nr], const char* fname, std::size_t line)
 {
-    std::size_t size1 = sizeof(R1) * n1;
-    std::size_t size2 = sizeof(R2) * n2;
+    std::size_t size1 = sizeof(T) * nt;
+    std::size_t size2 = sizeof(R) * nr;
     if (size1 != size2) {
         ADD_FAILURE_AT(fname, line);
         std::cout << "Different array sizes";

@@ -1,7 +1,7 @@
-#include "bmcl/core/endian.h"
-#include "bmcl/core/memwriter.h"
+#include "bmcl/core/Endian.h"
+#include "bmcl/core/MemWriter.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 

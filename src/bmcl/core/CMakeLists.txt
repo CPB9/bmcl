@@ -1,24 +1,24 @@
 set(BMCL_CORE_SRCS
-    memreader.cpp
-    memwriter.cpp
-    ringarray.cpp
-    ringbucket.cpp
-    ringbuf.cpp
-    status.cpp
+    MemReader.cpp
+    MemWriter.cpp
+    RingArray.cpp
+    RingBucket.cpp
+    RingBuffer.cpp
+    Status.cpp
 )
 
 set(BMCL_CORE_HDRS
-    endian.h
-    memreader.h
-    memwriter.h
-    platform.h
-    reader.h
-    ringarray.h
-    ringbucket.h
-    ringbuf.h
-    stack.h
-    status.h
-    writer.h
+    Endian.h
+    MemReader.h
+    MemWriter.h
+    Platform.h
+    Reader.h
+    RingArray.h
+    RingBucket.h
+    RingBuffer.h
+    Stack.h
+    Status.h
+    Writer.h
 )
 
 add_bmcl_library(bmcl-core SRCS ${BMCL_CORE_SRCS} HDRS ${BMCL_CORE_HDRS})

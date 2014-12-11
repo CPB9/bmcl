@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "bmcl/core/stack.h"
-#include "bmcl/core/writer.h"
+#include "bmcl/core/Stack.h"
+#include "bmcl/core/Writer.h"
 
 #include <cassert>
 #include <cstddef>

@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include "bmcl/core/memwriter.h"
-#include "bmcl/core/memreader.h"
-#include "bmcl/core/status.h"
+#include "bmcl/core/MemWriter.h"
+#include "bmcl/core/MemReader.h"
+#include "bmcl/core/Status.h"
 
 #include <limits>
 
 namespace bmcl {
-namespace interp {
+namespace interpreter {
 
 class Interpreter {
 public:

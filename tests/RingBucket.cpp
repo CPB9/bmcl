@@ -1,6 +1,6 @@
-#include "bmcl/core/ringbucket.h"
+#include "bmcl/core/RingBucket.h"
 
-#include "bmcl-test.h"
+#include "BmclTest.h"
 
 using namespace bmcl::core;
 
