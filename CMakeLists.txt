@@ -10,6 +10,11 @@ enable_testing()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)
+if(HAS_PARENT_SCOPE)
+    set(BMCL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
+endif()
+
 if(NOT ARDUINO_BOARD)
     if(SANITIZE_MEMORY)
         add_definitions(-fPIC -fno-omit-frame-pointer)
@@ -17,7 +22,9 @@ if(NOT ARDUINO_BOARD)
         add_definitions(-fPIC)
     endif()
 
-    add_subdirectory(thirdparty)
+    if(NOT HAS_PARENT_SCOPE)
+        add_subdirectory(thirdparty)
+    endif()
 
     if(MSVC)
         foreach (flag_var
@@ -62,7 +69,9 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(src/bmcl)
 
-if(NOT ARDUINO_BOARD)
-    set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
-    add_subdirectory(tests)
+if(NOT HAS_PARENT_SCOPE)
+    if(NOT ARDUINO_BOARD)
+        set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
+        add_subdirectory(tests)
+    endif()
 endif()
