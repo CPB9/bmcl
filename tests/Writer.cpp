@@ -33,7 +33,7 @@ public:
 
     std::size_t dataSize() const { return _memwriter->sizeUsed(); }
 
-    void copyData(void* dest) const { std::memcpy(dest, _memwriter->ptr(), _memwriter->sizeUsed()); }
+    void copyData(void* dest) const { std::memcpy(dest, _memwriter->start(), _memwriter->sizeUsed()); }
 
 private:
     MemWriter* _memwriter;

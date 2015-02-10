@@ -45,7 +45,7 @@ protected:
     template <std::size_t n, typename R>
     void expect(const R (&array)[n])
     {
-        EXPECT_EQ_MEM(array, _writer->ptr(), sizeof(R) * n);
+        EXPECT_EQ_MEM(array, _writer->start(), sizeof(R) * n);
     }
 
     void expectSizes(std::size_t used, std::size_t left)
@@ -55,7 +55,7 @@ protected:
         EXPECT_EQ(used + left, _writer->maxSize());
         bool isFull = used == _writer->maxSize();
         EXPECT_EQ(isFull, _writer->isFull());
-        EXPECT_EQ(_writer->ptr() + used, _writer->currentPtr());
+        EXPECT_EQ(_writer->start() + used, _writer->current());
     }
 
     template <std::size_t n, typename R>

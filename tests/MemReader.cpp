@@ -29,7 +29,7 @@ protected:
         EXPECT_EQ(read + left, _reader->size());
         bool isEmpty = read == _reader->size();
         EXPECT_EQ(isEmpty, _reader->isEmpty());
-        EXPECT_EQ((uint8_t*)data, _reader->currentPtr());
+        EXPECT_EQ((uint8_t*)data, _reader->current());
     }
 
     void skip(std::size_t size) { _reader->skip(size); }

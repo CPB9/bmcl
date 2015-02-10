@@ -32,8 +32,9 @@ public:
 
     bool isFull() const { return _current >= _end; }
 
-    uint8_t* ptr() const { return _start; }
-    uint8_t* currentPtr() const { return _current; }
+    uint8_t* current() const { return _current; }
+    uint8_t* start() const { return _start; }
+    uint8_t* end() const { return _end; }
 
     std::size_t sizeUsed() const { return _current - _start; }
     std::size_t maxSize() const { return _end - _start; }
@@ -51,7 +52,7 @@ private:
 
     uint8_t* _start;
     uint8_t* _current;
-    const uint8_t* _end;
+    uint8_t* _end;
 #if BMCL_HAVE_MALLOC
     bool hasAllocatedMem;
 #endif

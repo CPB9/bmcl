@@ -24,12 +24,15 @@ public:
 
     bool isEmpty() const { return _current >= _end; }
 
-    const uint8_t* currentPtr() const { return _current; }
+    const uint8_t* current() const { return _current; }
+    const uint8_t* start() const { return _start; }
+    const uint8_t* end() const { return _end; }
 
     std::size_t size() const { return _end - _start; }
     std::size_t sizeLeft() const { return _end - _current; }
     std::size_t sizeRead() const { return _current - _start; }
 
+    void reset() { _current = _start; }
     void skip(std::size_t size);
     void peek(void* dest, std::size_t size, std::size_t offset) const;
     virtual void read(void* dest, std::size_t size);
