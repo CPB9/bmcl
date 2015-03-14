@@ -15,9 +15,6 @@ namespace core {
 MemWriter::MemWriter(void* dest, std::size_t maxSize)
 {
     init(dest, maxSize);
-#if BMCL_HAVE_MALLOC
-    hasAllocatedMem = false;
-#endif
 }
 
 #if BMCL_HAVE_MALLOC
@@ -25,13 +22,12 @@ MemWriter::MemWriter(void* dest, std::size_t maxSize)
 MemWriter::MemWriter(std::size_t maxSize)
 {
     uint8_t* dest = new uint8_t[maxSize];
-    init(dest, maxSize);
-    hasAllocatedMem = true;
+    init(dest, maxSize, true);
 }
 
 MemWriter::~MemWriter()
 {
-    if (hasAllocatedMem) {
+    if (_hasAllocatedMem) {
         delete[] _start;
     }
 }
@@ -76,11 +72,18 @@ void MemWriter::fillUp(uint8_t byte)
     _current += size;
 }
 
+#if BMCL_HAVE_MALLOC
+void MemWriter::init(void* dest, std::size_t maxSize, bool hasAllocatedMem)
+#else
 void MemWriter::init(void* dest, std::size_t maxSize)
+#endif
 {
     _start = (uint8_t*)dest;
     _current = _start;
     _end = _start + maxSize;
+#if BMCL_HAVE_MALLOC
+    _hasAllocatedMem = hasAllocatedMem;
+#endif
 }
 }
 }

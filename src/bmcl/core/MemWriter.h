@@ -57,13 +57,17 @@ public:
     void write(R (&array)[n]);
 
 private:
+#if BMCL_HAVE_MALLOC
+    void init(void* dest, std::size_t maxSize, bool hasAllocatedMem = false);
+#else
     void init(void* dest, std::size_t maxSize);
+#endif
 
     uint8_t* _start;
     uint8_t* _current;
     uint8_t* _end;
 #if BMCL_HAVE_MALLOC
-    bool hasAllocatedMem;
+    bool _hasAllocatedMem;
 #endif
 };
 
