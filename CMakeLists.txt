@@ -15,6 +15,15 @@ if(BMCL_NO_MALLOC)
     set(BMCL_HAVE_MALLOC 0)
 endif()
 
+include(TestBigEndian)
+
+test_big_endian(IS_BIG_ENDIAN)
+if(IS_BIG_ENDIAN)
+    set(BMCL_BIG_ENDIAN 1)
+else()
+    set(BMCL_LITTLE_ENDIAN 1)
+endif()
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/bmcl/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
