@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "bmcl/config.h"
 #include "bmcl/core/Reader.h"
 
 #include <cstddef>

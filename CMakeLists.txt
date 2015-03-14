@@ -10,9 +10,21 @@ enable_testing()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(BMCL_HAVE_MALLOC 1)
+if(BMCL_NO_MALLOC)
+    set(BMCL_HAVE_MALLOC 0)
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/bmcl/config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
+
 get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)
 if(HAS_PARENT_SCOPE)
-    set(BMCL_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
+    set(BMCL_INCLUDE_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_BINARY_DIR}/src
+        PARENT_SCOPE
+    )
 endif()
 
 if(NOT ARDUINO_BOARD)
@@ -32,11 +44,12 @@ if(NOT ARDUINO_BOARD)
                  CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
             string(REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
         endforeach()
-        add_definitions(/DBMCL_HAVE_MALLOC=1) # temp
     else()
         add_definitions(-std=c++98)
-        add_definitions(-Wall -Wextra -O0 -ggdb3 -pipe)
-        add_definitions(-DBMCL_HAVE_MALLOC=1) # temp
+        add_definitions(-Wall -Wextra)
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_definitions(-O0 -ggdb3 -pipe)
+        endif()
     endif()
 
     macro(enable_sanitizer name)
@@ -71,7 +84,9 @@ add_subdirectory(src/bmcl)
 
 if(NOT HAS_PARENT_SCOPE)
     if(NOT ARDUINO_BOARD)
-        set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
-        add_subdirectory(tests)
+        if(BMCL_HAVE_MALLOC)
+            set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
+            add_subdirectory(tests)
+        endif()
     endif()
 endif()

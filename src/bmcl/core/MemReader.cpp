@@ -6,6 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "bmcl/config.h"
 #include "bmcl/core/MemReader.h"
 #include "bmcl/core/MemWriter.h"
 

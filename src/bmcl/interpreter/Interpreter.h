@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "bmcl/config.h"
 #include "bmcl/core/MemWriter.h"
 #include "bmcl/core/MemReader.h"
 #include "bmcl/core/Status.h"

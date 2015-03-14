@@ -6,6 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "bmcl/config.h"
 #include "bmcl/core/Endian.h"
 #include "bmcl/core/RingBuffer.h"
 

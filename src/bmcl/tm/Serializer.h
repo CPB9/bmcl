@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "bmcl/config.h"
 #include "bmcl/core/Status.h"
 #include "bmcl/core/Writer.h"
 #include "bmcl/tm/Frame.h"
