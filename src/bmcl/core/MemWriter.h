@@ -21,6 +21,9 @@ namespace core {
 
 class MemWriter : public bmcl::core::Writer, public bmcl::core::Stack {
 public:
+    template <std::size_t n, typename R>
+    MemWriter(R (&array)[n]);
+
     MemWriter(void* dest, std::size_t maxSize);
 
 #if BMCL_HAVE_MALLOC
@@ -31,6 +34,7 @@ public:
 #endif
 
     bool isFull() const { return _current >= _end; }
+    bool isEmpty() const { return _current == _start; }
 
     uint8_t* current() const { return _current; }
     uint8_t* start() const { return _start; }
@@ -40,12 +44,16 @@ public:
     std::size_t maxSize() const { return _end - _start; }
     virtual std::size_t availableSize() const;
 
+    void reset() { _current = _start; };
     void advance(std::size_t size);
     void fillUp(uint8_t byte);
     void fill(uint8_t byte, std::size_t size);
     virtual void write(const void* data, std::size_t size);
     virtual void push(const void* src, std::size_t size);
     virtual void pop(void* dest, std::size_t size);
+
+    template <std::size_t n, typename R>
+    void write(R (&array)[n]);
 
 private:
     void init(void* dest, std::size_t maxSize);
@@ -57,5 +65,17 @@ private:
     bool hasAllocatedMem;
 #endif
 };
+
+template <std::size_t n, typename R>
+inline MemWriter::MemWriter(R (&array)[n])
+{
+    init(array, n * sizeof(R));
+}
+
+template <std::size_t n, typename R>
+inline void MemWriter::write(R (&array)[n])
+{
+    write(array, sizeof(R) * n);
+}
 }
 }

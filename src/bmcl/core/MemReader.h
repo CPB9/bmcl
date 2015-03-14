@@ -10,17 +10,21 @@
 
 #include "bmcl/core/Reader.h"
 
-#include <cassert>
 #include <cstddef>
 #include <stdint.h>
-#include <cstring>
 
 namespace bmcl {
 namespace core {
 
+class MemWriter;
+
 class MemReader : public Reader {
 public:
+    template <std::size_t n, typename R>
+    MemReader(const R (&array)[n]);
+
     MemReader(const void* ptr, std::size_t size);
+    MemReader(const MemWriter& memWriter);
 
     bool isEmpty() const { return _current >= _end; }
 
@@ -38,9 +42,22 @@ public:
     virtual void read(void* dest, std::size_t size);
 
 private:
+    void init(const void* ptr, std::size_t size);
+
     const uint8_t* _start;
     const uint8_t* _current;
     const uint8_t* _end;
 };
+
+template <std::size_t n, typename R>
+inline MemReader::MemReader(const R (&array)[n])
+{
+    init(array, sizeof(R) * n);
+}
+
+inline MemReader::MemReader(const void* ptr, std::size_t size)
+{
+    init(ptr, size);
+}
 }
 }

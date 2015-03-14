@@ -24,6 +24,12 @@ public:
 
     virtual std::size_t availableSize() const = 0;
 
+    template <std::size_t n, typename R>
+    inline void write(R (&array)[n])
+    {
+        write(array, n * sizeof(R));
+    }
+
     virtual void write(const void* data, std::size_t size) = 0;
 
     template <typename T>

@@ -25,7 +25,7 @@ protected:
     void initWriter(R (&array)[n])
     {
         assert(_writer == 0);
-        _writer = new MemWriter(array, sizeof(R) * n);
+        _writer = new MemWriter(array);
     }
 
     template <std::size_t n, typename R>
@@ -50,6 +50,8 @@ protected:
 
     void expectSizes(std::size_t used, std::size_t left)
     {
+        EXPECT_EQ(used == 0, _writer->isEmpty());
+        EXPECT_EQ(left == 0, _writer->isFull());
         EXPECT_EQ(used, _writer->sizeUsed());
         EXPECT_EQ(left, _writer->availableSize());
         EXPECT_EQ(used + left, _writer->maxSize());
@@ -61,7 +63,7 @@ protected:
     template <std::size_t n, typename R>
     void append(const R (&array)[n])
     {
-        _writer->write(array, sizeof(R) * n);
+        _writer->write(array);
     }
 
     void appendUint8(uint8_t data) { _writer->write(&data, 1); }
@@ -86,7 +88,9 @@ TEST_F(MemWriterTest, with_dest)
     uint8_t dest[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
     uint8_t expected[5] = {0xaa, 0x11, 0x22, 0xbb, 0xff};
     initWriter(dest);
+    expectSizes(0, 5);
     append(data);
+    expectSizes(5, 0);
     EXPECT_EQ_ARRAYS(expected, dest);
 }
 

@@ -7,15 +7,24 @@
  */
 
 #include "bmcl/core/MemReader.h"
+#include "bmcl/core/MemWriter.h"
+
+#include <cassert>
+#include <cstring>
 
 namespace bmcl {
 namespace core {
 
-MemReader::MemReader(const void* ptr, std::size_t size)
+void MemReader::init(const void* ptr, std::size_t size)
 {
-    _start = (uint8_t*)ptr;
+     _start = (uint8_t*)ptr;
     _current = _start;
     _end = _start + size;
+}
+
+MemReader::MemReader(const MemWriter& memWriter)
+{
+    init(memWriter.start(), memWriter.sizeUsed());
 }
 
 void MemReader::skip(std::size_t size)

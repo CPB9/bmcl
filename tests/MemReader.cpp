@@ -19,7 +19,7 @@ protected:
     void initReader(const R (&array)[n])
     {
         assert(_reader == 0);
-        _reader = new MemReader(array, sizeof(R) * n);
+        _reader = new MemReader(array);
     }
 
     void expectParams(std::size_t read, std::size_t left, void* data)
