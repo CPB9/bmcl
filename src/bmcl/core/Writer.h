@@ -15,6 +15,8 @@
 #include <cstddef>
 #include <stdint.h>
 #include <cstdlib>
+#include <cassert>
+#include <limits>
 
 namespace bmcl {
 namespace core {
@@ -26,7 +28,7 @@ public:
     virtual std::size_t availableSize() const = 0;
 
     template <std::size_t n, typename R>
-    inline void write(R (&array)[n])
+    inline void write(R(&array)[n])
     {
         write(array, n * sizeof(R));
     }
@@ -49,6 +51,19 @@ public:
     void writeUint16Be(uint16_t value) { writeType<uint16_t>(htobe16(value)); }
     void writeUint32Be(uint32_t value) { writeType<uint32_t>(htobe32(value)); }
     void writeUint64Be(uint64_t value) { writeType<uint64_t>(htobe64(value)); }
+
+    template <typename T, typename H, typename C>
+    inline void writeFloat(T value, C convert)
+    {
+        assert(std::numeric_limits<T>::is_iec559);
+        H swapped = convert(&value);
+        write(&swapped, sizeof(H));
+    }
+
+    void writeFloat32Le(float value) { writeFloat<float, uint32_t>(value, le32dec); }
+    void writeFloat64Le(double value) { writeFloat<double, uint64_t>(value, le64dec); }
+    void writeFloat32Be(float value) { writeFloat<float, uint32_t>(value, be32dec); }
+    void writeFloat64Be(double value) { writeFloat<double, uint64_t>(value, be64dec); }
 };
 }
 }

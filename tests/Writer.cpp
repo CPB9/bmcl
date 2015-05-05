@@ -101,11 +101,19 @@ protected:
 
     void writeUint64le(uint64_t value) { _writer->writeUint64Le(value); }
 
+    void writeFloat32le(float value) { _writer->writeFloat32Le(value); }
+
+    void writeFloat64le(double value) { _writer->writeFloat64Le(value); }
+
     void writeUint16be(uint16_t value) { _writer->writeUint16Be(value); }
 
     void writeUint32be(uint32_t value) { _writer->writeUint32Be(value); }
 
     void writeUint64be(uint64_t value) { _writer->writeUint64Be(value); }
+
+    void writeFloat32be(float value) { _writer->writeFloat32Be(value); }
+
+    void writeFloat64be(double value) { _writer->writeFloat64Be(value); }
 
     void TearDown()
     {
@@ -188,6 +196,38 @@ TYPED_TEST(WriterTest, write_uint64le)
     this->expectData(expected);
 }
 
+TYPED_TEST(WriterTest, write_float32le)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint32_t expected[2] = {0x12345678, 0x90abcdef};
+#else
+    uint32_t expected[2] = {0x78563412, 0xefcdab90};
+#endif
+    this->newWriterWithSizeOf(expected);
+    uint32_t value1 = 0x12345678;
+    this->writeFloat32le(*(float*)&value1);
+    uint32_t value2 = 0x90abcdef;
+    this->writeFloat32le(*(float*)&value2);
+    this->expectData(expected);
+}
+
+TYPED_TEST(WriterTest, write_float64le)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint64_t expected[2] = {0x1234567890abcdef, 0x1029384756473829};
+#else
+    uint64_t expected[2] = {0xefcdab9078563412, 0x2938475647382910};
+#endif
+    this->newWriterWithSizeOf(expected);
+    uint64_t value1 = 0x1234567890abcdef;
+    this->writeFloat64le(*(double*)&value1);
+    uint64_t value2 = 0x1029384756473829;
+    this->writeFloat64le(*(double*)&value2);
+    this->expectData(expected);
+}
+
+
+
 TYPED_TEST(WriterTest, write_uint16be)
 {
 #ifdef BMCL_LITTLE_ENDIAN
@@ -228,3 +268,34 @@ TYPED_TEST(WriterTest, write_uint64be)
     this->writeUint64be(0x09ac2386394f78dc);
     this->expectData(expected);
 }
+
+TYPED_TEST(WriterTest, write_float32be)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint32_t expected[2] = {0x78563412, 0xefcdab90};
+#else
+    uint32_t expected[2] = {0x12345678, 0x90abcdef};
+#endif
+    this->newWriterWithSizeOf(expected);
+    uint32_t value1 = 0x12345678;
+    this->writeFloat32be(*(float*)&value1);
+    uint32_t value2 = 0x90abcdef;
+    this->writeFloat32be(*(float*)&value2);
+    this->expectData(expected);
+}
+
+TYPED_TEST(WriterTest, write_float64be)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint64_t expected[2] = {0xefcdab9078563412, 0x2938475647382910};
+#else
+    uint64_t expected[2] = {0x1234567890abcdef, 0x1029384756473829};
+#endif
+    this->newWriterWithSizeOf(expected);
+    uint64_t value1 = 0x1234567890abcdef;
+    this->writeFloat64be(*(double*)&value1);
+    uint64_t value2 = 0x1029384756473829;
+    this->writeFloat64be(*(double*)&value2);
+    this->expectData(expected);
+}
+

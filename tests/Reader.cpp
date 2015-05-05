@@ -85,6 +85,14 @@ protected:
 
     void expectNextUint64le(uint64_t value) { EXPECT_EQ(value, _reader->readUint64Le()); }
 
+    void expectNextFloat32le(float value) { EXPECT_EQ(value, _reader->readFloat32Le()); }
+
+    void expectNextFloat64le(double value) { EXPECT_EQ(value, _reader->readFloat64Le()); }
+
+    void expectNextFloat32be(float value) { EXPECT_EQ(value, _reader->readFloat32Be()); }
+
+    void expectNextFloat64be(double value) { EXPECT_EQ(value, _reader->readFloat64Be()); }
+
     void TearDown()
     {
         if (_shell != 0) {
@@ -165,6 +173,34 @@ TYPED_TEST(ReaderTest, read_uint64le)
     this->expectNextUint64le(0xaa11bb22cc33dd44);
 }
 
+TYPED_TEST(ReaderTest, read_float32le)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint32_t data[2] = {0x12345678, 0xabcdef12};
+#else
+    uint32_t data[2] = {0x78563412, 0x12efcdab};
+#endif
+    this->newReader(data);
+    uint32_t value1 = 0x12345678;
+    this->expectNextFloat32le(*(float*)&value1);
+    uint32_t value2 = 0xabcdef12;
+    this->expectNextFloat32le(*(float*)&value2);
+}
+
+TYPED_TEST(ReaderTest, read_float64le)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint64_t data[2] = {0x1122334455667788, 0x3344556677889900};
+#else
+    uint64_t data[2] = {0x8877665544332211, 0x0099887766554433};
+#endif
+    this->newReader(data);
+    uint64_t value1 = 0x1122334455667788;
+    this->expectNextFloat64le(*(double*)&value1);
+    uint64_t value2 = 0x3344556677889900;
+    this->expectNextFloat64le(*(double*)&value2);
+}
+
 TYPED_TEST(ReaderTest, read_uint16be)
 {
 #ifdef BMCL_LITTLE_ENDIAN
@@ -204,4 +240,32 @@ TYPED_TEST(ReaderTest, read_uint64be)
     this->newReader(data);
     this->expectNextUint64be(0x7799113355668800);
     this->expectNextUint64be(0xddbbff4422eeccaa);
+}
+
+TYPED_TEST(ReaderTest, read_float32be)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint32_t data[2] = {0x78563412, 0x12efcdab};
+#else
+    uint32_t data[2] = {0x12345678, 0xabcdef12};
+#endif
+    this->newReader(data);
+    uint32_t value1 = 0x12345678;
+    this->expectNextFloat32be(*(float*)&value1);
+    uint32_t value2 = 0xabcdef12;
+    this->expectNextFloat32be(*(float*)&value2);
+}
+
+TYPED_TEST(ReaderTest, read_float64be)
+{
+#ifdef BMCL_LITTLE_ENDIAN
+    uint64_t data[2] = {0x8877665544332211, 0x0099887766554433};
+#else
+    uint64_t data[2] = {0x1122334455667788, 0x3344556677889900};
+#endif
+    this->newReader(data);
+    uint64_t value1 = 0x1122334455667788;
+    this->expectNextFloat64be(*(double*)&value1);
+    uint64_t value2 = 0x3344556677889900;
+    this->expectNextFloat64be(*(double*)&value2);
 }

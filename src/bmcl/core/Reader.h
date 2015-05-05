@@ -14,6 +14,8 @@
 #include <cstddef>
 #include <stdint.h>
 #include <cstdlib>
+#include <cassert>
+#include <limits>
 
 namespace bmcl {
 namespace core {
@@ -42,6 +44,21 @@ public:
     uint16_t readUint16Be() { return be16toh(readType<uint16_t>()); }
     uint32_t readUint32Be() { return be32toh(readType<uint32_t>()); }
     uint64_t readUint64Be() { return be64toh(readType<uint64_t>()); }
+
+    template <typename T, typename H, typename C>
+    inline T readFloat(C convert)
+    {
+        assert(std::numeric_limits<T>::is_iec559);
+        H value = readType<H>();
+        T swapped;
+        convert(&swapped, value);
+        return swapped;
+    }
+
+    float readFloat32Le() { return readFloat<float, uint32_t>(le32enc); }
+    double readFloat64Le() { return readFloat<double, uint64_t>(le64enc); }
+    float readFloat32Be() { return readFloat<float, uint32_t>(be32enc); }
+    double readFloat64Be() { return readFloat<double, uint64_t>(be64enc); }
 };
 }
 }
