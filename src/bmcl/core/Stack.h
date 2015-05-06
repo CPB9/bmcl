@@ -12,6 +12,8 @@
 #include "bmcl/core/Endian.h"
 
 #include <cstddef>
+#include <cassert>
+#include <limits>
 
 namespace bmcl {
 namespace core {
@@ -37,6 +39,24 @@ public:
         push(&value, sizeof(value));
     }
 
+    template <typename T, typename H, typename C>
+    inline void pushFloat(T value, C convert)
+    {
+        assert(std::numeric_limits<T>::is_iec559);
+        H swapped = convert(&value);
+        push(&swapped, sizeof(H));
+    }
+
+    template <typename T, typename H, typename C>
+    inline T popFloat(C convert)
+    {
+        assert(std::numeric_limits<T>::is_iec559);
+        H value = popType<H>();
+        T swapped;
+        convert(&swapped, value);
+        return swapped;
+    }
+
     void pushUint8(uint8_t value) { pushType<uint8_t>(value); }
     void pushUint16(uint16_t value) { pushType<uint16_t>(value); }
     void pushUint32(uint32_t value) { pushType<uint32_t>(value); }
@@ -47,6 +67,10 @@ public:
     void pushUint16Be(uint16_t value) { pushType<uint16_t>(htobe16(value)); }
     void pushUint32Be(uint32_t value) { pushType<uint32_t>(htobe32(value)); }
     void pushUint64Be(uint64_t value) { pushType<uint64_t>(htobe64(value)); }
+    void pushFloat32Le(float value) { pushFloat<float, uint32_t>(value, le32dec); }
+    void pushFloat64Le(double value) { pushFloat<double, uint64_t>(value, le64dec); }
+    void pushFloat32Be(float value) { pushFloat<float, uint32_t>(value, be32dec); }
+    void pushFloat64Be(double value) { pushFloat<double, uint64_t>(value, be64dec); }
 
     uint8_t popUint8() { return popType<uint8_t>(); }
     uint16_t popUint16() { return popType<uint16_t>(); }
@@ -58,6 +82,10 @@ public:
     uint16_t popUint16Be() { return be16toh(popType<uint16_t>()); }
     uint32_t popUint32Be() { return be32toh(popType<uint32_t>()); }
     uint64_t popUint64Be() { return be64toh(popType<uint64_t>()); }
+    float popFloat32Le() { return popFloat<float, uint32_t>(le32enc); }
+    double popFloat64Le() { return popFloat<double, uint64_t>(le64enc); }
+    float popFloat32Be() { return popFloat<float, uint32_t>(be32enc); }
+    double popFloat64Be() { return popFloat<double, uint64_t>(be64enc); }
 };
 }
 }
