@@ -34,6 +34,7 @@ public:
     void clear();
     void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
     virtual void read(void* dest, std::size_t size);
+    virtual void skip(std::size_t size);
     virtual void write(const void* data, std::size_t size);
     void erase(std::size_t size);
 

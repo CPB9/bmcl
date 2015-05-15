@@ -38,8 +38,8 @@ public:
     std::size_t sizeRead() const { return _current - _start; }
 
     void reset() { _current = _start; }
-    void skip(std::size_t size);
-    void peek(void* dest, std::size_t size, std::size_t offset) const;
+    virtual void skip(std::size_t size);
+    virtual void peek(void* dest, std::size_t size, std::size_t offset) const;
     virtual void read(void* dest, std::size_t size);
 
 private:

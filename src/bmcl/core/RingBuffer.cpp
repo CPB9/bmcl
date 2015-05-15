@@ -131,5 +131,10 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
         }
     }
 }
+
+void RingBuffer::skip(std::size_t size)
+{
+    erase(size);
+}
 }
 }

@@ -25,6 +25,7 @@ public:
     virtual ~Reader() {}
 
     virtual void read(void* dest, std::size_t size) = 0;
+    virtual void skip(std::size_t size) = 0;
 
     template <typename T>
     inline T readType()
