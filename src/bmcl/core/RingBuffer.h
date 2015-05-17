@@ -33,6 +33,8 @@ public:
 
     void clear();
     void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
+    virtual std::size_t readableSize() const;
+    virtual std::size_t writableSize() const;
     virtual void read(void* dest, std::size_t size);
     virtual void skip(std::size_t size);
     virtual void write(const void* data, std::size_t size);
@@ -40,7 +42,6 @@ public:
 
     std::size_t freeSpace() const { return _freeSpace; }
     std::size_t usedSpace() const { return _size - _freeSpace; }
-    virtual std::size_t availableSize() const;
     bool isFull() const { return _freeSpace == 0; }
     bool isEmpty() const { return _freeSpace == _size; }
     std::size_t size() const { return _size; }

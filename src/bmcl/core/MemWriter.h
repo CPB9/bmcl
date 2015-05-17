@@ -43,7 +43,7 @@ public:
 
     std::size_t sizeUsed() const { return _current - _start; }
     std::size_t maxSize() const { return _end - _start; }
-    virtual std::size_t availableSize() const;
+    virtual std::size_t writableSize() const;
 
     void reset() { _current = _start; };
     void advance(std::size_t size);

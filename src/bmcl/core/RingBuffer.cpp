@@ -62,7 +62,7 @@ void RingBuffer::erase(std::size_t size)
     }
 }
 
-std::size_t RingBuffer::availableSize() const { return freeSpace(); }
+std::size_t RingBuffer::writableSize() const { return freeSpace(); }
 
 void RingBuffer::read(void* dest, std::size_t size)
 {
@@ -135,6 +135,11 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
 void RingBuffer::skip(std::size_t size)
 {
     erase(size);
+}
+
+std::size_t RingBuffer::readableSize() const
+{
+    return usedSpace();
 }
 }
 }

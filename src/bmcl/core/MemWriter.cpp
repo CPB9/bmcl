@@ -36,18 +36,18 @@ MemWriter::~MemWriter()
 
 void MemWriter::advance(std::size_t size)
 {
-    assert(availableSize() >= size);
+    assert(writableSize() >= size);
     _current += size;
 }
 
 void MemWriter::write(const void* data, std::size_t size)
 {
-    assert(availableSize() >= size);
+    assert(writableSize() >= size);
     std::memcpy(_current, data, size);
     _current += size;
 }
 
-std::size_t MemWriter::availableSize() const { return _end - _current; }
+std::size_t MemWriter::writableSize() const { return _end - _current; }
 
 void MemWriter::push(const void* src, std::size_t size) { write(src, size); }
 
@@ -60,7 +60,7 @@ void MemWriter::pop(void* dest, std::size_t size)
 
 void MemWriter::fill(uint8_t byte, std::size_t size)
 {
-    assert(availableSize() >= size);
+    assert(writableSize() >= size);
     std::memset(_current, byte, size);
     _current += size;
 }

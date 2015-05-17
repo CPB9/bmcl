@@ -46,5 +46,10 @@ void MemReader::read(void* dest, std::size_t size)
     std::memcpy(dest, _current, size);
     _current += size;
 }
+
+std::size_t MemReader::readableSize() const
+{
+    return sizeLeft();
+}
 }
 }
