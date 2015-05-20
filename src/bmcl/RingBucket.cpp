@@ -7,13 +7,12 @@
  */
 
 #include "bmcl/config.h"
-#include "bmcl/core/RingBucket.h"
+#include "bmcl/RingBucket.h"
 
 #include <cassert>
 #include <cstdlib>
 
 namespace bmcl {
-namespace core {
 
 RingBucket::RingBucket(void* data, std::size_t size)
     : _ringbuf(data, size)
@@ -93,6 +92,5 @@ void RingBucket::eraseElementsToFitSize(std::size_t size)
     while (freeSpace < size) {
         freeSpace += eraseElement();
     }
-}
 }
 }

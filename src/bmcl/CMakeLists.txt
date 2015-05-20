@@ -1,20 +1,17 @@
-function(ADD_BMCL_LIBRARY lib)
-    cmake_parse_arguments(ADD_BMCL_LIBRARY "" "" "SRCS;HDRS" ${ARGN})
-    if(ARDUINO_BOARD)
-        generate_arduino_library(${lib}
-            SRCS ${ADD_BMCL_LIBRARY_SRCS}
-            HDRS ${ADD_BMCL_LIBRARY_HDRS}
-            BOARD ${ARDUINO_BOARD}
-        )
-    else()
-        add_library(${lib}
-            STATIC
-            ${ADD_BMCL_LIBRARY_SRCS}
-            ${ADD_BMCL_LIBRARY_HDRS}
-        )
-    endif()
-endfunction()
-
-add_subdirectory(core)
-add_subdirectory(interpreter)
-#add_subdirectory(tm)
+add_library(bmcl STATIC
+    Endian.h
+    MemReader.cpp
+    MemReader.h
+    MemWriter.cpp
+    MemWriter.h
+    Platform.h
+    Reader.h
+    RingArray.cpp
+    RingArray.h
+    RingBucket.cpp
+    RingBucket.h
+    RingBuffer.cpp
+    RingBuffer.h
+    Stack.h
+    Writer.h
+)

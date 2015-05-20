@@ -1,8 +1,8 @@
-#include "bmcl/core/RingBucket.h"
+#include "bmcl/RingBucket.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class RingBucketTest : public ::testing::Test {
 protected:

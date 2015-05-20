@@ -1,9 +1,9 @@
-#include "bmcl/core/Endian.h"
-#include "bmcl/core/MemWriter.h"
+#include "bmcl/Endian.h"
+#include "bmcl/MemWriter.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class MemWriterTest : public ::testing::Test {
 protected:
@@ -53,7 +53,7 @@ protected:
         EXPECT_EQ(used == 0, _writer->isEmpty());
         EXPECT_EQ(left == 0, _writer->isFull());
         EXPECT_EQ(used, _writer->sizeUsed());
-        EXPECT_EQ(left, _writer->availableSize());
+        EXPECT_EQ(left, _writer->writableSize());
         EXPECT_EQ(used + left, _writer->maxSize());
         bool isFull = used == _writer->maxSize();
         EXPECT_EQ(isFull, _writer->isFull());

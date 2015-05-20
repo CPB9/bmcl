@@ -9,13 +9,12 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Reader.h"
+#include "bmcl/Reader.h"
 
 #include <cstddef>
 #include <stdint.h>
 
 namespace bmcl {
-namespace core {
 
 class MemWriter;
 
@@ -60,6 +59,5 @@ inline MemReader::MemReader(const R (&array)[n])
 inline MemReader::MemReader(const void* ptr, std::size_t size)
 {
     init(ptr, size);
-}
 }
 }

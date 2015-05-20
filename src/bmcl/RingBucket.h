@@ -9,12 +9,11 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/RingBuffer.h"
+#include "bmcl/RingBuffer.h"
 
 #include <cstddef>
 
 namespace bmcl {
-namespace core {
 
 typedef std::size_t RingBucketHeader;
 
@@ -48,5 +47,4 @@ private:
     RingBuffer _ringbuf;
     std::size_t _count;
 };
-}
 }

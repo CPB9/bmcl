@@ -1,11 +1,11 @@
-#include "bmcl/core/Endian.h"
-#include "bmcl/core/Writer.h"
-#include "bmcl/core/MemWriter.h"
-#include "bmcl/core/RingBuffer.h"
+#include "bmcl/Endian.h"
+#include "bmcl/Writer.h"
+#include "bmcl/MemWriter.h"
+#include "bmcl/RingBuffer.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class WriterShell {
 public:

@@ -13,7 +13,7 @@ macro(add_unit_test test file)
     add_executable(${test} ${file})
     target_link_libraries(${test}
         ${ARGN}
-        bmcl-core
+        bmcl
         gtest
         gtest_main
     )
@@ -30,20 +30,15 @@ endmacro()
 add_unit_test(environment_tests Environment.cpp)
 add_unit_test(memreader_tests MemReader.cpp)
 add_unit_test(memwriter_tests MemWriter.cpp)
-# add_unit_test(queue queue.cpp)
 add_unit_test(reader_tests Reader.cpp)
 add_unit_test(ringarray_tests RingArray.cpp)
 add_unit_test(ringbucket_tests RingBucket.cpp)
 add_unit_test(ringbuf_tests RingBuffer.cpp)
 add_unit_test(writer_tests Writer.cpp)
-#
-add_unit_test(interp_tests Interpreter.cpp bmcl-interpreter)
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests
-    bmcl-core
-    bmcl-interpreter
-#    bmcl-telem
+    bmcl
     gtest
     gtest_main
 )

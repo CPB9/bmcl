@@ -9,8 +9,8 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Stack.h"
-#include "bmcl/core/Writer.h"
+#include "bmcl/Stack.h"
+#include "bmcl/Writer.h"
 
 #include <cassert>
 #include <cstddef>
@@ -18,9 +18,8 @@
 #include <cstring>
 
 namespace bmcl {
-namespace core {
 
-class MemWriter : public bmcl::core::Writer, public bmcl::core::Stack {
+class MemWriter : public Writer, public Stack {
 public:
     template <std::size_t n, typename R>
     MemWriter(R (&array)[n]);
@@ -81,6 +80,5 @@ template <std::size_t n, typename R>
 inline void MemWriter::write(R (&array)[n])
 {
     write(array, sizeof(R) * n);
-}
 }
 }

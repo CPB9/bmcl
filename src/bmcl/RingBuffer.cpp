@@ -7,8 +7,8 @@
  */
 
 #include "bmcl/config.h"
-#include "bmcl/core/Endian.h"
-#include "bmcl/core/RingBuffer.h"
+#include "bmcl/Endian.h"
+#include "bmcl/RingBuffer.h"
 
 #include <cassert>
 #include <stdint.h>
@@ -17,7 +17,6 @@
 #define min(a, b) (((a) > (b)) ? (b) : (a))
 
 namespace bmcl {
-namespace core {
 
 RingBuffer::RingBuffer(void* data, std::size_t size)
 {
@@ -140,6 +139,5 @@ void RingBuffer::skip(std::size_t size)
 std::size_t RingBuffer::readableSize() const
 {
     return usedSpace();
-}
 }
 }

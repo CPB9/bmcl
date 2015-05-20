@@ -9,8 +9,8 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Reader.h"
-#include "bmcl/core/Writer.h"
+#include "bmcl/Reader.h"
+#include "bmcl/Writer.h"
 
 #include <cassert>
 #include <cstddef>
@@ -18,9 +18,8 @@
 #include <cstring>
 
 namespace bmcl {
-namespace core {
 
-class RingBuffer : public bmcl::core::Reader, public bmcl::core::Writer {
+class RingBuffer : public Reader, public Writer {
 public:
     RingBuffer(void* data, std::size_t size);
 
@@ -59,5 +58,4 @@ private:
     bool _hasAllocatedMem;
 #endif
 };
-}
 }

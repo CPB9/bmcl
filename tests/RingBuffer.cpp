@@ -1,8 +1,8 @@
-#include "bmcl/core/RingBuffer.h"
+#include "bmcl/RingBuffer.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class RingBufferTest : public ::testing::Test {
 protected:

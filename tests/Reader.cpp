@@ -1,11 +1,11 @@
-#include "bmcl/core/Endian.h"
-#include "bmcl/core/MemReader.h"
-#include "bmcl/core/Reader.h"
-#include "bmcl/core/RingBuffer.h"
+#include "bmcl/Endian.h"
+#include "bmcl/MemReader.h"
+#include "bmcl/Reader.h"
+#include "bmcl/RingBuffer.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class ReaderShell {
 public:

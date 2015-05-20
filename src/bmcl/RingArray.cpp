@@ -7,10 +7,9 @@
  */
 
 #include "bmcl/config.h"
-#include "bmcl/core/RingArray.h"
+#include "bmcl/RingArray.h"
 
 namespace bmcl {
-namespace core {
 
 RingArray::RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize)
 {
@@ -90,6 +89,5 @@ void RingArray::incWritePtr()
     if (_writeOffset >= _size) {
         _writeOffset -= _size;
     }
-}
 }
 }

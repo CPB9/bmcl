@@ -1,4 +1,4 @@
-#include "bmcl/core/Endian.h"
+#include "bmcl/Endian.h"
 
 #include <gtest/gtest.h>
 

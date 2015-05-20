@@ -9,14 +9,13 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Endian.h"
+#include "bmcl/Endian.h"
 
 #include <cstddef>
 #include <cassert>
 #include <limits>
 
 namespace bmcl {
-namespace core {
 
 class Stack {
 public:
@@ -87,5 +86,4 @@ public:
     float popFloat32Be() { return popFloat<float, uint32_t>(be32enc); }
     double popFloat64Be() { return popFloat<double, uint64_t>(be64enc); }
 };
-}
 }

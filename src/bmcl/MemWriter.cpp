@@ -7,10 +7,9 @@
  */
 
 #include "bmcl/config.h"
-#include "bmcl/core/MemWriter.h"
+#include "bmcl/MemWriter.h"
 
 namespace bmcl {
-namespace core {
 
 MemWriter::MemWriter(void* dest, std::size_t maxSize)
 {
@@ -84,6 +83,5 @@ void MemWriter::init(void* dest, std::size_t maxSize)
 #if BMCL_HAVE_MALLOC
     _hasAllocatedMem = hasAllocatedMem;
 #endif
-}
 }
 }

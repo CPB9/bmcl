@@ -16,7 +16,6 @@
 #include <cstring>
 
 namespace bmcl {
-namespace core {
 
 class RingArray {
 public:
@@ -60,5 +59,4 @@ private:
     bool _hasAllocatedMem;
 #endif
 };
-}
 }

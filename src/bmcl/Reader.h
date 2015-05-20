@@ -9,7 +9,7 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Endian.h"
+#include "bmcl/Endian.h"
 
 #include <cstddef>
 #include <stdint.h>
@@ -18,7 +18,6 @@
 #include <limits>
 
 namespace bmcl {
-namespace core {
 
 class Reader {
 public:
@@ -62,5 +61,4 @@ public:
     float readFloat32Be() { return readFloat<float, uint32_t>(be32enc); }
     double readFloat64Be() { return readFloat<double, uint64_t>(be64enc); }
 };
-}
 }

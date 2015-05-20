@@ -1,4 +1,4 @@
-#include "bmcl/core/Platform.h"
+#include "bmcl/Platform.h"
 
 #cmakedefine BMCL_HAVE_MALLOC 1
 

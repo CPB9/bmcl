@@ -1,8 +1,8 @@
-#include "bmcl/core/RingArray.h"
+#include "bmcl/RingArray.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class RingArrayTest : public ::testing::Test {
 protected:

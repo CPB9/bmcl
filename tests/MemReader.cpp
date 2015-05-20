@@ -1,8 +1,8 @@
-#include "bmcl/core/MemReader.h"
+#include "bmcl/MemReader.h"
 
 #include "BmclTest.h"
 
-using namespace bmcl::core;
+using namespace bmcl;
 
 class MemReaderTest : public ::testing::Test {
 protected:

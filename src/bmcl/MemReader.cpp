@@ -7,14 +7,13 @@
  */
 
 #include "bmcl/config.h"
-#include "bmcl/core/MemReader.h"
-#include "bmcl/core/MemWriter.h"
+#include "bmcl/MemReader.h"
+#include "bmcl/MemWriter.h"
 
 #include <cassert>
 #include <cstring>
 
 namespace bmcl {
-namespace core {
 
 void MemReader::init(const void* ptr, std::size_t size)
 {
@@ -50,6 +49,5 @@ void MemReader::read(void* dest, std::size_t size)
 std::size_t MemReader::readableSize() const
 {
     return sizeLeft();
-}
 }
 }

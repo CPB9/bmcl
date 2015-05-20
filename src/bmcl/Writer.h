@@ -9,8 +9,7 @@
 #pragma once
 
 #include "bmcl/config.h"
-#include "bmcl/core/Endian.h"
-#include "bmcl/core/Status.h"
+#include "bmcl/Endian.h"
 
 #include <cstddef>
 #include <stdint.h>
@@ -19,7 +18,6 @@
 #include <limits>
 
 namespace bmcl {
-namespace core {
 
 class Writer {
 public:
@@ -65,5 +63,4 @@ public:
     void writeFloat32Be(float value) { writeFloat<float, uint32_t>(value, be32dec); }
     void writeFloat64Be(double value) { writeFloat<double, uint64_t>(value, be64dec); }
 };
-}
 }
