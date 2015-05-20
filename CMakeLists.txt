@@ -1,7 +1,3 @@
-if(ARDUINO_BOARD)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/arduino-cmake/cmake/ArduinoToolchain.cmake)
-endif()
-
 project(bmcl)
 
 cmake_minimum_required(VERSION 2.8.7)
@@ -36,66 +32,60 @@ if(HAS_PARENT_SCOPE)
     )
 endif()
 
-if(NOT ARDUINO_BOARD)
-    if(SANITIZE_MEMORY)
-        add_definitions(-fPIC -fno-omit-frame-pointer)
-    elseif(SANITIZE_THREAD)
-        add_definitions(-fPIC)
-    endif()
+if(SANITIZE_MEMORY)
+    add_definitions(-fPIC -fno-omit-frame-pointer)
+elseif(SANITIZE_THREAD)
+    add_definitions(-fPIC)
+endif()
 
-    if(NOT HAS_PARENT_SCOPE)
-        add_subdirectory(thirdparty)
-    endif()
+if(NOT HAS_PARENT_SCOPE)
+    add_subdirectory(thirdparty)
+endif()
 
-    if(MSVC)
-        foreach (flag_var
-                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-            string(REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
-        endforeach()
-    else()
-        add_definitions(-std=c++98)
-        add_definitions(-Wall -Wextra)
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-            add_definitions(-O0 -ggdb3 -pipe)
-        endif()
+if(MSVC)
+    foreach (flag_var
+             CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+             CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        string(REPLACE "/W3" "/W4" ${flag_var} "${${flag_var}}")
+    endforeach()
+else()
+    add_definitions(-std=c++98)
+    add_definitions(-Wall -Wextra)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_definitions(-O0 -ggdb3 -pipe)
     endif()
+endif()
 
-    macro(enable_sanitizer name)
-        add_definitions(
-            -fsanitize=${name}
-            -fsanitize=integer
-            -fsanitize=undefined
-            #-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/cmake/sanitizer-blacklist.txt
-        )
-        SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${name} -fsanitize=integer -fsanitize=undefined")
-    endmacro()
+macro(enable_sanitizer name)
+    add_definitions(
+        -fsanitize=${name}
+        -fsanitize=integer
+        -fsanitize=undefined
+        #-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/cmake/sanitizer-blacklist.txt
+    )
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=${name} -fsanitize=integer -fsanitize=undefined")
+endmacro()
 
-    if(TEST_COVERAGE)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/test-coverage.sh.in ${CMAKE_BINARY_DIR}/test-coverage.sh)
-        execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/test-coverage.sh)
-        add_definitions(-fprofile-arcs -ftest-coverage)
-        SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
-    endif()
+if(TEST_COVERAGE)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/test-coverage.sh.in ${CMAKE_BINARY_DIR}/test-coverage.sh)
+    execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/test-coverage.sh)
+    add_definitions(-fprofile-arcs -ftest-coverage)
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
 
-    if(SANITIZE_ADDRESS)
-        enable_sanitizer(address)
-    elseif(SANITIZE_MEMORY) # instrumented libc++ required
-        enable_sanitizer(memory)
-        add_definitions(-fsanitize-memory-track-origins=2)
-    elseif(SANITIZE_THREAD)
-        enable_sanitizer(thread)
-    endif()
+if(SANITIZE_ADDRESS)
+    enable_sanitizer(address)
+elseif(SANITIZE_MEMORY) # instrumented libc++ required
+    enable_sanitizer(memory)
+    add_definitions(-fsanitize-memory-track-origins=2)
+elseif(SANITIZE_THREAD)
+    enable_sanitizer(thread)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(src/bmcl)
 
-if(NOT HAS_PARENT_SCOPE)
-    if(NOT ARDUINO_BOARD)
-        if(BMCL_HAVE_MALLOC)
-            set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
-            add_subdirectory(tests)
-        endif()
-    endif()
+if(BMCL_HAVE_MALLOC)
+    set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
+    add_subdirectory(tests)
 endif()
