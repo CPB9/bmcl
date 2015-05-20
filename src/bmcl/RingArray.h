@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
 
-#include <cassert>
 #include <cstddef>
 #include <stdint.h>
 #include <cstring>

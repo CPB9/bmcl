@@ -1,4 +1,4 @@
-#include "bmcl/Platform.h"
+#cmakedefine BMCL_NO_ASSERTS 1
 
 #cmakedefine BMCL_HAVE_MALLOC 1
 
@@ -10,3 +10,26 @@
 #else
 #define BMCL_BYTE_ORDER 1234
 #endif
+
+#define BMCL_UNUSED(var) (void)var;
+
+#if defined(_MSC_VER)
+#define BMCL_NORETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#define BMCL_NORETURN __attribute__((__noreturn__))
+#else
+#define BMCL_NORETURN
+#endif
+
+#if defined(__GNUC__) && defined(__SANITIZE_ADDRESS__)
+#define BMCL_ASAN 1
+#elif defined(__clang__)
+#if __has_feature(address_sanitizer)
+#define BMCL_ASAN 1
+#endif
+#else
+#define BMCL_ASAN 0
+#endif
+
+#define BMCL_MIN(a, b) (((a) > (b)) ? (b) : (a))
+#define BMCL_MAX(a, b) (((a) < (b)) ? (a) : (b))

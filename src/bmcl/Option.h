@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 
 #include <utility>
-#include <cassert>
 
 namespace bmcl {
 
@@ -182,14 +182,14 @@ inline bool Option<T>::isNone() const
 template <typename T>
 inline const T& Option<T>::unwrap() const
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return *asValue();
 }
 
 template <typename T>
 inline T& Option<T>::unwrap()
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return *asValue();
 }
 
@@ -222,7 +222,7 @@ inline T Option<T>::unwrapOr(R&& value) &&
 template <typename T>
 inline T Option<T>::take()
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     _isSome = false;
     T data = std::move(*asValue());
     asValue()->~T();
@@ -308,28 +308,28 @@ inline Option<T>& Option<T>::operator=(T&& value)
 template <typename T>
 inline const T* Option<T>::operator->() const
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return asValue();
 }
 
 template <typename T>
 inline T* Option<T>::operator->()
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return asValue();
 }
 
 template <typename T>
 inline const T& Option<T>::operator*() const
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return *asValue();
 }
 
 template <typename T>
 inline T& Option<T>::operator*()
 {
-    assert(_isSome);
+    BMCL_ASSERT(_isSome);
     return *asValue();
 }
 

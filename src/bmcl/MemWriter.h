@@ -8,11 +8,10 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
 #include "bmcl/Stack.h"
 #include "bmcl/Writer.h"
 
-#include <cassert>
 #include <cstddef>
 #include <stdint.h>
 #include <cstring>

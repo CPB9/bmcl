@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 
-#include <cassert>
 #include <utility>
 
 namespace bmcl {
@@ -167,42 +167,42 @@ inline bool Either<T, E>::isSecond() const
 template <typename T, typename E>
 inline const T& Either<T, E>::unwrapFirst() const
 {
-    assert(_isFirst);
+    BMCL_ASSERT(_isFirst);
     return *asFirst();
 }
 
 template <typename T, typename E>
 inline T& Either<T, E>::unwrapFirst()
 {
-    assert(_isFirst);
+    BMCL_ASSERT(_isFirst);
     return *asFirst();
 }
 
 template <typename T, typename E>
 inline const E& Either<T, E>::unwrapSecond() const
 {
-    assert(!_isFirst);
+    BMCL_ASSERT(!_isFirst);
     return *asSecond();
 }
 
 template <typename T, typename E>
 inline E& Either<T, E>::unwrapSecond()
 {
-    assert(!_isFirst);
+    BMCL_ASSERT(!_isFirst);
     return *asSecond();
 }
 
 template <typename T, typename E>
 inline T&& Either<T, E>::takeFirst()
 {
-    assert(_isFirst);
+    BMCL_ASSERT(_isFirst);
     return std::move(*asFirst());
 }
 
 template <typename T, typename E>
 inline E&& Either<T, E>::takeSecond()
 {
-    assert(!_isFirst);
+    BMCL_ASSERT(!_isFirst);
     return std::move(*asSecond());
 }
 

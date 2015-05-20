@@ -6,7 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/MemWriter.h"
 
 namespace bmcl {
@@ -35,13 +36,13 @@ MemWriter::~MemWriter()
 
 void MemWriter::advance(std::size_t size)
 {
-    assert(writableSize() >= size);
+    BMCL_ASSERT(writableSize() >= size);
     _current += size;
 }
 
 void MemWriter::write(const void* data, std::size_t size)
 {
-    assert(writableSize() >= size);
+    BMCL_ASSERT(writableSize() >= size);
     std::memcpy(_current, data, size);
     _current += size;
 }
@@ -52,14 +53,14 @@ void MemWriter::push(const void* src, std::size_t size) { write(src, size); }
 
 void MemWriter::pop(void* dest, std::size_t size)
 {
-    assert(sizeUsed() >= size);
+    BMCL_ASSERT(sizeUsed() >= size);
     _current -= size;
     std::memcpy(dest, _current, size);
 }
 
 void MemWriter::fill(uint8_t byte, std::size_t size)
 {
-    assert(writableSize() >= size);
+    BMCL_ASSERT(writableSize() >= size);
     std::memset(_current, byte, size);
     _current += size;
 }

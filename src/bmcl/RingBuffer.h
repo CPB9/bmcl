@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
 #include "bmcl/Reader.h"
 #include "bmcl/Writer.h"
 

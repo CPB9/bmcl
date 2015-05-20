@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/Endian.h"
 
 #include <cstddef>
 #include <stdint.h>
 #include <cstdlib>
-#include <cassert>
 #include <limits>
 
 namespace bmcl {
@@ -49,7 +49,7 @@ public:
     template <typename T, typename H, typename C>
     inline T readFloat(C convert)
     {
-        assert(std::numeric_limits<T>::is_iec559);
+        BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
         H value = readType<H>();
         T swapped;
         convert(&swapped, value);

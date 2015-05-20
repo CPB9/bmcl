@@ -6,7 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/RingArray.h"
 
 namespace bmcl {
@@ -40,23 +41,23 @@ RingArray::~RingArray()
 
 void RingArray::copyFirst(void* dest) const
 {
-    assert(!isEmpty());
+    BMCL_ASSERT(!isEmpty());
     std::memcpy(dest, readPtr(), _elementSize);
 }
 
 void RingArray::eraseFirstElement()
 {
-    assert(!isEmpty());
+    BMCL_ASSERT(!isEmpty());
     incReadPtr();
     _count--;
 }
 
 void RingArray::init(void* ptr, std::size_t bufSize, std::size_t elementSize)
 {
-    assert(ptr != 0);
-    assert(bufSize != 0);
-    assert(elementSize != 0);
-    assert(elementSize <= bufSize);
+    BMCL_ASSERT(ptr != 0);
+    BMCL_ASSERT(bufSize != 0);
+    BMCL_ASSERT(elementSize != 0);
+    BMCL_ASSERT(elementSize <= bufSize);
     _data = (uint8_t*)ptr;
     _elementSize = elementSize;
     _size = bufSize / elementSize;

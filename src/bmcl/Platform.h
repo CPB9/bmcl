@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "bmcl/Config.h"
+
 #if defined(__unux) || defined(__unix__)
     #define BMCL_PLATFORM_UNIX
     #if defined(__linux) || defined(__linux__)

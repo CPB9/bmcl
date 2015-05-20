@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/Endian.h"
 
 #include <cstddef>
-#include <cassert>
 #include <limits>
 
 namespace bmcl {
@@ -41,7 +41,7 @@ public:
     template <typename T, typename H, typename C>
     inline void pushFloat(T value, C convert)
     {
-        assert(std::numeric_limits<T>::is_iec559);
+        BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
         H swapped = convert(&value);
         push(&swapped, sizeof(H));
     }
@@ -49,7 +49,7 @@ public:
     template <typename T, typename H, typename C>
     inline T popFloat(C convert)
     {
-        assert(std::numeric_limits<T>::is_iec559);
+        BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
         H value = popType<H>();
         T swapped;
         convert(&swapped, value);

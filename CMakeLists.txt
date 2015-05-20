@@ -20,7 +20,7 @@ else()
     set(BMCL_LITTLE_ENDIAN 1)
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/bmcl/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/bmcl/Config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)

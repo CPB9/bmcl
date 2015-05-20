@@ -1,12 +1,19 @@
 add_library(bmcl STATIC
+    Alloca.h
+    Assert.cpp
+    Assert.h
+    Either.h
     Endian.h
     MemReader.cpp
     MemReader.h
     MemWriter.cpp
     MemWriter.h
     Option.h
+    Panic.cpp
+    Panic.h
     Platform.h
     Reader.h
+    Result.h
     RingArray.cpp
     RingArray.h
     RingBucket.cpp

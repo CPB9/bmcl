@@ -6,11 +6,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/MemReader.h"
 #include "bmcl/MemWriter.h"
 
-#include <cassert>
 #include <cstring>
 
 namespace bmcl {
@@ -29,19 +29,19 @@ MemReader::MemReader(const MemWriter& memWriter)
 
 void MemReader::skip(std::size_t size)
 {
-    assert(sizeLeft() >= size);
+    BMCL_ASSERT(sizeLeft() >= size);
     _current += size;
 }
 
 void MemReader::peek(void* dest, std::size_t size, std::size_t offset) const
 {
-    assert(sizeLeft() >= size + offset);
+    BMCL_ASSERT(sizeLeft() >= size + offset);
     std::memcpy(dest, _current + offset, size);
 }
 
 void MemReader::read(void* dest, std::size_t size)
 {
-    assert(sizeLeft() >= size);
+    BMCL_ASSERT(sizeLeft() >= size);
     std::memcpy(dest, _current, size);
     _current += size;
 }

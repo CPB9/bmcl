@@ -29,8 +29,7 @@ protected:
     template <std::size_t n, typename R>
     void appendElement(const R (&array)[n])
     {
-        std::size_t elementSize = sizeof(R) * n;
-        assert(elementSize == _ringarray->elementSize());
+        assert(sizeof(R) * n == _ringarray->elementSize());
         _ringarray->append(array);
     }
 

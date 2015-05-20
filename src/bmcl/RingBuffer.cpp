@@ -6,15 +6,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/config.h"
+#include "bmcl/Config.h"
+#include "bmcl/Assert.h"
 #include "bmcl/Endian.h"
 #include "bmcl/RingBuffer.h"
 
-#include <cassert>
 #include <stdint.h>
 #include <cstring>
-
-#define min(a, b) (((a) > (b)) ? (b) : (a))
 
 namespace bmcl {
 
@@ -53,7 +51,7 @@ void RingBuffer::clear()
 
 void RingBuffer::erase(std::size_t size)
 {
-    assert(_size - _freeSpace >= size);
+    BMCL_ASSERT(_size - _freeSpace >= size);
     _freeSpace += size;
     _readOffset += size;
     if (_readOffset >= _size) {
@@ -71,7 +69,7 @@ void RingBuffer::read(void* dest, std::size_t size)
 
 void RingBuffer::init(void* data, std::size_t size)
 {
-    assert(size > 0);
+    BMCL_ASSERT(size > 0);
     _data = (uint8_t*)data;
     _size = size;
     _freeSpace = size;
@@ -90,8 +88,8 @@ void RingBuffer::extend(std::size_t size)
 
 void RingBuffer::write(const void* data, std::size_t size)
 {
-    assert(size > 0);
-    assert(size <= _size);
+    BMCL_ASSERT(size > 0);
+    BMCL_ASSERT(size <= _size);
     if (_freeSpace < size) {
         erase(size - _freeSpace);
     }
@@ -100,7 +98,7 @@ void RingBuffer::write(const void* data, std::size_t size)
         std::memcpy(_data + _writeOffset, data, size);
     } else { /* ----------r**************w---------- */
         std::size_t rightData = _size - _writeOffset;
-        std::size_t firstChunkSize = min(size, rightData);
+        std::size_t firstChunkSize = BMCL_MIN(size, rightData);
         std::memcpy(_data + _writeOffset, data, firstChunkSize);
         if (size > firstChunkSize) {
             std::size_t secondChunkSize = size - firstChunkSize;
@@ -116,13 +114,13 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
     if (readOffset >= _size) {
         readOffset -= _size;
     }
-    assert(size > 0);
-    assert(size + offset <= _size - _freeSpace);
+    BMCL_ASSERT(size > 0);
+    BMCL_ASSERT(size + offset <= _size - _freeSpace);
     if (readOffset < _writeOffset) { /* ----------r**************w---------- */
         std::memcpy(dest, _data + readOffset, size);
     } else { /* *********w---------------r************ */
         std::size_t rightData = _size - readOffset;
-        std::size_t firstChunkSize = min(size, rightData);
+        std::size_t firstChunkSize = BMCL_MIN(size, rightData);
         std::memcpy(dest, _data + readOffset, firstChunkSize);
         if (size > firstChunkSize) {
             std::size_t secondChunkSize = size - firstChunkSize;
