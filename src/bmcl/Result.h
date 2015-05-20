@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bmcl/config.h"
 #include "bmcl/Either.h"
 
 namespace bmcl {

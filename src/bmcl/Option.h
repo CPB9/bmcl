@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bmcl/config.h"
+
 #include <utility>
 #include <cassert>
 
