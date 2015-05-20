@@ -4,6 +4,7 @@ add_library(bmcl STATIC
     MemReader.h
     MemWriter.cpp
     MemWriter.h
+    Option.h
     Platform.h
     Reader.h
     RingArray.cpp
