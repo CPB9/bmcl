@@ -124,3 +124,25 @@ TEST(EitherTest, operatorEqSecondSecond)
     EXPECT_EQ(768, second1.unwrapSecond());
     EXPECT_EQ(768, second2.unwrapSecond());
 }
+
+TEST(EitherTest, takeFirst)
+{
+    Either<std::string, std::vector<int>> first("value");
+    Either<std::string, std::vector<int>> second = std::vector<int>({1, 2, 3, 4});
+    second = first.takeFirst();
+    EXPECT_TRUE(first.isFirst());
+    EXPECT_TRUE(second.isFirst());
+    EXPECT_EQ("value", second.unwrapFirst());
+    EXPECT_EQ("", first.unwrapFirst());
+}
+
+TEST(EitherTest, takeSecond)
+{
+    Either<std::string, std::vector<int>> first("value");
+    Either<std::string, std::vector<int>> second = std::vector<int>({1, 2, 3, 4});
+    first = second.takeSecond();
+    EXPECT_TRUE(first.isSecond());
+    EXPECT_TRUE(second.isSecond());
+    EXPECT_EQ(std::vector<int>({1, 2, 3, 4}), first.unwrapSecond());
+    EXPECT_TRUE(second.unwrapSecond().empty());
+}

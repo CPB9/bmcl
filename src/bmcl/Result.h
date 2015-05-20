@@ -20,6 +20,8 @@ public:
     T& unwrap();
     const E& unwrapErr() const;
     E& unwrapErr();
+    T&& take();
+    E&& takeErr();
 
     Result& operator=(const Result& other);
     Result& operator=(Result&& other);
@@ -95,6 +97,18 @@ template <typename T, typename E>
 inline E& Result<T, E>::unwrapErr()
 {
     return Either<T, E>::unwrapSecond();
+}
+
+template <typename T, typename E>
+inline T&& Result<T, E>::take()
+{
+    return Either<T, E>::takeFirst();
+}
+
+template <typename T, typename E>
+inline E&& Result<T, E>::takeErr()
+{
+    return Either<T, E>::takeSecond();
 }
 
 template <typename T, typename E>

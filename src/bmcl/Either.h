@@ -22,6 +22,8 @@ public:
     T& unwrapFirst();
     const E& unwrapSecond() const;
     E& unwrapSecond();
+    T&& takeFirst();
+    E&& takeSecond();
 
     //TODO: op=
     Either& operator=(const Either& other);
@@ -180,6 +182,19 @@ inline E& Either<T, E>::unwrapSecond()
     return *asSecond();
 }
 
+template <typename T, typename E>
+inline T&& Either<T, E>::takeFirst()
+{
+    assert(_isFirst);
+    return std::move(*asFirst());
+}
+
+template <typename T, typename E>
+inline E&& Either<T, E>::takeSecond()
+{
+    assert(!_isFirst);
+    return std::move(*asSecond());
+}
 
 template <typename T, typename E>
 inline Either<T, E>& Either<T, E>::operator=(const Either<T, E>& other)
