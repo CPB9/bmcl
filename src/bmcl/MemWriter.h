@@ -9,7 +9,6 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/Stack.h"
 #include "bmcl/Writer.h"
 
 #include <cstddef>
@@ -18,7 +17,7 @@
 
 namespace bmcl {
 
-class MemWriter : public Writer, public Stack {
+class MemWriter : public Writer {
 public:
     template <std::size_t n, typename R>
     MemWriter(R (&array)[n]);

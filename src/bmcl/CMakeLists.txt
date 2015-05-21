@@ -20,6 +20,5 @@ add_library(bmcl STATIC
     RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
-    Stack.h
     Writer.h
 )
