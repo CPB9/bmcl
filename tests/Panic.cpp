@@ -24,7 +24,6 @@ static bool assertTest()
 
 TEST(Panic, assert)
 {
-    EXPECT_DEATH(BMCL_ASSERT(assertTest()), "Assertion failed at.*assertTest()");
     EXPECT_DEATH(BMCL_ASSERT(9 > 10), "Assertion failed at.*9 > 10");
 }
 
