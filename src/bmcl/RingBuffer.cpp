@@ -59,9 +59,12 @@ void RingBuffer::erase(std::size_t size)
     }
 }
 
-std::size_t RingBuffer::writableSize() const { return freeSpace(); }
+std::size_t RingBuffer::writableSizeImpl() const
+{
+    return freeSpace();
+}
 
-void RingBuffer::read(void* dest, std::size_t size)
+void RingBuffer::readImpl(void* dest, std::size_t size)
 {
     peek(dest, size, 0);
     erase(size);
@@ -86,7 +89,7 @@ void RingBuffer::extend(std::size_t size)
     _freeSpace -= size;
 }
 
-void RingBuffer::write(const void* data, std::size_t size)
+void RingBuffer::writeImpl(const void* data, std::size_t size)
 {
     BMCL_ASSERT(size > 0);
     BMCL_ASSERT(size <= _size);
@@ -129,12 +132,12 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
     }
 }
 
-void RingBuffer::skip(std::size_t size)
+void RingBuffer::skipImpl(std::size_t size)
 {
     erase(size);
 }
 
-std::size_t RingBuffer::readableSize() const
+std::size_t RingBuffer::readableSizeImpl() const
 {
     return usedSpace();
 }

@@ -19,7 +19,7 @@
 
 namespace bmcl {
 
-class RingBuffer : public Reader, public Writer {
+class RingBuffer : public Reader<RingBuffer>, public Writer<RingBuffer> {
 public:
     RingBuffer(void* data, std::size_t size);
 
@@ -32,11 +32,6 @@ public:
 
     void clear();
     void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
-    virtual std::size_t readableSize() const;
-    virtual std::size_t writableSize() const;
-    virtual void read(void* dest, std::size_t size);
-    virtual void skip(std::size_t size);
-    virtual void write(const void* data, std::size_t size);
     void erase(std::size_t size);
 
     std::size_t freeSpace() const { return _freeSpace; }
@@ -44,6 +39,12 @@ public:
     bool isFull() const { return _freeSpace == 0; }
     bool isEmpty() const { return _freeSpace == _size; }
     std::size_t size() const { return _size; }
+
+    std::size_t writableSizeImpl() const;
+    void writeImpl(const void* data, std::size_t size);
+    std::size_t readableSizeImpl() const;
+    void readImpl(void* dest, std::size_t size);
+    void skipImpl(std::size_t size);
 
 private:
     void init(void* data, std::size_t size);

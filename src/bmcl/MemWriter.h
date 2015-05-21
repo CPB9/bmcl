@@ -17,7 +17,7 @@
 
 namespace bmcl {
 
-class MemWriter : public Writer {
+class MemWriter : public Writer<MemWriter> {
 public:
     template <std::size_t n, typename R>
     MemWriter(R (&array)[n]);
@@ -40,18 +40,14 @@ public:
 
     std::size_t sizeUsed() const { return _current - _start; }
     std::size_t maxSize() const { return _end - _start; }
-    virtual std::size_t writableSize() const;
 
     void reset() { _current = _start; };
     void advance(std::size_t size);
     void fillUp(uint8_t byte);
     void fill(uint8_t byte, std::size_t size);
-    virtual void write(const void* data, std::size_t size);
-    virtual void push(const void* src, std::size_t size);
-    virtual void pop(void* dest, std::size_t size);
 
-    template <std::size_t n, typename R>
-    void write(R (&array)[n]);
+    void writeImpl(const void* data, std::size_t size);
+    std::size_t writableSizeImpl() const;
 
 private:
 #if BMCL_HAVE_MALLOC
@@ -72,11 +68,5 @@ template <std::size_t n, typename R>
 inline MemWriter::MemWriter(R (&array)[n])
 {
     init(array, n * sizeof(R));
-}
-
-template <std::size_t n, typename R>
-inline void MemWriter::write(R (&array)[n])
-{
-    write(array, sizeof(R) * n);
 }
 }

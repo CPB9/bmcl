@@ -27,7 +27,7 @@ MemReader::MemReader(const MemWriter& memWriter)
     init(memWriter.start(), memWriter.sizeUsed());
 }
 
-void MemReader::skip(std::size_t size)
+void MemReader::skipImpl(std::size_t size)
 {
     BMCL_ASSERT(sizeLeft() >= size);
     _current += size;
@@ -39,14 +39,14 @@ void MemReader::peek(void* dest, std::size_t size, std::size_t offset) const
     std::memcpy(dest, _current + offset, size);
 }
 
-void MemReader::read(void* dest, std::size_t size)
+void MemReader::readImpl(void* dest, std::size_t size)
 {
     BMCL_ASSERT(sizeLeft() >= size);
     std::memcpy(dest, _current, size);
     _current += size;
 }
 
-std::size_t MemReader::readableSize() const
+std::size_t MemReader::readableSizeImpl() const
 {
     return sizeLeft();
 }

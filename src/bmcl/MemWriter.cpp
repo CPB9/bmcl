@@ -40,22 +40,16 @@ void MemWriter::advance(std::size_t size)
     _current += size;
 }
 
-void MemWriter::write(const void* data, std::size_t size)
+void MemWriter::writeImpl(const void* data, std::size_t size)
 {
     BMCL_ASSERT(writableSize() >= size);
     std::memcpy(_current, data, size);
     _current += size;
 }
 
-std::size_t MemWriter::writableSize() const { return _end - _current; }
-
-void MemWriter::push(const void* src, std::size_t size) { write(src, size); }
-
-void MemWriter::pop(void* dest, std::size_t size)
+std::size_t MemWriter::writableSizeImpl() const
 {
-    BMCL_ASSERT(sizeUsed() >= size);
-    _current -= size;
-    std::memcpy(dest, _current, size);
+    return _end - _current;
 }
 
 void MemWriter::fill(uint8_t byte, std::size_t size)

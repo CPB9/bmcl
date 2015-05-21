@@ -19,13 +19,23 @@
 
 namespace bmcl {
 
+template <typename B>
 class Reader {
 public:
-    virtual ~Reader() {}
+    void read(void* dest, std::size_t size)
+    {
+        static_cast<B*>(this)->readImpl(dest, size);
+    }
 
-    virtual void read(void* dest, std::size_t size) = 0;
-    virtual void skip(std::size_t size) = 0;
-    virtual std::size_t readableSize() const = 0;
+    void skip(std::size_t size)
+    {
+        static_cast<B*>(this)->skipImpl(size);
+    }
+
+    std::size_t readableSize() const
+    {
+        return static_cast<const B*>(this)->readableSize();
+    }
 
     template <typename T>
     inline T readType()

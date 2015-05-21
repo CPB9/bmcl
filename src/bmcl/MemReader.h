@@ -18,7 +18,7 @@ namespace bmcl {
 
 class MemWriter;
 
-class MemReader : public Reader {
+class MemReader : public Reader<MemReader> {
 public:
     template <std::size_t n, typename R>
     MemReader(const R (&array)[n]);
@@ -37,10 +37,11 @@ public:
     std::size_t sizeRead() const { return _current - _start; }
 
     void reset() { _current = _start; }
-    virtual std::size_t readableSize() const;
-    virtual void skip(std::size_t size);
-    virtual void peek(void* dest, std::size_t size, std::size_t offset) const;
-    virtual void read(void* dest, std::size_t size);
+    void peek(void* dest, std::size_t size, std::size_t offset) const;
+
+    std::size_t readableSizeImpl() const;
+    void readImpl(void* dest, std::size_t size);
+    void skipImpl(std::size_t size);
 
 private:
     void init(const void* ptr, std::size_t size);
