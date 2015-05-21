@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#if GTEST_HAS_DEATH_TEST
+#if GTEST_HAS_DEATH_TEST && !BMCL_ASAN
 
 TEST(Panic, panic)
 {

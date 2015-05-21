@@ -1,6 +1,9 @@
 #include "bmcl/Endian.h"
+#include "bmcl/Alloca.h"
 
 #include <gtest/gtest.h>
+
+#include <cstring>
 
 // environment sanity tests
 
@@ -123,3 +126,11 @@ TEST_F(EnvironmentTest, leenc)
     le64enc(&t64, h64);
     EXPECT_EQ(le64, t64);
 }
+
+TEST_F(EnvironmentTest, alloca)
+{
+    char* mem = (char*)alloca(1024);
+    std::memset(mem, 0x5a, 1024);
+    // should not fail
+}
+

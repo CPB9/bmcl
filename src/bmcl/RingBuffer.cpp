@@ -59,11 +59,6 @@ void RingBuffer::erase(std::size_t size)
     }
 }
 
-std::size_t RingBuffer::writableSizeImpl() const
-{
-    return freeSpace();
-}
-
 void RingBuffer::readImpl(void* dest, std::size_t size)
 {
     peek(dest, size, 0);
@@ -96,7 +91,6 @@ void RingBuffer::writeImpl(const void* data, std::size_t size)
     if (_freeSpace < size) {
         erase(size - _freeSpace);
     }
-
     if (_readOffset > _writeOffset) { /* *********w---------------r************ */
         std::memcpy(_data + _writeOffset, data, size);
     } else { /* ----------r**************w---------- */
@@ -130,15 +124,5 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
             std::memcpy((uint8_t*)dest + firstChunkSize, _data, secondChunkSize);
         }
     }
-}
-
-void RingBuffer::skipImpl(std::size_t size)
-{
-    erase(size);
-}
-
-std::size_t RingBuffer::readableSizeImpl() const
-{
-    return usedSpace();
 }
 }

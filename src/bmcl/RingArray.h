@@ -27,21 +27,21 @@ public:
 
 #endif
 
-    bool isEmpty() const { return _count == 0; }
-    bool isFull() const { return !isEmpty() && (_readOffset == _writeOffset); }
+    bool isEmpty() const;
+    bool isFull() const;
 
-    std::size_t count() const { return _count; }
-    std::size_t size() const { return _size; }
-    std::size_t elementSize() const { return _elementSize; }
+    std::size_t count() const;
+    std::size_t size() const;
+    std::size_t elementSize() const;
 
-    void reset() { init(_data, _size, _elementSize); }
+    void reset();
     void append(const void* element);
     void copyFirst(void* dest) const;
-    void removeFirst() { eraseFirstElement(); }
+    void removeFirst();
 
 private:
-    void* writePtr() const { return _data + _writeOffset * _elementSize; }
-    void* readPtr() const { return _data + _readOffset * _elementSize; }
+    void* writePtr() const;
+    void* readPtr() const;
 
     void init(void* ptr, std::size_t bufSize, std::size_t elementSize);
     void eraseFirstElement();
@@ -58,4 +58,49 @@ private:
     bool _hasAllocatedMem;
 #endif
 };
+
+inline bool RingArray::isEmpty() const
+{
+    return _count == 0;
+}
+
+inline bool RingArray::isFull() const
+{
+    return !isEmpty() && (_readOffset == _writeOffset);
+}
+
+inline std::size_t RingArray::count() const
+{
+    return _count;
+}
+
+inline std::size_t RingArray::size() const
+{
+    return _size;
+}
+
+inline std::size_t RingArray::elementSize() const
+{
+    return _elementSize;
+}
+
+inline void RingArray::reset()
+{
+    init(_data, _size, _elementSize);
+}
+
+inline void RingArray::removeFirst()
+{
+    eraseFirstElement();
+}
+
+inline void* RingArray::writePtr() const
+{
+    return _data + _writeOffset * _elementSize;
+}
+
+inline void* RingArray::readPtr() const
+{
+    return _data + _readOffset * _elementSize;
+}
 }

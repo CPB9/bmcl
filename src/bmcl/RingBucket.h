@@ -27,15 +27,15 @@ public:
 
 #endif
 
-    bool isEmpty() const { return _count == 0; }
+    bool isEmpty() const;
 
-    std::size_t freeSpace() const { return _ringbuf.freeSpace(); }
-    std::size_t count() const { return _count; }
+    std::size_t freeSpace() const;
+    std::size_t count() const;
     std::size_t firstSize() const;
-    static std::size_t headerSize() { return sizeof(RingBucketHeader); }
+    static std::size_t headerSize();
 
     void reset();
-    void removeFirst() { eraseElement(); }
+    void removeFirst();
     void append(const void* data, std::size_t dataSize);
     void copyFirst(void* dest) const;
 
@@ -47,4 +47,29 @@ private:
     RingBuffer _ringbuf;
     std::size_t _count;
 };
+
+inline bool RingBucket::isEmpty() const
+{
+    return _count == 0;
+}
+
+inline std::size_t RingBucket::freeSpace() const
+{
+    return _ringbuf.freeSpace();
+}
+
+inline std::size_t RingBucket::count() const
+{
+    return _count;
+}
+
+inline std::size_t RingBucket::headerSize()
+{
+    return sizeof(RingBucketHeader);
+}
+
+inline void RingBucket::removeFirst()
+{
+    eraseElement();
+}
 }

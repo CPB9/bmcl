@@ -34,11 +34,11 @@ public:
     void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
     void erase(std::size_t size);
 
-    std::size_t freeSpace() const { return _freeSpace; }
-    std::size_t usedSpace() const { return _size - _freeSpace; }
-    bool isFull() const { return _freeSpace == 0; }
-    bool isEmpty() const { return _freeSpace == _size; }
-    std::size_t size() const { return _size; }
+    std::size_t freeSpace() const;
+    std::size_t usedSpace() const;
+    bool isFull() const;
+    bool isEmpty() const;
+    std::size_t size() const;
 
     std::size_t writableSizeImpl() const;
     void writeImpl(const void* data, std::size_t size);
@@ -59,4 +59,44 @@ private:
     bool _hasAllocatedMem;
 #endif
 };
+
+inline std::size_t RingBuffer::freeSpace() const
+{
+    return _freeSpace;
+}
+
+inline std::size_t RingBuffer::usedSpace() const
+{
+    return _size - _freeSpace;
+}
+
+inline bool RingBuffer::isFull() const
+{
+    return _freeSpace == 0;
+}
+
+inline bool RingBuffer::isEmpty() const
+{
+    return _freeSpace == _size;
+}
+
+inline std::size_t RingBuffer::size() const
+{
+    return _size;
+}
+
+inline std::size_t RingBuffer::writableSizeImpl() const
+{
+    return freeSpace();
+}
+
+inline void RingBuffer::skipImpl(std::size_t size)
+{
+    erase(size);
+}
+
+inline std::size_t RingBuffer::readableSizeImpl() const
+{
+    return usedSpace();
+}
 }

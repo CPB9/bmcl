@@ -22,51 +22,154 @@ namespace bmcl {
 template <typename B>
 class Writer {
 public:
-    std::size_t writableSize() const
-    {
-        return static_cast<const B*>(this)->writableSizeImpl();
-    }
-
-    void write(const void* data, std::size_t size)
-    {
-        static_cast<B*>(this)->writeImpl(data, size);
-    }
+    std::size_t writableSize() const;
+    void write(const void* data, std::size_t size);
 
     template <std::size_t n, typename R>
-    inline void write(R(&array)[n])
-    {
-        write(array, n * sizeof(R));
-    }
-
+    void write(R(&array)[n]);
 
     template <typename T>
-    inline void writeType(T value)
-    {
-        write(&value, sizeof(value));
-    }
+    void writeType(T value);
 
-    void writeUint8(uint8_t value) { writeType<uint8_t>(value); }
-    void writeUint16(uint16_t value) { writeType<uint16_t>(value); }
-    void writeUint32(uint32_t value) { writeType<uint32_t>(value); }
-    void writeUint64(uint64_t value) { writeType<uint64_t>(value); }
-    void writeUint16Le(uint16_t value) { writeType<uint16_t>(htole16(value)); }
-    void writeUint32Le(uint32_t value) { writeType<uint32_t>(htole32(value)); }
-    void writeUint64Le(uint64_t value) { writeType<uint64_t>(htole64(value)); }
-    void writeUint16Be(uint16_t value) { writeType<uint16_t>(htobe16(value)); }
-    void writeUint32Be(uint32_t value) { writeType<uint32_t>(htobe32(value)); }
-    void writeUint64Be(uint64_t value) { writeType<uint64_t>(htobe64(value)); }
+    void writeUint8(uint8_t value);
+    void writeUint16(uint16_t value);
+    void writeUint32(uint32_t value);
+    void writeUint64(uint64_t value);
+
+    void writeUint16Le(uint16_t value);
+    void writeUint32Le(uint32_t value);
+    void writeUint64Le(uint64_t value);
+
+    void writeUint16Be(uint16_t value);
+    void writeUint32Be(uint32_t value);
+    void writeUint64Be(uint64_t value);
 
     template <typename T, typename H, typename C>
-    inline void writeFloat(T value, C convert)
-    {
-        BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
-        H swapped = convert(&value);
-        write(&swapped, sizeof(H));
-    }
+    inline void writeFloat(T value, C convert);
 
-    void writeFloat32Le(float value) { writeFloat<float, uint32_t>(value, le32dec); }
-    void writeFloat64Le(double value) { writeFloat<double, uint64_t>(value, le64dec); }
-    void writeFloat32Be(float value) { writeFloat<float, uint32_t>(value, be32dec); }
-    void writeFloat64Be(double value) { writeFloat<double, uint64_t>(value, be64dec); }
+    void writeFloat32Le(float value);
+    void writeFloat64Le(double value);
+
+    void writeFloat32Be(float value);
+    void writeFloat64Be(double value);
 };
+
+template <typename B>
+inline std::size_t Writer<B>::writableSize() const
+{
+    return static_cast<const B*>(this)->writableSizeImpl();
+}
+
+template <typename B>
+inline void Writer<B>::write(const void* data, std::size_t size)
+{
+    static_cast<B*>(this)->writeImpl(data, size);
+}
+
+template <typename B>
+template <std::size_t n, typename R>
+inline void Writer<B>::write(R(&array)[n])
+{
+    write(array, n * sizeof(R));
+}
+
+template <typename B>
+template <typename T>
+inline void Writer<B>::writeType(T value)
+{
+    write(&value, sizeof(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint8(uint8_t value)
+{
+    writeType<uint8_t>(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeUint16(uint16_t value)
+{
+    writeType<uint16_t>(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeUint32(uint32_t value)
+{
+    writeType<uint32_t>(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeUint64(uint64_t value)
+{
+    writeType<uint64_t>(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeUint16Le(uint16_t value)
+{
+    writeType<uint16_t>(htole16(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint32Le(uint32_t value)
+{
+    writeType<uint32_t>(htole32(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint64Le(uint64_t value)
+{
+    writeType<uint64_t>(htole64(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint16Be(uint16_t value)
+{
+    writeType<uint16_t>(htobe16(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint32Be(uint32_t value)
+{
+    writeType<uint32_t>(htobe32(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeUint64Be(uint64_t value)
+{
+    writeType<uint64_t>(htobe64(value));
+}
+
+template <typename B>
+template <typename T, typename H, typename C>
+inline void Writer<B>::writeFloat(T value, C convert)
+{
+    BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
+    H swapped = convert(&value);
+    write(&swapped, sizeof(H));
+}
+
+template <typename B>
+inline void Writer<B>::writeFloat32Le(float value)
+{
+    writeFloat<float, uint32_t>(value, le32dec);
+}
+
+template <typename B>
+inline void Writer<B>::writeFloat64Le(double value)
+{
+    writeFloat<double, uint64_t>(value, le64dec);
+}
+
+template <typename B>
+inline void Writer<B>::writeFloat32Be(float value)
+{
+    writeFloat<float, uint32_t>(value, be32dec);
+}
+
+template <typename B>
+inline void Writer<B>::writeFloat64Be(double value)
+{
+    writeFloat<double, uint64_t>(value, be64dec);
+}
 }

@@ -47,11 +47,6 @@ void MemWriter::writeImpl(const void* data, std::size_t size)
     _current += size;
 }
 
-std::size_t MemWriter::writableSizeImpl() const
-{
-    return _end - _current;
-}
-
 void MemWriter::fill(uint8_t byte, std::size_t size)
 {
     BMCL_ASSERT(writableSize() >= size);

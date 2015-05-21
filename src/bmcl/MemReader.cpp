@@ -35,7 +35,7 @@ void MemReader::skipImpl(std::size_t size)
 
 void MemReader::peek(void* dest, std::size_t size, std::size_t offset) const
 {
-    BMCL_ASSERT(sizeLeft() >= size + offset);
+    BMCL_ASSERT(sizeLeft() >= (size + offset));
     std::memcpy(dest, _current + offset, size);
 }
 
@@ -44,10 +44,5 @@ void MemReader::readImpl(void* dest, std::size_t size)
     BMCL_ASSERT(sizeLeft() >= size);
     std::memcpy(dest, _current, size);
     _current += size;
-}
-
-std::size_t MemReader::readableSizeImpl() const
-{
-    return sizeLeft();
 }
 }

@@ -21,22 +21,22 @@ class MemWriter;
 class MemReader : public Reader<MemReader> {
 public:
     template <std::size_t n, typename R>
-    MemReader(const R (&array)[n]);
+    MemReader(const R(&array)[n]);
 
     MemReader(const void* ptr, std::size_t size);
     MemReader(const MemWriter& memWriter);
 
-    bool isEmpty() const { return _current >= _end; }
+    bool isEmpty() const;
 
-    const uint8_t* current() const { return _current; }
-    const uint8_t* start() const { return _start; }
-    const uint8_t* end() const { return _end; }
+    const uint8_t* current() const;
+    const uint8_t* start() const;
+    const uint8_t* end() const;
 
-    std::size_t size() const { return _end - _start; }
-    std::size_t sizeLeft() const { return _end - _current; }
-    std::size_t sizeRead() const { return _current - _start; }
+    std::size_t size() const;
+    std::size_t sizeLeft() const;
+    std::size_t sizeRead() const;
 
-    void reset() { _current = _start; }
+    void reset();
     void peek(void* dest, std::size_t size, std::size_t offset) const;
 
     std::size_t readableSizeImpl() const;
@@ -52,7 +52,7 @@ private:
 };
 
 template <std::size_t n, typename R>
-inline MemReader::MemReader(const R (&array)[n])
+inline MemReader::MemReader(const R(&array)[n])
 {
     init(array, sizeof(R) * n);
 }
@@ -60,5 +60,50 @@ inline MemReader::MemReader(const R (&array)[n])
 inline MemReader::MemReader(const void* ptr, std::size_t size)
 {
     init(ptr, size);
+}
+
+inline bool MemReader::isEmpty() const
+{
+    return _current >= _end;
+}
+
+inline const uint8_t* MemReader::current() const
+{
+    return _current;
+}
+
+inline const uint8_t* MemReader::start() const
+{
+    return _start;
+}
+
+inline const uint8_t* MemReader::end() const
+{
+    return _end;
+}
+
+inline std::size_t MemReader::size() const
+{
+    return _end - _start;
+}
+
+inline std::size_t MemReader::sizeLeft() const
+{
+    return _end - _current;
+}
+
+inline std::size_t MemReader::sizeRead() const
+{
+    return _current - _start;
+}
+
+inline void MemReader::reset()
+{
+    _current = _start;
+}
+
+inline std::size_t MemReader::readableSizeImpl() const
+{
+    return sizeLeft();
 }
 }
