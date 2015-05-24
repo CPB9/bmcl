@@ -4,6 +4,8 @@ add_library(bmcl STATIC
     Assert.h
     Either.h
     Endian.h
+    Logging.cpp
+    Logging.h
     MemReader.cpp
     MemReader.h
     MemWriter.cpp
