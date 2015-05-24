@@ -43,6 +43,9 @@ public:
     void readImpl(void* dest, std::size_t size);
     void skipImpl(std::size_t size);
 
+    uint8_t readUint8();
+    int8_t readInt8();
+
 private:
     void init(const void* ptr, std::size_t size);
 
@@ -105,5 +108,18 @@ inline void MemReader::reset()
 inline std::size_t MemReader::readableSizeImpl() const
 {
     return sizeLeft();
+}
+
+inline uint8_t MemReader::readUint8()
+{
+    BMCL_ASSERT(sizeLeft() > 0);
+    uint8_t value = *_current;
+    _current++;
+    return value;
+}
+
+inline int8_t MemReader::readInt8()
+{
+    return readUint8();
 }
 }

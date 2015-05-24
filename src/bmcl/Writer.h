@@ -28,9 +28,6 @@ public:
     template <std::size_t n, typename R>
     void write(R(&array)[n]);
 
-    template <typename T>
-    void writeType(T value);
-
     void writeUint8(uint8_t value);
     void writeUint16(uint16_t value);
     void writeUint32(uint32_t value);
@@ -44,14 +41,32 @@ public:
     void writeUint32Be(uint32_t value);
     void writeUint64Be(uint64_t value);
 
-    template <typename T, typename H, typename C>
-    inline void writeFloat(T value, C convert);
+    void writeInt8(int8_t value);
+    void writeInt16(int16_t value);
+    void writeInt32(int32_t value);
+    void writeInt64(int64_t value);
+
+    void writeInt16Le(int16_t value);
+    void writeInt32Le(int32_t value);
+    void writeInt64Le(int64_t value);
+
+    void writeInt16Be(int16_t value);
+    void writeInt32Be(int32_t value);
+    void writeInt64Be(int64_t value);
 
     void writeFloat32Le(float value);
     void writeFloat64Le(double value);
 
     void writeFloat32Be(float value);
     void writeFloat64Be(double value);
+
+private:
+    template <typename T>
+    void writeType(T value);
+
+    template <typename T, typename H, typename C>
+    inline void writeFloat(T value, C convert);
+
 };
 
 template <typename B>
@@ -138,6 +153,66 @@ template <typename B>
 inline void Writer<B>::writeUint64Be(uint64_t value)
 {
     writeType<uint64_t>(htobe64(value));
+}
+
+template <typename B>
+inline void Writer<B>::writeInt8(int8_t value)
+{
+    writeUint8(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt16(int16_t value)
+{
+    writeUint16(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt32(int32_t value)
+{
+    writeUint32(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt64(int64_t value)
+{
+    writeUint64(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt16Le(int16_t value)
+{
+    writeUint16Le(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt32Le(int32_t value)
+{
+    writeUint32Le(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt64Le(int64_t value)
+{
+    writeUint64Le(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt16Be(int16_t value)
+{
+    writeUint16Be(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt32Be(int32_t value)
+{
+    writeUint32Be(value);
+}
+
+template <typename B>
+inline void Writer<B>::writeInt64Be(int64_t value)
+{
+    writeUint64Be(value);
 }
 
 template <typename B>

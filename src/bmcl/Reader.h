@@ -26,9 +26,6 @@ public:
     void skip(std::size_t size);
     std::size_t readableSize() const;
 
-    template <typename T>
-    inline T readType();
-
     uint8_t readUint8();
     uint16_t readUint16();
     uint32_t readUint32();
@@ -42,14 +39,31 @@ public:
     uint32_t readUint32Be();
     uint64_t readUint64Be();
 
-    template <typename T, typename H, typename C>
-    inline T readFloat(C convert);
+    int8_t readInt8();
+    int16_t readInt16();
+    int32_t readInt32();
+    int64_t readInt64();
+
+    int16_t readInt16Le();
+    int32_t readInt32Le();
+    int64_t readInt64Le();
+
+    int16_t readInt16Be();
+    int32_t readInt32Be();
+    int64_t readInt64Be();
 
     float readFloat32Le();
     double readFloat64Le();
 
     float readFloat32Be();
     double readFloat64Be();
+
+private:
+    template <typename T>
+    inline T readType();
+
+    template <typename T, typename H, typename C>
+    inline T readFloat(C convert);
 };
 
 template <typename B>
@@ -137,6 +151,66 @@ template <typename B>
 inline uint64_t Reader<B>::readUint64Be()
 {
     return be64toh(readType<uint64_t>());
+}
+
+template <typename B>
+inline int8_t Reader<B>::readInt8()
+{
+    return readUint8();
+}
+
+template <typename B>
+inline int16_t Reader<B>::readInt16()
+{
+    return readUint16();
+}
+
+template <typename B>
+inline int32_t Reader<B>::readInt32()
+{
+    return readUint32();
+}
+
+template <typename B>
+inline int64_t Reader<B>::readInt64()
+{
+    return readUint64();
+}
+
+template <typename B>
+inline int16_t Reader<B>::readInt16Le()
+{
+    return readUint16Le();
+}
+
+template <typename B>
+inline int32_t Reader<B>::readInt32Le()
+{
+    return readUint32Le();
+}
+
+template <typename B>
+inline int64_t Reader<B>::readInt64Le()
+{
+    return readUint64Le();
+}
+
+template <typename B>
+inline int16_t Reader<B>::readInt16Be()
+{
+    return readUint16Be();
+}
+
+template <typename B>
+inline int32_t Reader<B>::readInt32Be()
+{
+    return readUint32Be();
+}
+
+template <typename B>
+inline int64_t Reader<B>::readInt64Be()
+{
+    return readUint64Be();
 }
 
 template <typename B>
