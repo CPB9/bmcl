@@ -41,6 +41,14 @@ add_unit_test(result_tests Result.cpp)
 add_unit_test(panic_tests Panic.cpp)
 add_unit_test(logging_tests Logging.cpp)
 
+add_executable(colorstream_test ColorStream.cpp)
+target_link_libraries(colorstream_test bmcl)
+set_target_properties(colorstream_test
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${TESTS_DIR}
+    FOLDER "tests"
+)
+
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests
     bmcl
