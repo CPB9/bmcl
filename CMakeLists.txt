@@ -6,6 +6,12 @@ enable_testing()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(BMCL_HAVE_QT5 0)
+find_package(Qt5Core)
+if (Qt5Core_FOUND)
+    set(BMCL_HAVE_QT 1)
+endif()
+
 set(BMCL_HAVE_MALLOC 1)
 if(BMCL_NO_MALLOC)
     set(BMCL_HAVE_MALLOC 0)

@@ -1,7 +1,13 @@
 #pragma once
 
+#include "bmcl/Config.h"
+
+#if BMCL_HAVE_QT
+#include <QTextStream>
+#include <QBuffer>
+#else
 #include <sstream>
-#include <iostream>
+#endif
 
 #define BMCL_LOG(level) bmcl::Logger(level)
 #define BMCL_DEBUG(level) BMCL_LOG(bmcl::LogLevel::Debug)
@@ -36,12 +42,20 @@ public:
 private:
     LogLevel _allowedLevel;
     LogLevel _level;
+#if BMCL_HAVE_QT
+    QTextStream _stream;
+    QString _buffer;
+#else
     std::ostringstream _stream;
+#endif
 };
 
 inline Logger::Logger(LogLevel level)
     : _allowedLevel(bmcl::logLevel())
     , _level(level)
+#if BMCL_HAVE_QT
+    , _stream(&_buffer, QIODevice::WriteOnly)
+#endif
 {
 }
 

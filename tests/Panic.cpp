@@ -1,5 +1,6 @@
 #include "bmcl/Panic.h"
 #include "bmcl/Assert.h"
+#include "bmcl/Logging.h"
 
 #include <iostream>
 
@@ -15,11 +16,6 @@ TEST(Panic, panic)
 TEST(Panic, assertFail)
 {
     ASSERT_DEATH(bmcl::assertFail("Assert message", __FILE__, __LINE__), "Assertion 'Assert message' failed.");
-}
-
-static bool assertTest()
-{
-    return false;
 }
 
 TEST(Panic, assert)

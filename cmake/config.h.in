@@ -1,6 +1,7 @@
 #cmakedefine BMCL_NO_ASSERTS 1
 
 #cmakedefine BMCL_HAVE_MALLOC 1
+#cmakedefine BMCL_HAVE_QT 1
 
 #cmakedefine BMCL_BIG_ENDIAN 1
 #cmakedefine BMCL_LITTLE_ENDIAN 1

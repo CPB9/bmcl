@@ -24,3 +24,7 @@ add_library(bmcl STATIC
     RingBuffer.h
     Writer.h
 )
+
+if (BMCL_HAVE_QT)
+    target_link_libraries(bmcl Qt5::Core)
+endif()

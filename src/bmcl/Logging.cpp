@@ -56,6 +56,10 @@ void log(LogLevel level, const char* msg)
 
 Logger::~Logger()
 {
+#if BMCL_HAVE_QT
+    log(currentLogLevel, _buffer.toLocal8Bit().constData());
+#else
     log(currentLogLevel, _stream.str().c_str());
+#endif
 }
 }
