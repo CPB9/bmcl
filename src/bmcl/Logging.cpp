@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 CPB9 team. See the COPYRIGHT file at the top-level directory.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+#include "bmcl/Config.h"
 #include "bmcl/Logging.h"
 
 #include <iostream>
@@ -49,6 +58,11 @@ void setLogHandler(LogHandler handler)
     currentLogHandler = handler;
 }
 
+void setDefaulLogHandler()
+{
+    currentLogHandler = coutHandler;
+}
+
 void log(LogLevel level, const char* msg)
 {
     currentLogHandler(level, msg);
@@ -57,9 +71,9 @@ void log(LogLevel level, const char* msg)
 Logger::~Logger()
 {
 #if BMCL_HAVE_QT
-    log(currentLogLevel, _buffer.toLocal8Bit().constData());
+    log(_level, _buffer.toLocal8Bit().constData());
 #else
-    log(currentLogLevel, _stream.str().c_str());
+    log(_level, _stream.str().c_str());
 #endif
 }
 }

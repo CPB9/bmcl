@@ -1,6 +1,5 @@
 #include "bmcl/Panic.h"
 #include "bmcl/Assert.h"
-#include "bmcl/Logging.h"
 
 #include <iostream>
 

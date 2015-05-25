@@ -39,6 +39,7 @@ add_unit_test(option_tests Option.cpp)
 add_unit_test(either_tests Either.cpp)
 add_unit_test(result_tests Result.cpp)
 add_unit_test(panic_tests Panic.cpp)
+add_unit_test(logging_tests Logging.cpp)
 
 add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
 target_link_libraries(all_tests
