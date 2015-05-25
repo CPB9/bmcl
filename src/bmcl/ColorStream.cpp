@@ -23,64 +23,91 @@ ColorStream::ColorStream(std::ostream* stream)
 #ifdef BMCL_PLATFORM_WINDOWS
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(_handle, &info);
-    _defaultAttrs = consoleInfo.wAttributes;
-    _currentAttrs = _defaultAttrs;
+    _defaultAttrs = info.wAttributes;
+    resetAttrs();
 #endif
 }
 
 #ifdef BMCL_PLATFORM_WINDOWS
 
-static WORD applyAttrs(WORD attrs, WORD defaultAttrs, ColorAttr colorAttr)
+void ColorStream::resetAttrs()
 {
-    WORD noFgMask = ~(FOREGROUND_BLUE & FOREGROUND_GREEN & FOREGROUND_RED);
-    WORD noBgMask = ~(BACKGROUND_BLUE & BACKGROUND_GREEN & BACKGROUND_RED);
+    WORD fgMask = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+    _currentFg = _defaultAttrs & fgMask;
+    WORD bgMask = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+    _currentBg = _defaultAttrs & bgMask;
+    _currentIntensity = _defaultAttrs & FOREGROUND_INTENSITY; 
+    _otherAttrs = _defaultAttrs & ~(fgMask | bgMask | FOREGROUND_INTENSITY);
+}
+
+void ColorStream::applyAttrs(ColorAttr colorAttr)
+{
     switch (colorAttr) {
     case ColorAttr::Reset:
-        return defaultAttrs;
+        SetConsoleTextAttribute(_handle, _defaultAttrs);
+        resetAttrs();
+        break;
     case ColorAttr::Normal:
-        return attrs | FOREGROUND_INTENSITY;
+        _currentIntensity = 0;
+        break;
     case ColorAttr::Bright:
-        return attrs & (~FOREGROUND_INTENSITY);
+        _currentIntensity |= FOREGROUND_INTENSITY;
+        break;
     case ColorAttr::FgBlack:
-        return attrs & noFgMask;
+        _currentFg = 0;
+        break;
     case ColorAttr::FgRed:
-        return attrs & (noFgMask | FOREGROUND_RED);
+        _currentFg = FOREGROUND_RED;
+        break;
     case ColorAttr::FgGreen:
-        return attrs & (noFgMask | FOREGROUND_GREEN);
+        _currentFg = FOREGROUND_GREEN;
+        break;
     case ColorAttr::FgYellow:
-        return attrs & (noFgMask | FOREGROUND_GREEN | FOREGROUND_RED);
+        _currentFg = FOREGROUND_GREEN | FOREGROUND_RED;
+        break;
     case ColorAttr::FgBlue:
-        return attrs & (noFgMask | FOREGROUND_BLUE);
+        _currentFg = FOREGROUND_BLUE;
+        break;
     case ColorAttr::FgMagenta:
-        return attrs & (noFgMask | FOREGROUND_BLUE | FOREGROUND_RED);
+        _currentFg = FOREGROUND_BLUE | FOREGROUND_RED;
+        break;
     case ColorAttr::FgCyan:
-        return attrs & (noFgMask | FOREGROUND_BLUE | FOREGROUND_GREEN);
+        _currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN;
+        break;
     case ColorAttr::FgWhite:
-        return attrs | (~noFgMask);
+        _currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+        break;
     case ColorAttr::BgBlack:
-        return attrs & noBgMask;
+        _currentBg = 0;
+        break;
     case ColorAttr::BgRed:
-        return attrs & (noBgMask | BACKEGROUND_RED);
+        _currentBg = BACKGROUND_RED;
+        break;
     case ColorAttr::BgGreen:
-        return attrs & (noBgMask | BACKEGROUND_GREEN);
+        _currentBg = BACKGROUND_GREEN;
+        break;
     case ColorAttr::BgYellow:
-        return attrs & (noBgMask | BACKEGROUND_GREEN | BACKEGROUND_RED);
+        _currentBg = BACKGROUND_GREEN | BACKGROUND_RED;
+        break;
     case ColorAttr::BgBlue:
-        return attrs & (noBgMask | BACKEGROUND_BLUE);
+        _currentBg = BACKGROUND_BLUE;
+        break;
     case ColorAttr::BgMagenta:
-        return attrs & (noBgMask | BACKEGROUND_BLUE | BACKEGROUND_RED);
+        _currentBg = BACKGROUND_BLUE | BACKGROUND_RED;
+        break;
     case ColorAttr::BgCyan:
-        return attrs & (noBgMask | BACKEGROUND_BLUE | BACKEGROUND_GREEN);
+        _currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN;
+        break;
     case ColorAttr::BgWhite:
-        return attrs | (~noBgMask);
+        _currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+        break;
     }
-    return attrs;
 }
 
 void ColorStream::setAttribute(ColorAttr colorAttr)
 {
-    _currentAttrs = applyAttrs(_currentAttrs, _defaultAttrs, colorAttr);
-    SetConsoleTextAttribute(handle, _currentAttrs);
+    applyAttrs(colorAttr);
+    SetConsoleTextAttribute(_handle, _currentFg | _currentBg | _currentIntensity | _otherAttrs);
 }
 
 #else

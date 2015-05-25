@@ -10,11 +10,12 @@
 
 #include "bmcl/Config.h"
 
-#include <iostream>
 #ifdef BMCL_PLATFORM_WINDOWS
+#include <stdio.h>
 #include <windows.h>
-#include <strio.h>
 #endif
+
+#include <iostream>
 
 namespace bmcl {
 
@@ -64,12 +65,17 @@ protected:
 private:
     void setAttribute(ColorAttr attr);
 
-    std::ostream* _stream;
 #ifdef BMCL_PLATFORM_WINDOWS
+    void applyAttrs(ColorAttr colorAttr);
+    void resetAttrs();
     WORD _defaultAttrs;
-    WORD _currentAttrs;
+    WORD _currentFg;
+    WORD _currentBg;
+    WORD _currentIntensity;
+    WORD _otherAttrs;
     HANDLE _handle;
 #endif
+    std::ostream* _stream;
 };
 
 inline void ColorStream::reset()
