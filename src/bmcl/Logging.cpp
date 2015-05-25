@@ -8,9 +8,11 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Logging.h"
+#include "bmcl/ColorStream.h"
 
 #include <iostream>
 #include <cstring>
+#include <ctime>
 
 namespace bmcl {
 
@@ -32,23 +34,38 @@ static void coutHandler(LogLevel level, const char* msg)
         return;
     }
     const char* prefix;
+    ColorAttr attr;
     switch (level) {
     case LogLevel::Debug:
-        prefix = "DEBUG: ";
+        prefix = "DEBUG:   ";
+        attr = ColorAttr::FgMagenta;
+        break;
+    case LogLevel::Info:
+        prefix = "INFO:    ";
+        attr = ColorAttr::FgCyan;
         break;
     case LogLevel::Warning:
         prefix = "WARNING: ";
+        attr = ColorAttr::FgYellow;
         break;
     case LogLevel::Critical:
-        prefix = "CRITICAL: ";
+        prefix = "CRITICAL:";
+        attr = ColorAttr::FgRed;
         break;
     case LogLevel::Panic:
-        prefix = "PANIC: ";
+        prefix = "PANIC:   ";
+        attr = ColorAttr::FgRed;
         break;
     default:
         prefix = "???: ";
     }
-    std::cout << prefix << msg << std::endl;
+    char timeStr[20];
+    std::time_t t = std::time(nullptr);
+    std::strftime(timeStr, sizeof(timeStr), "%F %T", std::localtime(&t));
+    ColorStdError out;
+    out << ColorAttr::Bright << timeStr << ' ';
+    out << attr << prefix << ColorAttr::Reset << ' ';
+    out << msg << std::endl;
 }
 
 static LogHandler currentLogHandler = coutHandler;
