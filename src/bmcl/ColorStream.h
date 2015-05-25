@@ -11,8 +11,9 @@
 #include "bmcl/Config.h"
 
 #include <iostream>
-#if BMCL_PLATFORM_WINDOWS
+#ifdef BMCL_PLATFORM_WINDOWS
 #include <windows.h>
+#include <strio.h>
 #endif
 
 namespace bmcl {

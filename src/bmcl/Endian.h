@@ -9,7 +9,6 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/Platform.h"
 
 #if defined(BMCL_PLATFORM_LINUX)
     #include <endian.h>

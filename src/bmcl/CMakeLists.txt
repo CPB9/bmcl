@@ -15,7 +15,6 @@ add_library(bmcl STATIC
     Option.h
     Panic.cpp
     Panic.h
-    Platform.h
     Reader.h
     Result.h
     RingArray.cpp
