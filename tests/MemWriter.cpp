@@ -9,41 +9,51 @@ class MemWriterTest : public ::testing::Test {
 protected:
     MemWriterTest()
         : _writer(0)
+        , _data(0)
     {
     }
 
-    void SetUp() { _writer = 0; }
+    void SetUp()
+    {
+        _writer = 0;
+        _data = 0;
+    }
 
     void TearDown()
     {
         if (_writer) {
             delete _writer;
         }
+        if (_data) {
+            delete [] _data;
+        }
     }
 
     template <std::size_t n, typename R>
-    void initWriter(R (&array)[n])
+    void initWriter(R(&array)[n])
     {
         assert(_writer == 0);
         _writer = new MemWriter(array);
     }
 
     template <std::size_t n, typename R>
-    void initWriterWithSizeOf(const R (&array)[n])
+    void initWriterWithSizeOf(const R(&array)[n])
     {
         (void)array;
         assert(_writer == 0);
-        _writer = new MemWriter(sizeof(R) * n);
+        _data = new uint8_t[sizeof(R) * n];
+        _writer = new MemWriter(_data, sizeof(R) * n);
     }
 
     void initWriterWithSize(std::size_t size)
     {
         assert(_writer == 0);
-        _writer = new MemWriter(size);
+        _data = new uint8_t[size];
+        _writer = new MemWriter(_data, size);
     }
 
     template <std::size_t n, typename R>
-    void expect(const R (&array)[n])
+    void expect(const R(&array)[n])
     {
         EXPECT_EQ_MEM(array, _writer->start(), sizeof(R) * n);
     }
@@ -61,19 +71,29 @@ protected:
     }
 
     template <std::size_t n, typename R>
-    void append(const R (&array)[n])
+    void append(const R(&array)[n])
     {
         _writer->write(array);
     }
 
-    void appendUint8(uint8_t data) { _writer->write(&data, 1); }
+    void appendUint8(uint8_t data)
+    {
+        _writer->write(&data, 1);
+    }
 
-    void fillUp(uint8_t data) { _writer->fillUp(data); }
+    void fillUp(uint8_t data)
+    {
+        _writer->fillUp(data);
+    }
 
-    void fill(uint8_t data, std::size_t size) { _writer->fill(data, size); }
+    void fill(uint8_t data, std::size_t size)
+    {
+        _writer->fill(data, size);
+    }
 
 private:
     MemWriter* _writer;
+    uint8_t* _data;
 };
 
 TEST_F(MemWriterTest, init)

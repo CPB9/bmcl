@@ -2,6 +2,8 @@ add_library(bmcl STATIC
     Alloca.h
     Assert.cpp
     Assert.h
+    Buffer.cpp
+    Buffer.h
     ColorStream.cpp
     ColorStream.h
     Either.h

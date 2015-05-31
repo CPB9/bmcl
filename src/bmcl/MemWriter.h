@@ -24,13 +24,6 @@ public:
 
     MemWriter(void* dest, std::size_t maxSize);
 
-#if BMCL_HAVE_MALLOC
-
-    MemWriter(std::size_t maxSize);
-    ~MemWriter();
-
-#endif
-
     bool isFull() const;
     bool isEmpty() const;
 
@@ -39,6 +32,7 @@ public:
     uint8_t* end() const;
 
     std::size_t sizeUsed() const;
+    std::size_t sizeLeft() const;
     std::size_t maxSize() const;
 
     void reset();
@@ -50,18 +44,11 @@ public:
     std::size_t writableSizeImpl() const;
 
 private:
-#if BMCL_HAVE_MALLOC
-    void init(void* dest, std::size_t maxSize, bool hasAllocatedMem = false);
-#else
     void init(void* dest, std::size_t maxSize);
-#endif
 
     uint8_t* _start;
     uint8_t* _current;
     uint8_t* _end;
-#if BMCL_HAVE_MALLOC
-    bool _hasAllocatedMem;
-#endif
 };
 
 template <std::size_t n, typename R>
@@ -98,6 +85,11 @@ inline uint8_t* MemWriter::end() const
 inline std::size_t MemWriter::sizeUsed() const
 {
     return _current - _start;
+}
+
+inline std::size_t MemWriter::sizeLeft() const
+{
+    return _end - _current;
 }
 
 inline std::size_t MemWriter::maxSize() const

@@ -28,6 +28,7 @@ macro(add_unit_test test file)
 endmacro()
 
 add_unit_test(environment_tests Environment.cpp)
+add_unit_test(buffer_tests Buffer.cpp)
 add_unit_test(memreader_tests MemReader.cpp)
 add_unit_test(memwriter_tests MemWriter.cpp)
 #add_unit_test(reader_tests Reader.cpp)

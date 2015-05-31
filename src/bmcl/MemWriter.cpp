@@ -17,23 +17,6 @@ MemWriter::MemWriter(void* dest, std::size_t maxSize)
     init(dest, maxSize);
 }
 
-#if BMCL_HAVE_MALLOC
-
-MemWriter::MemWriter(std::size_t maxSize)
-{
-    uint8_t* dest = new uint8_t[maxSize];
-    init(dest, maxSize, true);
-}
-
-MemWriter::~MemWriter()
-{
-    if (_hasAllocatedMem) {
-        delete[] _start;
-    }
-}
-
-#endif
-
 void MemWriter::advance(std::size_t size)
 {
     BMCL_ASSERT(writableSize() >= size);
@@ -61,17 +44,10 @@ void MemWriter::fillUp(uint8_t byte)
     _current += size;
 }
 
-#if BMCL_HAVE_MALLOC
-void MemWriter::init(void* dest, std::size_t maxSize, bool hasAllocatedMem)
-#else
 void MemWriter::init(void* dest, std::size_t maxSize)
-#endif
 {
     _start = (uint8_t*)dest;
     _current = _start;
     _end = _start + maxSize;
-#if BMCL_HAVE_MALLOC
-    _hasAllocatedMem = hasAllocatedMem;
-#endif
 }
 }
