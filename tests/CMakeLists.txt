@@ -4,6 +4,7 @@ include_directories(
     ${GTEST_INCLUDE_DIRS}
 )
 
+add_definitions(-DDATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
 set(TESTS_DIR ${CMAKE_BINARY_DIR}/bin/tests)
 file(MAKE_DIRECTORY ${TESTS_DIR})
 
@@ -41,6 +42,7 @@ add_unit_test(either_tests Either.cpp)
 add_unit_test(result_tests Result.cpp)
 add_unit_test(panic_tests Panic.cpp)
 add_unit_test(logging_tests Logging.cpp)
+add_unit_test(utils_tests Utils.cpp)
 
 add_executable(colorstream_test ColorStream.cpp)
 target_link_libraries(colorstream_test bmcl)

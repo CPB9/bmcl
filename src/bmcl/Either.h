@@ -11,6 +11,7 @@
 #include "bmcl/Config.h"
 #include "bmcl/Assert.h"
 
+#include <new>
 #include <utility>
 
 namespace bmcl {

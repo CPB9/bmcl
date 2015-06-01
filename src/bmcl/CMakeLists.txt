@@ -25,6 +25,8 @@ add_library(bmcl STATIC
     RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
+    Utils.cpp
+    Utils.h
     Writer.h
 )
 

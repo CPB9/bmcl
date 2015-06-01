@@ -33,6 +33,9 @@ public:
     Buffer& operator=(const Buffer& other);
     Buffer& operator=(Buffer&& other);
 
+    uint8_t& operator[](std::size_t index);
+    uint8_t operator[](std::size_t index) const;
+
 private:
     void dealloc();
     void copyFrom(const Buffer& other);
@@ -72,5 +75,17 @@ inline bool Buffer::isEmpty() const
 inline std::size_t Buffer::writableSizeImpl() const
 {
     return _capacity - _size;
+}
+
+inline uint8_t& Buffer::operator[](std::size_t index)
+{
+    BMCL_ASSERT(index < _size);
+    return _ptr[index];
+}
+
+inline uint8_t Buffer::operator[](std::size_t index) const
+{
+    BMCL_ASSERT(index < _size);
+    return _ptr[index];
 }
 }
