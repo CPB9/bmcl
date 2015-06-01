@@ -51,7 +51,7 @@ protected:
 
     void expectFirstElementSize(std::size_t size) { EXPECT_EQ(size, _ringbucket->firstSize()); }
 
-    std::size_t fullSize(std::size_t elementSize) { return elementSize + _ringbucket->headerSize(); }
+    std::size_t fullSize(std::size_t elementSize) { return elementSize + RingBucket::headerSize(); }
 
     void reset() { _ringbucket->reset(); }
 
