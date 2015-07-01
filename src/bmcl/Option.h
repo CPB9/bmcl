@@ -56,6 +56,8 @@ public:
     const T& unwrap() const;
     T& unwrap();
 
+    void clear();
+
     template <class R>
 #ifdef _MSC_VER
     T unwrapOr(R&& value) const;
@@ -162,8 +164,7 @@ inline Option<T>::Option(Option<T>&& other)
 {
     if (_isSome) {
         new (asValue()) T(std::move(*other.asValue()));
-        other._isSome = false;
-        other.asValue()->~T();
+        other.clear();
     }
 }
 
@@ -191,6 +192,15 @@ inline T& Option<T>::unwrap()
 {
     BMCL_ASSERT(_isSome);
     return *asValue();
+}
+
+template<typename T>
+inline void Option<T>::clear()
+{
+    if (_isSome) {
+        _isSome = false;
+        asValue()->~T();
+    }
 }
 
 template <typename T>
@@ -223,9 +233,8 @@ template <typename T>
 inline T Option<T>::take()
 {
     BMCL_ASSERT(_isSome);
-    _isSome = false;
     T data = std::move(*asValue());
-    asValue()->~T();
+    clear();
     return data;
 }
 
@@ -240,10 +249,7 @@ inline Option<T>& Option<T>::operator=(const Option<T>& other)
             new (asValue()) T(*other.asValue());
         }
     } else {
-        if (_isSome) {
-            _isSome = false;
-            asValue()->~T();
-        }
+        clear();
     }
     return *this;
 }
@@ -258,13 +264,9 @@ inline Option<T>& Option<T>::operator=(Option<T>&& other)
             _isSome = true;
             new (asValue()) T(std::move(*other.asValue()));
         }
-        other._isSome = false;
-        other.asValue()->~T();
+        other.clear();
     } else {
-        if (_isSome) {
-            _isSome = false;
-            asValue()->~T();
-        }
+        clear();
     }
     return *this;
 }
