@@ -229,14 +229,6 @@ TEST(OptionTest, operatorEqMoveSomeValue)
     EXPECT_EQ("next", option.unwrap());
 }
 
-TEST(OptionTest, operatorBool)
-{
-    Option<std::string> none;
-    Option<std::string> some("some");
-    EXPECT_TRUE(some);
-    EXPECT_FALSE(none);
-}
-
 TEST(OptionTest, operatorEqEq)
 {
     Option<std::string> none1;
