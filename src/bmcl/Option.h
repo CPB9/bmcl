@@ -80,8 +80,6 @@ public:
     const T& operator*() const;
     T& operator*();
 
-    operator bool() const;
-
 private:
     const T* asValue() const;
     T* asValue();
@@ -333,12 +331,6 @@ inline T& Option<T>::operator*()
 {
     BMCL_ASSERT(_isSome);
     return *asValue();
-}
-
-template <typename T>
-inline Option<T>::operator bool() const
-{
-    return _isSome;
 }
 
 template <typename T>
