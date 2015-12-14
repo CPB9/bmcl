@@ -1,0 +1,153 @@
+#include "bmcl/StringView.h"
+#include "bmcl/Option.h"
+
+#include "BmclTest.h"
+
+#include <gtest/gtest.h>
+
+using namespace bmcl;
+
+static void expectStringView(const StringView& ref, const char* data, std::size_t size)
+{
+    ASSERT_EQ(size, ref.size());
+    EXPECT_EQ_MEM(data, ref.data(), size);
+}
+
+TEST(StringView, fromCStr)
+{
+    StringView ref("asd");
+    expectStringView(ref, "asd", 3);
+}
+
+TEST(StringView, fromDataSize)
+{
+    StringView ref("test123", 4);
+    expectStringView(ref, "test", 4);
+}
+
+TEST(StringView, fromStrString)
+{
+    std::string data = "test134";
+    StringView ref(data);
+    expectStringView(ref, "test134", 7);
+}
+
+TEST(StringView, asBytes)
+{
+    StringView ref("bytes");
+    Bytes bytes = ref.asBytes();
+    ASSERT_EQ(5, bytes.size());
+    EXPECT_EQ_MEM("bytes", bytes.data(), 5);
+}
+
+TEST(StringView, toStdString)
+{
+    StringView ref("string");
+    std::string str = ref.toStdString();
+    ASSERT_EQ(6, str.size());
+    EXPECT_STREQ("string", str.c_str());
+}
+
+TEST(StringView, startsWith)
+{
+    StringView ref("test123");
+    EXPECT_TRUE(ref.startsWith(""));
+    EXPECT_TRUE(ref.startsWith("test"));
+    EXPECT_TRUE(ref.startsWith("test123"));
+    EXPECT_FALSE(ref.startsWith("test1234"));
+    EXPECT_FALSE(ref.startsWith("1234"));
+    EXPECT_FALSE(ref.startsWith("est12"));
+}
+
+TEST(StringView, endsWith)
+{
+    StringView ref("test123");
+    EXPECT_TRUE(ref.endsWith(""));
+    EXPECT_TRUE(ref.endsWith("123"));
+    EXPECT_TRUE(ref.endsWith("test123"));
+    EXPECT_FALSE(ref.endsWith("1test123"));
+    EXPECT_FALSE(ref.endsWith("test"));
+    EXPECT_FALSE(ref.endsWith("test12"));
+}
+
+TEST(StringView, slice)
+{
+    StringView ref("test123test321");
+    expectStringView(ref.slice(4, 11).sliceFrom(3), "test", 4);
+}
+
+TEST(StringView, toUpper)
+{
+    ASSERT_EQ("ASD", StringView("asd").toUpper());
+    ASSERT_EQ("A1S2D3", StringView("a1s2d3").toUpper());
+    ASSERT_EQ(",A.1 S:2;D/3-", StringView(",A.1 s:2;d/3-").toUpper());
+}
+
+TEST(StringView, toLower)
+{
+    ASSERT_EQ("asd", StringView("ASD").toLower());
+    ASSERT_EQ("a1s2d3", StringView("A1S2D3").toLower());
+    ASSERT_EQ(",a.1 s:2;d/3-", StringView(",a.1 S:2;D/3-").toLower());
+}
+
+TEST(StringView, findFirstOfChar)
+{
+    StringView ref("0123456789asdfghjkl");
+    EXPECT_EQ(2, ref.findFirstOf('2').unwrap());
+    EXPECT_EQ(10, ref.findFirstOf('a').unwrap());
+    EXPECT_EQ(18, ref.findFirstOf('l').unwrap());
+    EXPECT_FALSE(ref.findFirstOf('z').isSome());
+    EXPECT_FALSE(ref.findFirstOf('.').isSome());
+    EXPECT_FALSE(ref.findFirstOf('2', 3).isSome());
+}
+
+TEST(StringView, findFirstOfStr)
+{
+    StringView ref("0123456789asdfghjkl");
+    EXPECT_EQ(3, ref.findFirstOf("38g").unwrap());
+    EXPECT_EQ(10, ref.findFirstOf("safg").unwrap());
+    EXPECT_EQ(15, ref.findFirstOf("h").unwrap());
+    EXPECT_FALSE(ref.findFirstOf("zxc").isSome());
+    EXPECT_FALSE(ref.findFirstOf("qweert").isSome());
+    EXPECT_FALSE(ref.findFirstOf("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq").isSome());
+}
+
+TEST(StringView, findFirstNotOfChar)
+{
+    StringView ref("00000111111111333333");
+    EXPECT_EQ(5, ref.findFirstNotOf('0').unwrap());
+    EXPECT_EQ(14, ref.findFirstNotOf('1', 5).unwrap());
+    EXPECT_FALSE(ref.findFirstNotOf('.', 20).isSome());
+    EXPECT_FALSE(ref.findFirstNotOf('3', 15).isSome());
+}
+
+TEST(StringView, findFirstNotOfStr)
+{
+    EXPECT_EQ(7, StringView("122211234567890").findFirstNotOf("12").unwrap());
+    EXPECT_EQ(7, StringView("122211234567890").findFirstNotOf("12", 5).unwrap());
+    EXPECT_EQ(0, StringView("122211234567890").findFirstNotOf("32").unwrap());
+    EXPECT_FALSE(StringView("12221121122222111").findFirstNotOf("12").isSome());
+    EXPECT_FALSE(StringView("32221121122222111").findFirstNotOf("12", 1).isSome());
+}
+
+TEST(StringView, ltrimChar)
+{
+    expectStringView(StringView("12345").ltrim('z'), "12345", 5);
+    expectStringView(StringView("12345").ltrim('1'), "2345", 4);
+    expectStringView(StringView("aazzz").ltrim('a'), "zzz", 3);
+    expectStringView(StringView("zzzzz").ltrim('z'), "", 0);
+}
+
+TEST(StringView, rtrimChar)
+{
+    expectStringView(StringView("12345").rtrim('z'), "12345", 5);
+    expectStringView(StringView("12345").rtrim('5'), "1234", 4);
+    expectStringView(StringView("sssaaaa").rtrim('a'), "sss", 3);
+    expectStringView(StringView("zzzzz").rtrim('z'), "", 0);
+}
+
+TEST(StringView, trimChar)
+{
+    StringView ref("1111111111122222221111111111");
+    expectStringView(ref.trim('1'), "2222222", 7);
+}

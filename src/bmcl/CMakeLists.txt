@@ -1,5 +1,6 @@
 add_library(bmcl STATIC
     Alloca.h
+    ArrayView.h
     Assert.cpp
     Assert.h
     Buffer.cpp
@@ -25,6 +26,8 @@ add_library(bmcl STATIC
     RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
+    StringView.cpp
+    StringView.h
     Utils.cpp
     Utils.h
     Writer.h
