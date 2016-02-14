@@ -28,6 +28,7 @@ void Buffer::copyFrom(const Buffer& other)
         _size = other._size;
         _capacity = other._capacity;
         _ptr = (uint8_t*)std::malloc(_capacity);
+        BMCL_ASSERT(_ptr);
         std::memcpy(_ptr, other._ptr, _size);
     } else {
         _ptr = 0;

@@ -32,6 +32,7 @@ BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char
         resultSize += std::strlen(msg);
     }
     char* result = (char*)alloca(resultSize);
+    bmcl::panic(result);
     result[resultSize - 1] = '\0';
     int offset;
     if (msg) {
@@ -40,7 +41,6 @@ BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char
         offset = std::sprintf(result, format, file, line, assertion);
     }
     result[offset] = '\0';
-    bmcl::panic(result);
 }
 
 BMCL_NORETURN void assertFail(const char* assertion, const char* file, int line)

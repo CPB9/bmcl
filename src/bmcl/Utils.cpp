@@ -19,7 +19,7 @@ namespace bmcl {
 
 class FileGuard {
 public:
-    FileGuard(std::FILE* file)
+    explicit FileGuard(std::FILE* file)
         : _file(file)
     {
     }
