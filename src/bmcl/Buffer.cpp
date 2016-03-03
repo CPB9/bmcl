@@ -91,6 +91,7 @@ void Buffer::realloc(std::size_t capacity)
             _ptr = 0;
         } else {
             _ptr = (uint8_t*)std::realloc(_ptr, capacity);
+            BMCL_ASSERT(_ptr != nullptr);
         }
     } else {
         _ptr = (uint8_t*)std::malloc(capacity);
