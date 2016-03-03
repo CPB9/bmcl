@@ -341,4 +341,11 @@ inline bool operator==(const Option<T>& left, const Option<T>& right)
     }
     return left.isSome() == right.isSome();
 }
+
+template <typename T>
+inline bool operator!=(const Option<T>& left, const Option<T>& right)
+{
+    return !operator==(left, right);
+}
+
 }
