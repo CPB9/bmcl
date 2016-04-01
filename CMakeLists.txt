@@ -95,6 +95,11 @@ endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_subdirectory(src/bmcl)
+target_include_directories(bmcl
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}/src
+)
 
 if(NOT HAS_PARENT_SCOPE)
     if(BMCL_HAVE_MALLOC)
