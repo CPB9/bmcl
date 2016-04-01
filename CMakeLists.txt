@@ -2,6 +2,10 @@ project(bmcl)
 
 cmake_minimum_required(VERSION 2.8.7)
 
+if(BMCL_FOUND)
+    return()
+endif()
+
 enable_testing()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -31,6 +35,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)
 if(HAS_PARENT_SCOPE)
+    set(BMCL_FOUND 1 PARENT_SCOPE)
     set(BMCL_INCLUDE_DIRS
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_BINARY_DIR}/src
