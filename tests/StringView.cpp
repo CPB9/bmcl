@@ -130,6 +130,59 @@ TEST(StringView, findFirstNotOfStr)
     EXPECT_FALSE(StringView("32221121122222111").findFirstNotOf("12", 1).isSome());
 }
 
+TEST(StringView, findLastOfChar)
+{
+    StringView ref("0123456789asdfgh2kl");
+    EXPECT_EQ(0, ref.findLastOf('0').unwrap());
+    EXPECT_EQ(16, ref.findLastOf('2').unwrap());
+    EXPECT_EQ(16, ref.findLastOf('2', 2).unwrap());
+    EXPECT_EQ(2, ref.findLastOf('2', 3).unwrap());
+    EXPECT_EQ(10, ref.findLastOf('a').unwrap());
+    EXPECT_EQ(18, ref.findLastOf('l').unwrap());
+    EXPECT_FALSE(ref.findLastOf('z').isSome());
+    EXPECT_FALSE(ref.findLastOf('.').isSome());
+}
+
+TEST(StringView, findLastOfStr)
+{
+    StringView ref("0123456789asdfghjkl");
+    EXPECT_EQ(14, ref.findLastOf("38g").unwrap());
+    EXPECT_EQ(14, ref.findLastOf("safg").unwrap());
+    EXPECT_EQ(15, ref.findLastOf("h").unwrap());
+    EXPECT_EQ(15, ref.findLastOf("h", 3).unwrap());
+    EXPECT_EQ(0, ref.findLastOf("0", 18).unwrap());
+    EXPECT_TRUE(ref.findLastOf("0", 18).isSome());
+    EXPECT_FALSE(ref.findLastOf("0", 19).isSome());
+    EXPECT_FALSE(ref.findLastOf("h", 4).isSome());
+    EXPECT_FALSE(ref.findLastOf("zxc").isSome());
+    EXPECT_FALSE(ref.findLastOf("qweert").isSome());
+    EXPECT_FALSE(ref.findLastOf("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq").isSome());
+}
+
+TEST(StringView, findLastNotOfChar)
+{
+    StringView ref("00000111111111333333");
+    EXPECT_EQ(19, ref.findLastNotOf('0').unwrap());
+    EXPECT_EQ(4, ref.findLastNotOf('1', 6).unwrap());
+    EXPECT_EQ(14, ref.findLastNotOf('1', 5).unwrap());
+    EXPECT_FALSE(ref.findLastNotOf('.', 20).isSome());
+    EXPECT_TRUE(ref.findLastNotOf('0', 14).isSome());
+    EXPECT_FALSE(ref.findLastNotOf('0', 15).isSome());
+}
+
+TEST(StringView, findLastNotOfStr)
+{
+    EXPECT_EQ(12, StringView("122211234567890").findLastNotOf("90").unwrap());
+    EXPECT_EQ(11, StringView("122211234567890").findLastNotOf("56", 3).unwrap());
+    EXPECT_EQ(8, StringView("122211234567890").findLastNotOf("56", 4).unwrap());
+    EXPECT_EQ(8, StringView("122211234567890").findLastNotOf("56", 5).unwrap());
+    EXPECT_EQ(8, StringView("122211234567890").findLastNotOf("56", 6).unwrap());
+    EXPECT_FALSE(StringView("12221121122222111").findLastNotOf("12").isSome());
+    EXPECT_TRUE(StringView("22221121122222113").findLastNotOf("12", 0).isSome());
+    EXPECT_FALSE(StringView("22221121122222113").findLastNotOf("12", 1).isSome());
+    EXPECT_FALSE(StringView("22221121122222113").findLastNotOf("12", 1).isSome());
+}
+
 TEST(StringView, ltrimChar)
 {
     expectStringView(StringView("12345").ltrim('z'), "12345", 5);
@@ -150,4 +203,31 @@ TEST(StringView, trimChar)
 {
     StringView ref("1111111111122222221111111111");
     expectStringView(ref.trim('1'), "2222222", 7);
+}
+
+
+TEST(StringView, ltrimCharSet)
+{
+    expectStringView(StringView("12345").ltrim("67"), "12345", 5);
+    expectStringView(StringView("12345").ltrim("16"), "2345", 4);
+    expectStringView(StringView("aazzz").ltrim("a"), "zzz", 3);
+    expectStringView(StringView("zzzzz").ltrim("az"), "", 0);
+}
+
+TEST(StringView, rtrimCharSet)
+{
+    expectStringView(StringView("12345").rtrim("zy"), "12345", 5);
+    expectStringView(StringView("12345").rtrim("56"), "1234", 4);
+    expectStringView(StringView("sssaaaa").rtrim("a"), "sss", 3);
+    expectStringView(StringView("sssaaaa").rtrim("s"), "sssaaaa", 7);
+    expectStringView(StringView("sssaaaa").rtrim("sa"), "", 0);
+}
+
+TEST(StringView, trimCharSet)
+{
+    StringView ref("11111111111222222233333333");
+    expectStringView(ref.trim("13"), "2222222", 7);
+    expectStringView(ref.trim("1"), "222222233333333", 15);
+    expectStringView(ref.trim("3"), "111111111112222222", 18);
+    expectStringView(ref.trim("567"), "11111111111222222233333333", 26);
 }

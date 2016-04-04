@@ -50,12 +50,20 @@ std::string StringView::toUpper() const
     return map(asciiToUpper);
 }
 
-inline Option<std::size_t> StringView::iteratorToIndex(const char* it) const
+inline Option<std::size_t> StringView::iteratorToIndex(iterator it) const
 {
     if (it == end()) {
         return None;
     }
     return it - begin();
+}
+
+inline Option<std::size_t> StringView::iteratorToIndex(reverse_iterator it) const
+{
+    if (it == rend()) {
+        return None;
+    }
+    return it.base() - begin() - 1;
 }
 
 Option<std::size_t> StringView::findFirstOf(char c, std::size_t from) const
@@ -96,6 +104,44 @@ Option<std::size_t> StringView::findFirstNotOf(StringView chars, std::size_t fro
     }));
 }
 
+Option<std::size_t> StringView::findLastOf(char c, std::size_t offset) const
+{
+    BMCL_ASSERT(offset <= size());
+    return iteratorToIndex(std::find(rbegin() + offset, rend(), c));
+}
+
+Option<std::size_t> StringView::findLastOf(StringView chars, std::size_t offset) const
+{
+    BMCL_ASSERT(offset <= size());
+    std::bitset<1 << CHAR_BIT> bits;
+    for (char c : chars) {
+        bits.set(c);
+    }
+    return iteratorToIndex(std::find_if(rbegin() + offset, rend(), [&bits](char c) {
+        return bits.test(c);
+    }));
+}
+
+Option<std::size_t> StringView::findLastNotOf(char c, std::size_t offset) const
+{
+    BMCL_ASSERT(offset <= size());
+    return iteratorToIndex(std::find_if(rbegin() + offset, rend(), [c](char s) {
+        return s != c;
+    }));
+}
+
+Option<std::size_t> StringView::findLastNotOf(StringView chars, std::size_t offset) const
+{
+    BMCL_ASSERT(offset <= size());
+    std::bitset<1 << CHAR_BIT> bits;
+    for (char c : chars) {
+        bits.set(c);
+    }
+    return iteratorToIndex(std::find_if(rbegin() + offset, rend(), [&bits](char c) {
+        return !bits.test(c);
+    }));
+}
+
 StringView StringView::ltrim(char c) const
 {
     const char* it = begin();
@@ -118,4 +164,26 @@ StringView StringView::trim(char c) const
 {
     return ltrim(c).rtrim(c);
 }
+
+StringView StringView::ltrim(StringView chars) const
+{
+    auto r = findFirstNotOf(chars);
+    if (r.isSome())
+        return sliceFrom(r.unwrap());
+    return sliceFrom(size());
+}
+
+StringView StringView::rtrim(StringView chars) const
+{
+    auto r = findLastNotOf(chars);
+    if (r.isSome())
+        return sliceTo(r.unwrap() + 1);
+    return sliceTo(0);
+}
+
+StringView StringView::trim(StringView chars) const
+{
+    return ltrim(chars).rtrim(chars);
+}
+
 }

@@ -46,24 +46,30 @@ public:
     Option<std::size_t> findFirstNotOf(char c, std::size_t from = 0) const;
     Option<std::size_t> findFirstNotOf(StringView chars, std::size_t from = 0) const;
 
+    Option<std::size_t> findLastOf(char c, std::size_t offset = 0) const;
+    Option<std::size_t> findLastOf(StringView chars, std::size_t offset = 0) const;
+    Option<std::size_t> findLastNotOf(char c, std::size_t offset = 0) const;
+    Option<std::size_t> findLastNotOf(StringView chars, std::size_t offset = 0) const;
+
     StringView ltrim(char c) const;
     StringView rtrim(char c) const;
     StringView trim(char c) const;
 
-    StringView ltrim(StringView chars = " \t\n\v\f\r");
-    StringView rtrim(StringView chars = " \t\n\v\f\r");
-    StringView trim(StringView chars = " \t\n\v\f\r");
+    StringView ltrim(StringView chars = " \t\n\v\f\r") const;
+    StringView rtrim(StringView chars = " \t\n\v\f\r") const;
+    StringView trim(StringView chars = " \t\n\v\f\r") const;
 
     bool operator==(StringView other) const;
 
 private:
     template <typename C>
     std::string map(C&& convert) const;
-    Option<std::size_t> iteratorToIndex(const char* it) const;
+    Option<std::size_t> iteratorToIndex(iterator) const;
+    Option<std::size_t> iteratorToIndex(reverse_iterator) const;
 };
 
 inline StringView::StringView(const char* cstr)
-    : ArrayViewBase<char, StringView>(cstr, std::strlen(cstr))
+    : ArrayViewBase<char, StringView>(cstr, cstr ? std::strlen(cstr) : 0)
 {
 }
 
