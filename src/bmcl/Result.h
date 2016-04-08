@@ -10,6 +10,7 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Either.h"
+#include "bmcl/Option.h"
 
 namespace bmcl {
 
@@ -31,6 +32,10 @@ public:
     E& unwrapErr();
     T&& take();
     E&& takeErr();
+    Option<T> unwrapOption() const;
+    Option<E> unwrapErrOption() const;
+    Option<T>&& takeOption();
+    Option<E>&& takeErrOption();
 
     Result& operator=(const Result& other);
     Result& operator=(Result&& other);
@@ -118,6 +123,38 @@ template <typename T, typename E>
 inline E&& Result<T, E>::takeErr()
 {
     return Either<T, E>::takeSecond();
+}
+
+template <typename T, typename E>
+inline Option<T> Result<T, E>::unwrapOption() const
+{
+    if (isOk())
+        return Either<T, E>::unwrapFirst();
+    return bmcl::None;
+}
+
+template <typename T, typename E>
+inline Option<T>&& Result<T, E>::takeOption()
+{
+    if (isOk())
+        return Either<T, E>::takeFirst();
+    return bmcl::None;
+}
+
+template <typename T, typename E>
+inline Option<E> Result<T, E>::unwrapErrOption() const
+{
+    if (isErr())
+        return unwrapSecond();
+    return bmcl::None;
+}
+
+template <typename T, typename E>
+inline Option<E>&& Result<T, E>::takeErrOption()
+{
+    if (isErr())
+        return takeSecond();
+    return bmcl::None;
 }
 
 template <typename T, typename E>
