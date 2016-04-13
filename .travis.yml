@@ -1,7 +1,8 @@
 language: c
 compiler: clang
-env: 
-  global: 
+dist: trusty
+env:
+  global:
       - CXX=clang++
       - secure: "WO7Bs89KG+TemRpZqkRBtGGf3CRKXJpBFpZXyE8xwakE2EtEdCd4/ljaBMjMa0pR1t7mp8sR8UOczkBdyxNft7CKBEuhByWI1F4zhZenWFSBP/JRdzglL8HIShmvJJeMnUhYLQt2GhbyMwYoKQJKTGTUGDC9fH6qQsc2n2Ajr+I="
   matrix:
