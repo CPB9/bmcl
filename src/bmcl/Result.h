@@ -145,7 +145,7 @@ template <typename T, typename E>
 inline Option<E> Result<T, E>::unwrapErrOption() const
 {
     if (isErr())
-        return unwrapSecond();
+        return Either<T, E>::unwrapSecond();
     return bmcl::None;
 }
 
@@ -153,7 +153,7 @@ template <typename T, typename E>
 inline Option<E>&& Result<T, E>::takeErrOption()
 {
     if (isErr())
-        return takeSecond();
+        return Either<T, E>::takeSecond();
     return bmcl::None;
 }
 
