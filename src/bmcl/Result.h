@@ -34,8 +34,8 @@ public:
     E&& takeErr();
     Option<T> unwrapOption() const;
     Option<E> unwrapErrOption() const;
-    Option<T>&& takeOption();
-    Option<E>&& takeErrOption();
+    Option<T> takeOption();
+    Option<E> takeErrOption();
 
     Result& operator=(const Result& other);
     Result& operator=(Result&& other);
@@ -134,7 +134,7 @@ inline Option<T> Result<T, E>::unwrapOption() const
 }
 
 template <typename T, typename E>
-inline Option<T>&& Result<T, E>::takeOption()
+inline Option<T> Result<T, E>::takeOption()
 {
     if (isOk())
         return Either<T, E>::takeFirst();
@@ -150,7 +150,7 @@ inline Option<E> Result<T, E>::unwrapErrOption() const
 }
 
 template <typename T, typename E>
-inline Option<E>&& Result<T, E>::takeErrOption()
+inline Option<E> Result<T, E>::takeErrOption()
 {
     if (isErr())
         return Either<T, E>::takeSecond();
