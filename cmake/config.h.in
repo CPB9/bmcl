@@ -79,3 +79,9 @@
 
 #define BMCL_MIN(a, b) (((a) > (b)) ? (b) : (a))
 #define BMCL_MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+#if defined(_MSC_VER)
+#define BMCL_NOEXCEPT
+#else
+#define BMCL_NOEXCEPT noexcept
+#endif
