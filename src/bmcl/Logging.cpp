@@ -93,4 +93,14 @@ Logger::~Logger()
     log(_level, _stream.str().c_str());
 #endif
 }
+
+template<>
+Logger& Logger::operator<<(const std::string & value)
+{
+    if ((int)_level <= (int)_allowedLevel) {
+        _stream << value.c_str();
+    }
+    return *this;
+}
+
 }

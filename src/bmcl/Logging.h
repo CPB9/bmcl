@@ -78,4 +78,8 @@ Logger& Logger::operator<<(const T& value)
     }
     return *this;
 }
+
+template<>
+Logger& Logger::operator<<(const std::string & value);
+
 };
