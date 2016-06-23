@@ -26,6 +26,8 @@ add_library(bmcl STATIC
     RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
+    String.h
+    String.cpp
     StringView.cpp
     StringView.h
     Utils.cpp

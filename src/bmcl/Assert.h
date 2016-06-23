@@ -9,6 +9,7 @@
 #pragma once
 
 #include "bmcl/Config.h"
+#include "bmcl/String.h"
 
 #define BMCL_STRINGIFY(expr) #expr
 
@@ -17,7 +18,7 @@
 #define BMCL_ASSERT_MSG(expr, msg)
 #else
 #define BMCL_ASSERT(expr) ((expr) ? (void)0 : bmcl::assertFail(BMCL_STRINGIFY(expr), __FILE__, __LINE__))
-#define BMCL_ASSERT_MSG(expr, msg) ((expr) ? (void)0 : bmcl::assertFail(BMCL_STRINGIFY(expr), msg, __FILE__, __LINE__))
+#define BMCL_ASSERT_MSG(expr, msg) ((expr) ? (void)0 : bmcl::assertFail(BMCL_STRINGIFY(expr), bmcl::toCString(msg), __FILE__, __LINE__))
 #endif
 
 namespace bmcl {
