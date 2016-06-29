@@ -17,7 +17,7 @@ namespace bmcl {
 
 typedef std::size_t RingBucketHeader;
 
-class RingBucket {
+class BMCL_EXPORT RingBucket {
 public:
     RingBucket(void* data, std::size_t size);
 
@@ -27,15 +27,15 @@ public:
 
 #endif
 
-    bool isEmpty() const;
+    inline bool isEmpty() const;
 
-    std::size_t freeSpace() const;
-    std::size_t count() const;
+    inline std::size_t freeSpace() const;
+    inline std::size_t count() const;
     std::size_t firstSize() const;
-    static std::size_t headerSize();
+    inline static std::size_t headerSize();
 
     void reset();
-    void removeFirst();
+    inline void removeFirst();
     void append(const void* data, std::size_t dataSize);
     void copyFirst(void* dest) const;
 

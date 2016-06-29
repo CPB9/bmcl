@@ -21,25 +21,25 @@ namespace bmcl {
 template <typename T>
 class Option;
 
-class StringView : public ArrayViewBase<char, StringView> {
+class BMCL_EXPORT StringView : public ArrayViewBase<char, StringView> {
 public:
-    StringView(const char* cstr);
-    StringView(const char* data, std::size_t size);
-    StringView(const char* start, const char* end);
-    StringView(const std::string& str);
+    inline StringView(const char* cstr);
+    inline StringView(const char* data, std::size_t size);
+    inline StringView(const char* start, const char* end);
+    inline StringView(const std::string& str);
 
-    std::string toStdString() const;
+    inline std::string toStdString() const;
     std::string toUpper() const;
     std::string toLower() const;
 
-    Bytes asBytes() const;
+    inline Bytes asBytes() const;
 
-    bool startsWith(StringView prefix) const;
-    bool endsWith(StringView postfix) const;
+    inline bool startsWith(StringView prefix) const;
+    inline bool endsWith(StringView postfix) const;
 
-    bool equals(StringView other) const;
-    bool equals(const std::string& other) const;
-    bool equals(const char* cstr) const;
+    inline bool equals(StringView other) const;
+    inline bool equals(const std::string& other) const;
+    inline bool equals(const char* cstr) const;
 
     Option<std::size_t> findFirstOf(char c, std::size_t from = 0) const;
     Option<std::size_t> findFirstOf(StringView chars, std::size_t from = 0) const;
@@ -59,7 +59,7 @@ public:
     StringView rtrim(StringView chars = " \t\n\v\f\r") const;
     StringView trim(StringView chars = " \t\n\v\f\r") const;
 
-    bool operator==(StringView other) const;
+    inline bool operator==(StringView other) const;
 
 private:
     template <typename C>

@@ -36,15 +36,15 @@ enum class LogLevel {
 
 typedef void (*LogHandler)(LogLevel level, const char* msg);
 
-void setLogLevel(LogLevel level);
-LogLevel logLevel();
-void setLogHandler(LogHandler handler);
-void setDefaulLogHandler();
-void log(LogLevel level, const char* msg);
+BMCL_EXPORT void setLogLevel(LogLevel level);
+BMCL_EXPORT LogLevel logLevel();
+BMCL_EXPORT void setLogHandler(LogHandler handler);
+BMCL_EXPORT void setDefaulLogHandler();
+BMCL_EXPORT void log(LogLevel level, const char* msg);
 
-class Logger {
+class BMCL_EXPORT Logger {
 public:
-    Logger(LogLevel level);
+    inline Logger(LogLevel level);
     ~Logger();
 
     template <typename T>
@@ -80,6 +80,6 @@ Logger& Logger::operator<<(const T& value)
 }
 
 template<>
-Logger& Logger::operator<<(const std::string & value);
+BMCL_EXPORT Logger& Logger::operator<<(const std::string & value);
 
 };

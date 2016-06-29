@@ -85,3 +85,17 @@
 #else
 #define BMCL_NOEXCEPT noexcept
 #endif
+
+#ifdef _MSC_VER
+# define BMCL_DECL_DLLEXPORT __declspec(dllexport)
+# define BMCL_DECL_DLLIMPORT __declspec(dllimport)
+#else
+# define BMCL_DECL_DLLEXPORT
+# define BMCL_DECL_DLLIMPORT
+#endif
+
+#ifdef BMCL_DLL
+# define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+#else
+# define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+#endif

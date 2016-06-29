@@ -19,7 +19,7 @@ class Result;
 
 class Buffer;
 
-Result<std::string, int> readFileIntoString(const char* path);
-Result<Buffer, int> readFileIntoBuffer(const char* path);
+BMCL_EXPORT Result<std::string, int> readFileIntoString(const char* path);
+BMCL_EXPORT Result<Buffer, int> readFileIntoBuffer(const char* path);
 
 }

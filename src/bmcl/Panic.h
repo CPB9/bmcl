@@ -14,9 +14,9 @@ namespace bmcl {
 
 typedef void (*PanicHandler)(const char* msg);
 
-void setPanicHandler(PanicHandler handler);
-PanicHandler panicHandler();
-PanicHandler defaultPanicHandler();
+BMCL_EXPORT void setPanicHandler(PanicHandler handler);
+BMCL_EXPORT PanicHandler panicHandler();
+BMCL_EXPORT PanicHandler defaultPanicHandler();
 
-BMCL_NORETURN void panic(const char* msg);
+BMCL_EXPORT BMCL_NORETURN void panic(const char* msg);
 };

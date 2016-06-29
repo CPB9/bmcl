@@ -26,10 +26,10 @@ inline std::string toString(const QString & t) BMCL_NOEXCEPT { return t.toStdStr
 template<class T>
 inline const char * toCString(const T & t) BMCL_NOEXCEPT { return toString(t).c_str(); }
 
-inline const char * toCString(const char * t) BMCL_NOEXCEPT { return t; }
+BMCL_EXPORT inline const char * toCString(const char * t) BMCL_NOEXCEPT { return t; }
 
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+BMCL_EXPORT std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 
-std::vector<std::string> split(const std::string &s, char delim);
+BMCL_EXPORT std::vector<std::string> split(const std::string &s, char delim);
 
 }

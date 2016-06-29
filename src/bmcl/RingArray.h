@@ -16,7 +16,7 @@
 
 namespace bmcl {
 
-class RingArray {
+class BMCL_EXPORT RingArray {
 public:
     RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize);
 
@@ -27,21 +27,21 @@ public:
 
 #endif
 
-    bool isEmpty() const;
-    bool isFull() const;
+    inline bool isEmpty() const;
+    inline bool isFull() const;
 
-    std::size_t count() const;
-    std::size_t size() const;
-    std::size_t elementSize() const;
+    inline std::size_t count() const;
+    inline std::size_t size() const;
+    inline std::size_t elementSize() const;
 
-    void reset();
+    inline void reset();
     void append(const void* element);
     void copyFirst(void* dest) const;
-    void removeFirst();
+    inline void removeFirst();
 
 private:
-    void* writePtr() const;
-    void* readPtr() const;
+    inline void* writePtr() const;
+    inline void* readPtr() const;
 
     void init(void* ptr, std::size_t bufSize, std::size_t elementSize);
     void eraseFirstElement();

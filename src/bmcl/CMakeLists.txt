@@ -1,4 +1,8 @@
-add_library(bmcl STATIC
+if(MSVC)
+    add_definitions(-DBMCL_DLL)
+endif()
+
+add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
     Assert.cpp

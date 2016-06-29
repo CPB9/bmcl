@@ -17,31 +17,31 @@
 
 namespace bmcl {
 
-class MemWriter : public Writer<MemWriter> {
+class BMCL_EXPORT MemWriter : public Writer<MemWriter> {
 public:
     template <std::size_t n, typename R>
     MemWriter(R(&array)[n]);
 
     MemWriter(void* dest, std::size_t maxSize);
 
-    bool isFull() const;
-    bool isEmpty() const;
+    inline bool isFull() const;
+    inline bool isEmpty() const;
 
-    uint8_t* current() const;
-    uint8_t* start() const;
-    uint8_t* end() const;
+    inline uint8_t* current() const;
+    inline uint8_t* start() const;
+    inline uint8_t* end() const;
 
-    std::size_t sizeUsed() const;
-    std::size_t sizeLeft() const;
-    std::size_t maxSize() const;
+    inline std::size_t sizeUsed() const;
+    inline std::size_t sizeLeft() const;
+    inline std::size_t maxSize() const;
 
-    void reset();
+    inline void reset();
     void advance(std::size_t size);
     void fillUp(uint8_t byte);
     void fill(uint8_t byte, std::size_t size);
 
     void writeImpl(const void* data, std::size_t size);
-    std::size_t writableSizeImpl() const;
+    inline std::size_t writableSizeImpl() const;
 
 private:
     void init(void* dest, std::size_t maxSize);

@@ -17,7 +17,7 @@ namespace bmcl {
 
 struct NoneType {
 public:
-    NoneType()
+    inline NoneType()
     {
     }
 };
@@ -26,7 +26,7 @@ const NoneType None;
 
 struct InPlaceType {
 public:
-    InPlaceType()
+    inline InPlaceType()
     {
     }
 };
@@ -347,5 +347,4 @@ inline bool operator!=(const Option<T>& left, const Option<T>& right)
 {
     return !operator==(left, right);
 }
-
 }

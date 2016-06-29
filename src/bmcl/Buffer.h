@@ -8,7 +8,7 @@
 
 namespace bmcl {
 
-class Buffer : public Writer<Buffer> {
+class BMCL_EXPORT Buffer : public Writer<Buffer> {
 public:
     Buffer();
     Buffer(std::size_t size);
@@ -16,11 +16,11 @@ public:
     Buffer(Buffer&& other);
     ~Buffer();
 
-    std::size_t size() const;
-    std::size_t capacity() const;
-    bool isEmpty() const;
-    uint8_t* start() const;
-    uint8_t* end() const;
+    inline std::size_t size() const;
+    inline std::size_t capacity() const;
+    inline bool isEmpty() const;
+    inline uint8_t* start() const;
+    inline uint8_t* end() const;
 
     void resize(std::size_t size);
     void resize(std::size_t size, uint8_t filler);
@@ -28,13 +28,13 @@ public:
     void shrink();
 
     void writeImpl(const void* data, std::size_t size);
-    std::size_t writableSizeImpl() const;
+    inline std::size_t writableSizeImpl() const;
 
     Buffer& operator=(const Buffer& other);
     Buffer& operator=(Buffer&& other);
 
-    uint8_t& operator[](std::size_t index);
-    uint8_t operator[](std::size_t index) const;
+    inline uint8_t& operator[](std::size_t index);
+    inline uint8_t operator[](std::size_t index) const;
 
 private:
     void dealloc();
