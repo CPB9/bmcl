@@ -5,6 +5,7 @@ endif()
 add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
+    AlignedUnion.h
     Assert.cpp
     Assert.h
     Buffer.cpp
