@@ -35,8 +35,8 @@ add_library(bmcl SHARED
     String.cpp
     StringView.cpp
     StringView.h
-    Utils.cpp
-    Utils.h
+    FileUtils.cpp
+    FileUtils.h
     Writer.h
 )
 

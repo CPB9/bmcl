@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/Utils.h"
+#include "bmcl/FileUtils.h"
 #include "bmcl/Result.h"
 #include "bmcl/Buffer.h"
 
