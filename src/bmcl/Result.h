@@ -19,8 +19,12 @@ class Result : private Either<T, E> {
 public:
     Result(const T& value);
     Result(T&& value);
-    Result(const E& error);
-    Result(E&& error);
+    template <typename U = E>
+    Result(const enableIfNotVoid<U>& error);
+    template <typename U = E>
+    Result(enableIfNotVoid<U>&& error);
+    template <typename U = E, typename = enableIfVoid<U>>
+    Result();
     Result(const Result& error);
     Result(Result&& error);
 
@@ -28,14 +32,20 @@ public:
     bool isErr() const;
     const T& unwrap() const;
     T& unwrap();
-    const E& unwrapErr() const;
-    E& unwrapErr();
     T&& take();
-    E&& takeErr();
+
+    template <typename U = E>
+    const enableIfNotVoid<U>& unwrapErr() const;
+    template <typename U = E>
+    enableIfNotVoid<U>& unwrapErr();
+    template <typename U = E>
+    enableIfNotVoid<U>&& takeErr();
     Option<T> unwrapOption() const;
-    Option<E> unwrapErrOption() const;
     Option<T> takeOption();
-    Option<E> takeErrOption();
+    template <typename U = E>
+    enableIfNotVoid<U, Option<E>> unwrapErrOption() const;
+    template <typename U = E>
+    enableIfNotVoid<U, Option<E>> takeErrOption();
 
     Result& operator=(const Result& other);
     Result& operator=(Result&& other);
@@ -54,14 +64,22 @@ inline Result<T, E>::Result(T&& value)
 }
 
 template <typename T, typename E>
-inline Result<T, E>::Result(const E& error)
+template <typename U>
+inline Result<T, E>::Result(const enableIfNotVoid<U>& error)
     : Either<T, E>::Either(error)
 {
 }
 
 template <typename T, typename E>
-inline Result<T, E>::Result(E&& error)
+template <typename U>
+inline Result<T, E>::Result(enableIfNotVoid<U>&& error)
     : Either<T, E>::Either(std::move(error))
+{
+}
+
+template <typename T, typename E>
+template <typename U, typename>
+inline Result<T, E>::Result()
 {
 }
 
@@ -102,13 +120,15 @@ inline T& Result<T, E>::unwrap()
 }
 
 template <typename T, typename E>
-inline const E& Result<T, E>::unwrapErr() const
+template <typename U>
+inline const enableIfNotVoid<U>& Result<T, E>::unwrapErr() const
 {
     return Either<T, E>::unwrapSecond();
 }
 
 template <typename T, typename E>
-inline E& Result<T, E>::unwrapErr()
+template <typename U>
+inline enableIfNotVoid<U>& Result<T, E>::unwrapErr()
 {
     return Either<T, E>::unwrapSecond();
 }
@@ -120,7 +140,8 @@ inline T&& Result<T, E>::take()
 }
 
 template <typename T, typename E>
-inline E&& Result<T, E>::takeErr()
+template <typename U>
+inline enableIfNotVoid<U>&& Result<T, E>::takeErr()
 {
     return Either<T, E>::takeSecond();
 }
@@ -142,7 +163,8 @@ inline Option<T> Result<T, E>::takeOption()
 }
 
 template <typename T, typename E>
-inline Option<E> Result<T, E>::unwrapErrOption() const
+template <typename U>
+inline enableIfNotVoid<U, Option<E>> Result<T, E>::unwrapErrOption() const
 {
     if (isErr())
         return Either<T, E>::unwrapSecond();
@@ -150,7 +172,8 @@ inline Option<E> Result<T, E>::unwrapErrOption() const
 }
 
 template <typename T, typename E>
-inline Option<E> Result<T, E>::takeErrOption()
+template <typename U>
+inline enableIfNotVoid<U, Option<E>> Result<T, E>::takeErrOption()
 {
     if (isErr())
         return Either<T, E>::takeSecond();
