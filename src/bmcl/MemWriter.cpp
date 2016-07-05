@@ -50,4 +50,103 @@ void MemWriter::init(void* dest, std::size_t maxSize)
     _current = _start;
     _end = _start + maxSize;
 }
+
+//sqlite varuint
+
+#define RETURN_IF_SIZE_LESS(size)   \
+    if (sizeLeft() < size) {        \
+        return false;               \
+    }
+
+bool MemWriter::writeVarUint(std::uint64_t value)
+{
+    if (value <= 240) {
+        RETURN_IF_SIZE_LESS(1);
+        _current[0] = uint8_t(value);
+        _current += 1;
+        return true;
+    }
+    if (value <= 2287) {
+        RETURN_IF_SIZE_LESS(2);
+        _current[0] = uint8_t((value - 240) / 256 + 241);
+        _current[1] = uint8_t((value - 240) % 256);
+        _current += 2;
+        return true;
+    }
+    if (value <= 67823) {
+        RETURN_IF_SIZE_LESS(3);
+        _current[0] = 249;
+        _current[1] = uint8_t((value - 2288) / 256);
+        _current[2] = uint8_t((value - 2288) % 256);
+        _current += 3;
+        return true;
+    }
+    if (value <= 16777215) {
+        RETURN_IF_SIZE_LESS(4);
+        _current[0] = 250;
+        _current[1] = uint8_t(value >> 16);
+        _current[2] = uint8_t(value >> 8);
+        _current[3] = uint8_t(value);
+        _current += 4;
+        return true;
+    }
+    if (value <= 4294967295) {
+        RETURN_IF_SIZE_LESS(5);
+        _current[0] = 251;
+        _current[1] = uint8_t(value >> 24);
+        _current[2] = uint8_t(value >> 16);
+        _current[3] = uint8_t(value >> 8);
+        _current[4] = uint8_t(value);
+        _current += 5;
+        return true;
+    }
+    if (value <= 1099511627775) {
+        RETURN_IF_SIZE_LESS(6);
+        _current[0] = 252;
+        _current[1] = uint8_t(value >> 32);
+        _current[2] = uint8_t(value >> 24);
+        _current[3] = uint8_t(value >> 16);
+        _current[4] = uint8_t(value >> 8);
+        _current[5] = uint8_t(value);
+        _current += 6;
+        return true;
+    }
+    if (value <= 281474976710655) {
+        RETURN_IF_SIZE_LESS(7);
+        _current[0] = 253;
+        _current[1] = uint8_t(value >> 40);
+        _current[2] = uint8_t(value >> 32);
+        _current[3] = uint8_t(value >> 24);
+        _current[4] = uint8_t(value >> 16);
+        _current[5] = uint8_t(value >> 8);
+        _current[6] = uint8_t(value);
+        _current += 7;
+        return true;
+    }
+    if (value <= 72057594037927935) {
+        RETURN_IF_SIZE_LESS(8);
+        _current[0] = 254;
+        _current[1] = uint8_t(value >> 48);
+        _current[2] = uint8_t(value >> 40);
+        _current[3] = uint8_t(value >> 32);
+        _current[4] = uint8_t(value >> 24);
+        _current[5] = uint8_t(value >> 16);
+        _current[6] = uint8_t(value >> 8);
+        _current[7] = uint8_t(value);
+        _current += 8;
+        return true;
+    }
+    RETURN_IF_SIZE_LESS(9);
+    _current[0] = 255;
+    _current[1] = uint8_t(value >> 56);
+    _current[2] = uint8_t(value >> 48);
+    _current[3] = uint8_t(value >> 40);
+    _current[4] = uint8_t(value >> 32);
+    _current[5] = uint8_t(value >> 24);
+    _current[6] = uint8_t(value >> 16);
+    _current[7] = uint8_t(value >> 8);
+    _current[8] = uint8_t(value);
+    _current += 9;
+    return true;
+}
 }
