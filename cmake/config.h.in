@@ -87,6 +87,12 @@
 #endif
 
 #ifdef _MSC_VER
+#define BMCL_NOINLINE __declspec(noinline)
+#else
+#define BMCL_NOINLINE __attribute__((noinline))
+#endif
+
+#ifdef _MSC_VER
 # define BMCL_DECL_DLLEXPORT __declspec(dllexport)
 # define BMCL_DECL_DLLIMPORT __declspec(dllimport)
 #else
