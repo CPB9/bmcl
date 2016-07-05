@@ -1,6 +1,7 @@
 #include "bmcl/MemReader.h"
 
 #include "BmclTest.h"
+#include "bmcl/Logging.h"
 
 using namespace bmcl;
 
@@ -18,18 +19,23 @@ protected:
     template <std::size_t n, typename R>
     void initReader(const R (&array)[n])
     {
-        assert(_reader == 0);
+
+        if (_reader) {
+            delete _reader;
+        }
         _reader = new MemReader(array);
     }
 
-    void expectParams(std::size_t read, std::size_t left, void* data)
+    void expectParams(std::size_t read, std::size_t left, void* data = nullptr)
     {
         EXPECT_EQ(read, _reader->sizeRead());
         EXPECT_EQ(left, _reader->sizeLeft());
         EXPECT_EQ(read + left, _reader->size());
         bool isEmpty = read == _reader->size();
         EXPECT_EQ(isEmpty, _reader->isEmpty());
-        EXPECT_EQ((uint8_t*)data, _reader->current());
+        if (data) {
+            EXPECT_EQ((uint8_t*)data, _reader->current());
+        }
     }
 
     void skip(std::size_t size) { _reader->skip(size); }
@@ -45,6 +51,14 @@ protected:
         EXPECT_EQ(expected, value);
     }
 
+    void expectNextVarUint(uint64_t expected)
+    {
+        uint64_t value;
+        bool rv = _reader->readVarUint(&value);
+        EXPECT_TRUE(rv);
+        EXPECT_EQ(expected, value);
+    }
+
     template <std::size_t n, typename R>
     void expectNextData(const R (&array)[n])
     {
@@ -52,6 +66,14 @@ protected:
         R temp[n];
         _reader->read(temp, dataSize);
         EXPECT_EQ_MEM(array, temp, dataSize);
+    }
+
+    template <std::size_t n>
+    void makeVarUintTest(std::uint64_t value, const uint8_t (&array)[n])
+    {
+        initReader(array);
+        expectNextVarUint(value);
+        expectParams(n, 0);
     }
 
     MemReader* _reader;
@@ -125,4 +147,58 @@ TEST_F(MemReaderTest, read)
     initReader(data);
     expectNextData(expected);
     expectParams(4, 0, data + 4);
+}
+
+TEST_F(MemReaderTest, varUint1)
+{
+    makeVarUintTest(0, {0});
+    makeVarUintTest(240, {240});
+}
+
+TEST_F(MemReaderTest, varUint2)
+{
+    makeVarUintTest(241, {241, 1});
+    makeVarUintTest(2287, {248, 255});
+}
+
+TEST_F(MemReaderTest, varUint3)
+{
+    makeVarUintTest(2288, {249, 0, 0});
+    makeVarUintTest(67823, {249, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint4)
+{
+    makeVarUintTest(67824, {250, 0x01, 0x08, 0xf0});
+    makeVarUintTest(16777215, {250, 255, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint5)
+{
+    makeVarUintTest(16777216, {251, 1, 0, 0, 0});
+    makeVarUintTest(4294967295, {251, 255, 255, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint6)
+{
+    makeVarUintTest(4294967296, {252, 1, 0, 0, 0, 0});
+    makeVarUintTest(1099511627775, {252, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint7)
+{
+    makeVarUintTest(1099511627776, {253, 1, 0, 0, 0, 0, 0});
+    makeVarUintTest(281474976710655, {253, 255, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint8)
+{
+    makeVarUintTest(281474976710656, {254, 1, 0, 0, 0, 0, 0, 0});
+    makeVarUintTest(72057594037927935, {254, 255, 255, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemReaderTest, varUint9)
+{
+    makeVarUintTest(72057594037927936, {255, 1, 0, 0, 0, 0, 0, 0, 0});
+    makeVarUintTest(18446744073709551615u, {255, 255, 255, 255, 255, 255, 255, 255, 255});
 }

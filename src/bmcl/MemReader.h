@@ -16,6 +16,9 @@
 
 namespace bmcl {
 
+template <typename T, typename E>
+class Result;
+
 class MemWriter;
 
 class BMCL_EXPORT MemReader : public Reader<MemReader> {
@@ -42,6 +45,9 @@ public:
     inline std::size_t readableSizeImpl() const;
     void readImpl(void* dest, std::size_t size);
     void skipImpl(std::size_t size);
+
+    Result<std::uint64_t, void> readVarUint();
+    bool readVarUint(std::uint64_t* dest);
 
     inline uint8_t readUint8();
     inline int8_t readInt8();
