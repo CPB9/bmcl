@@ -58,7 +58,7 @@ void MemWriter::init(void* dest, std::size_t maxSize)
         return false;               \
     }
 
-bool MemWriter::writeVarUint(std::uint64_t value)
+bool MemWriter::writeVarUint(uint64_t value)
 {
     if (value <= 240) {
         RETURN_IF_SIZE_LESS(1);

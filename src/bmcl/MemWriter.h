@@ -43,7 +43,7 @@ public:
     void writeImpl(const void* data, std::size_t size);
     inline std::size_t writableSizeImpl() const;
 
-    bool writeVarUint(std::uint64_t value);
+    bool writeVarUint(uint64_t value);
 
 private:
     void init(void* dest, std::size_t maxSize);

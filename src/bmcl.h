@@ -8,12 +8,15 @@
 
 #pragma once
 
+#include "bmcl/AlignedUnion.h"
 #include "bmcl/Alloca.h"
+#include "bmcl/ArrayView.h"
 #include "bmcl/Assert.h"
 #include "bmcl/Buffer.h"
 #include "bmcl/ColorStream.h"
 #include "bmcl/Either.h"
 #include "bmcl/Endian.h"
+#include "bmcl/FileUtils.h"
 #include "bmcl/Logging.h"
 #include "bmcl/MemReader.h"
 #include "bmcl/MemWriter.h"
@@ -24,5 +27,7 @@
 #include "bmcl/RingArray.h"
 #include "bmcl/RingBucket.h"
 #include "bmcl/RingBuffer.h"
+#include "bmcl/String.h"
+#include "bmcl/StringView.h"
 #include "bmcl/Utils.h"
 #include "bmcl/Writer.h"

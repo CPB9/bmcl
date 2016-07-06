@@ -56,7 +56,7 @@ void MemReader::readImpl(void* dest, std::size_t size)
 
 //TODO: check if value is in range
 
-bool MemReader::readVarUint(std::uint64_t* dest)
+bool MemReader::readVarUint(uint64_t* dest)
 {
     RETURN_IF_SIZE_LESS(1);
     uint8_t head = *_current;
@@ -113,12 +113,12 @@ bool MemReader::readVarUint(std::uint64_t* dest)
     return true;
 }
 
-Result<std::uint64_t, void> MemReader::readVarUint()
+Result<uint64_t, void> MemReader::readVarUint()
 {
-    std::uint64_t res;
+    uint64_t res;
     if (readVarUint(&res)) {
         return res;
     }
-    return Result<std::uint64_t, void>();
+    return Result<uint64_t, void>();
 }
 }

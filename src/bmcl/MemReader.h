@@ -46,8 +46,8 @@ public:
     void readImpl(void* dest, std::size_t size);
     void skipImpl(std::size_t size);
 
-    Result<std::uint64_t, void> readVarUint();
-    bool readVarUint(std::uint64_t* dest);
+    Result<uint64_t, void> readVarUint();
+    bool readVarUint(uint64_t* dest);
 
     inline uint8_t readUint8();
     inline int8_t readInt8();

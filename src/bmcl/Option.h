@@ -10,28 +10,12 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Assert.h"
+#include "bmcl/AlignedUnion.h"
+#include "bmcl/Utils.h"
 
 #include <utility>
 
 namespace bmcl {
-
-struct NoneType {
-public:
-    inline NoneType()
-    {
-    }
-};
-
-const NoneType None;
-
-struct InPlaceType {
-public:
-    inline InPlaceType()
-    {
-    }
-};
-
-const InPlaceType InPlace;
 
 template <typename T>
 class Option {
@@ -83,13 +67,8 @@ public:
 private:
     const T* asValue() const;
     T* asValue();
-#ifdef _MSC_VER
-    // msvc has no support for c++11 unrestricted union
-    typename std::aligned_union<sizeof(T), T>::type _data;
-#else
-    // gcc has no aligned_union
-    typename std::aligned_storage<sizeof(T), alignof(T)>::type _data;
-#endif
+
+    AlignedUnion<T> _data;
     bool _isSome;
 };
 
@@ -126,7 +105,7 @@ inline Option<T>::Option(InPlaceType, A&&... args)
 }
 
 template <typename T>
-inline Option<T>::~Option()
+Option<T>::~Option()
 {
     if (_isSome) {
         asValue()->~T();
@@ -148,7 +127,7 @@ inline Option<T>::Option(T&& value)
 }
 
 template <typename T>
-inline Option<T>::Option(const Option<T>& other)
+Option<T>::Option(const Option<T>& other)
     : _isSome(other._isSome)
 {
     if (_isSome) {
@@ -157,7 +136,7 @@ inline Option<T>::Option(const Option<T>& other)
 }
 
 template <typename T>
-inline Option<T>::Option(Option<T>&& other)
+Option<T>::Option(Option<T>&& other)
     : _isSome(other._isSome)
 {
     if (_isSome) {
@@ -193,7 +172,7 @@ inline T& Option<T>::unwrap()
 }
 
 template<typename T>
-inline void Option<T>::clear()
+void Option<T>::clear()
 {
     if (_isSome) {
         _isSome = false;
@@ -204,9 +183,9 @@ inline void Option<T>::clear()
 template <typename T>
 template <typename R>
 #ifdef _MSC_VER
-inline T Option<T>::unwrapOr(R&& value) const
+T Option<T>::unwrapOr(R&& value) const
 #else
-inline T Option<T>::unwrapOr(R&& value) const &
+T Option<T>::unwrapOr(R&& value) const &
 #endif
 {
     if (_isSome) {
@@ -218,7 +197,7 @@ inline T Option<T>::unwrapOr(R&& value) const &
 #ifndef _MSC_VER
 template <typename T>
 template <typename R>
-inline T Option<T>::unwrapOr(R&& value) &&
+T Option<T>::unwrapOr(R&& value) &&
 {
     if (_isSome) {
         return take();
@@ -228,7 +207,7 @@ inline T Option<T>::unwrapOr(R&& value) &&
 #endif
 
 template <typename T>
-inline T Option<T>::take()
+T Option<T>::take()
 {
     BMCL_ASSERT(_isSome);
     T data = std::move(*asValue());
@@ -237,7 +216,7 @@ inline T Option<T>::take()
 }
 
 template <typename T>
-inline Option<T>& Option<T>::operator=(const Option<T>& other)
+Option<T>& Option<T>::operator=(const Option<T>& other)
 {
     if (other._isSome) {
         if (_isSome) {
@@ -253,7 +232,7 @@ inline Option<T>& Option<T>::operator=(const Option<T>& other)
 }
 
 template <typename T>
-inline Option<T>& Option<T>::operator=(Option<T>&& other)
+Option<T>& Option<T>::operator=(Option<T>&& other)
 {
     if (other._isSome) {
         if (_isSome) {
@@ -270,7 +249,7 @@ inline Option<T>& Option<T>::operator=(Option<T>&& other)
 }
 
 template <typename T>
-inline Option<T>& Option<T>::operator=(const T& value)
+Option<T>& Option<T>::operator=(const T& value)
 {
     if (_isSome) {
         *asValue() = value;
@@ -283,7 +262,7 @@ inline Option<T>& Option<T>::operator=(const T& value)
 
 template <typename T>
 template <typename... A>
-inline void Option<T>::emplace(A&&... args)
+void Option<T>::emplace(A&&... args)
 {
     if (_isSome) {
         *asValue() = T(std::forward<A>(args)...);
@@ -294,7 +273,7 @@ inline void Option<T>::emplace(A&&... args)
 }
 
 template <typename T>
-inline Option<T>& Option<T>::operator=(T&& value)
+Option<T>& Option<T>::operator=(T&& value)
 {
     if (_isSome) {
         *asValue() = std::forward<T>(value);
@@ -334,7 +313,7 @@ inline T& Option<T>::operator*()
 }
 
 template <typename T>
-inline bool operator==(const Option<T>& left, const Option<T>& right)
+bool operator==(const Option<T>& left, const Option<T>& right)
 {
     if (left.isSome() && right.isSome()) {
         return left.unwrap() == right.unwrap();
