@@ -359,7 +359,7 @@ public:
 
 template <class R>
 #ifdef _MSC_VER
-    T* unwrapOr(R* value) const { return _data != nullptr? *_data : std::forward<R>(value); }
+    T* unwrapOr(R* value) const { return _data != nullptr? *_data : value; }
 #else
     T* unwrapOr(R* value) const& { return _data != nullptr? _data : value; }
 
