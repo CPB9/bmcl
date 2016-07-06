@@ -43,6 +43,11 @@ BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char
     result[offset] = '\0';
 }
 
+BMCL_NORETURN void assertFail(const char* assertion, const std::string & msg, const char* file, int line)
+{
+    assertFail(assertion, msg.c_str(), file, line);
+}
+
 BMCL_NORETURN void assertFail(const char* assertion, const char* file, int line)
 {
     assertFail(assertion, 0, file, line);
