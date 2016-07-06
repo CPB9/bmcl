@@ -16,35 +16,41 @@
 
 namespace bmcl {
 
+template <typename T, typename E>
+class Result;
+
 class MemWriter;
 
-class MemReader : public Reader<MemReader> {
+class BMCL_EXPORT MemReader : public Reader<MemReader> {
 public:
     template <std::size_t n, typename R>
     MemReader(const R(&array)[n]);
 
-    MemReader(const void* ptr, std::size_t size);
+    inline MemReader(const void* ptr, std::size_t size);
     MemReader(const MemWriter& memWriter);
 
-    bool isEmpty() const;
+    inline bool isEmpty() const;
 
-    const uint8_t* current() const;
-    const uint8_t* start() const;
-    const uint8_t* end() const;
+    inline const uint8_t* current() const;
+    inline const uint8_t* start() const;
+    inline const uint8_t* end() const;
 
-    std::size_t size() const;
-    std::size_t sizeLeft() const;
-    std::size_t sizeRead() const;
+    inline std::size_t size() const;
+    inline std::size_t sizeLeft() const;
+    inline std::size_t sizeRead() const;
 
-    void reset();
+    inline void reset();
     void peek(void* dest, std::size_t size, std::size_t offset) const;
 
-    std::size_t readableSizeImpl() const;
+    inline std::size_t readableSizeImpl() const;
     void readImpl(void* dest, std::size_t size);
     void skipImpl(std::size_t size);
 
-    uint8_t readUint8();
-    int8_t readInt8();
+    Result<uint64_t, void> readVarUint();
+    bool readVarUint(uint64_t* dest);
+
+    inline uint8_t readUint8();
+    inline int8_t readInt8();
 
 private:
     void init(const void* ptr, std::size_t size);

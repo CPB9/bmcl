@@ -44,16 +44,16 @@ enum class ColorAttr {
     BgWhite = 47,
 };
 
-class ColorStream {
+class BMCL_EXPORT ColorStream {
 public:
-    ~ColorStream();
+    inline ~ColorStream();
 
-    ColorStream& operator<<(std::ostream& (*func)(std::ostream&));
+    inline ColorStream& operator<<(std::ostream& (*func)(std::ostream&));
 
     template <typename T>
     ColorStream& operator<<(const T& value);
 
-    void reset();
+    inline void reset();
 
 protected:
 #ifdef BMCL_PLATFORM_WINDOWS
@@ -108,21 +108,21 @@ inline ColorStream& ColorStream::operator<<(const ColorAttr& attr)
     return *this;
 }
 
-class ColorStdOut : public ColorStream {
+class BMCL_EXPORT ColorStdOut : public ColorStream {
 public:
 #ifdef BMCL_PLATFORM_WINDOWS
-    ColorStdOut(): ColorStream(&std::cout, GetStdHandle(STD_OUTPUT_HANDLE)) {}
+    inline ColorStdOut(): ColorStream(&std::cout, GetStdHandle(STD_OUTPUT_HANDLE)) {}
 #else
-    ColorStdOut(): ColorStream(&std::cout) {}
+    inline ColorStdOut(): ColorStream(&std::cout) {}
 #endif
 };
 
-class ColorStdError : public ColorStream {
+class BMCL_EXPORT ColorStdError : public ColorStream {
 public:
 #ifdef BMCL_PLATFORM_WINDOWS
-    ColorStdError(): ColorStream(&std::cerr, GetStdHandle(STD_ERROR_HANDLE)) {}
+    inline ColorStdError(): ColorStream(&std::cerr, GetStdHandle(STD_ERROR_HANDLE)) {}
 #else
-    ColorStdError(): ColorStream(&std::cerr) {}
+    inline ColorStdError(): ColorStream(&std::cerr) {}
 #endif
 };
 }

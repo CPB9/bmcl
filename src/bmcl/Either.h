@@ -10,6 +10,8 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Assert.h"
+#include "bmcl/AlignedUnion.h"
+#include "bmcl/Utils.h"
 
 #include <new>
 #include <utility>
@@ -21,20 +23,29 @@ class Either {
 public:
     Either(const T& first);
     Either(T&& first);
-    Either(const E& second);
-    Either(E&& second);
+    template <typename U = E>
+    Either(const enableIfNotVoid<U>& second);
+    template <typename U = E>
+    Either(enableIfNotVoid<U>&& second);
+    template <typename U = E, typename = enableIfVoid<U>>
+    Either();
     Either(const Either& other);
     Either(Either&& other);
     ~Either();
 
     bool isFirst() const;
     bool isSecond() const;
+
     const T& unwrapFirst() const;
     T& unwrapFirst();
-    const E& unwrapSecond() const;
-    E& unwrapSecond();
     T&& takeFirst();
-    E&& takeSecond();
+
+    template <typename U = E>
+    const enableIfNotVoid<U>& unwrapSecond() const;
+    template <typename U = E>
+    enableIfNotVoid<U>& unwrapSecond();
+    template <typename U = E>
+    enableIfNotVoid<U>&& takeSecond();
 
     //TODO: op=
     Either& operator=(const Either& other);
@@ -45,27 +56,21 @@ public:
 //     Either& operator=(E&& second);
 
 private:
+    void copyConstruct(const Either<T, E>& other, std::true_type isVoid);
+    void copyConstruct(const Either<T, E>& other, std::false_type isVoid);
+    void moveConstruct(Either<T, E>&& other, std::true_type isVoid);
+    void moveConstruct(Either<T, E>&& other, std::false_type isVoid);
+    Either& copyEquality(const Either<T, E>& other, std::true_type isVoid);
+    Either& copyEquality(const Either<T, E>& other, std::false_type isVoid);
+    Either& moveEquality(Either<T, E>&& other, std::true_type isVoid);
+    Either& moveEquality(Either<T, E>&& other, std::false_type isVoid);
+    void destruct(std::true_type isVoid);
+    void destruct(std::false_type isVoid);
     const T* asFirst() const;
     T* asFirst();
     const E* asSecond() const;
     E* asSecond();
-
-#ifdef _MSC_VER
-    struct TEContainer {
-        T t;
-        E e;
-    };
-
-    typename std::aligned_union<sizeof(TEContainer), T, E>::type _data;
-#else
-    template <typename S>
-    static constexpr S max(S t, S r)
-    {
-        return t > r ? t : r;
-    }
-
-    typename std::aligned_storage<max(sizeof(T), sizeof(E)), max(alignof(T), alignof(E))>::type _data;
-#endif
+    typename std::conditional<std::is_void<E>::value, AlignedUnion<T>, AlignedUnion<T, E>>::type _data;
     bool _isFirst;
 };
 
@@ -108,21 +113,39 @@ inline Either<T, E>::Either(T&& value)
 }
 
 template <typename T, typename E>
-inline Either<T, E>::Either(const E& error)
+template <typename U>
+inline Either<T, E>::Either(const enableIfNotVoid<U>& error)
     : _isFirst(false)
 {
     new (asSecond()) E(error);
 }
 
 template <typename T, typename E>
-inline Either<T, E>::Either(E&& error)
+template <typename U>
+inline Either<T, E>::Either(enableIfNotVoid<U>&& error)
     : _isFirst(false)
 {
     new (asSecond()) E(std::move(error));
 }
 
 template <typename T, typename E>
-inline Either<T, E>::Either(const Either<T, E>& other)
+template <typename U, typename>
+inline Either<T, E>::Either()
+    : _isFirst(false)
+{
+}
+
+template <typename T, typename E>
+void Either<T, E>::copyConstruct(const Either<T, E>& other, std::true_type)
+{
+    _isFirst = other._isFirst;
+    if (_isFirst) {
+        new (asFirst()) T(*other.asFirst());
+    }
+}
+
+template <typename T, typename E>
+void Either<T, E>::copyConstruct(const Either<T, E>& other, std::false_type)
 {
     _isFirst = other._isFirst;
     if (_isFirst) {
@@ -133,7 +156,22 @@ inline Either<T, E>::Either(const Either<T, E>& other)
 }
 
 template <typename T, typename E>
-inline Either<T, E>::Either(Either<T, E>&& other)
+inline Either<T, E>::Either(const Either<T, E>& other)
+{
+    copyConstruct(other, std::is_void<E>());
+}
+
+template <typename T, typename E>
+void Either<T, E>::moveConstruct(Either<T, E>&& other, std::true_type)
+{
+    _isFirst = other._isFirst;
+    if (_isFirst) {
+        new (asFirst()) T(std::move(*other.asFirst()));
+    }
+}
+
+template <typename T, typename E>
+void Either<T, E>::moveConstruct(Either<T, E>&& other, std::false_type)
 {
     _isFirst = other._isFirst;
     if (_isFirst) {
@@ -144,13 +182,33 @@ inline Either<T, E>::Either(Either<T, E>&& other)
 }
 
 template <typename T, typename E>
-inline Either<T, E>::~Either()
+inline Either<T, E>::Either(Either<T, E>&& other)
+{
+    moveConstruct(std::move(other), std::is_void<E>());
+}
+
+template <typename T, typename E>
+void Either<T, E>::destruct(std::true_type)
+{
+    if (_isFirst) {
+        asFirst()->~T();
+    }
+}
+
+template <typename T, typename E>
+void Either<T, E>::destruct(std::false_type)
 {
     if (_isFirst) {
         asFirst()->~T();
     } else {
         asSecond()->~E();
     }
+}
+
+template <typename T, typename E>
+inline Either<T, E>::~Either()
+{
+    destruct(std::is_void<E>());
 }
 
 template <typename T, typename E>
@@ -180,14 +238,16 @@ inline T& Either<T, E>::unwrapFirst()
 }
 
 template <typename T, typename E>
-inline const E& Either<T, E>::unwrapSecond() const
+template <typename U>
+inline const enableIfNotVoid<U>& Either<T, E>::unwrapSecond() const
 {
     BMCL_ASSERT(!_isFirst);
     return *asSecond();
 }
 
 template <typename T, typename E>
-inline E& Either<T, E>::unwrapSecond()
+template <typename U>
+inline enableIfNotVoid<U>& Either<T, E>::unwrapSecond()
 {
     BMCL_ASSERT(!_isFirst);
     return *asSecond();
@@ -201,14 +261,34 @@ inline T&& Either<T, E>::takeFirst()
 }
 
 template <typename T, typename E>
-inline E&& Either<T, E>::takeSecond()
+template <typename U>
+inline enableIfNotVoid<U>&& Either<T, E>::takeSecond()
 {
     BMCL_ASSERT(!_isFirst);
     return std::move(*asSecond());
 }
 
 template <typename T, typename E>
-inline Either<T, E>& Either<T, E>::operator=(const Either<T, E>& other)
+Either<T, E>& Either<T, E>::copyEquality(const Either<T, E>& other, std::true_type)
+{
+    if (other._isFirst) {
+        if (_isFirst) {
+            *asFirst() = *other.asFirst();
+        } else {
+            _isFirst = true;
+            new (asFirst()) T(*other.asFirst());
+        }
+    } else {
+        if (_isFirst) {
+            _isFirst = false;
+            asFirst()->~T();
+        }
+    }
+    return *this;
+}
+
+template <typename T, typename E>
+Either<T, E>& Either<T, E>::copyEquality(const Either<T, E>& other, std::false_type)
 {
     if (other._isFirst) {
         if (_isFirst) {
@@ -230,8 +310,15 @@ inline Either<T, E>& Either<T, E>::operator=(const Either<T, E>& other)
     return *this;
 }
 
+
 template <typename T, typename E>
-inline Either<T, E>& Either<T, E>::operator=(Either<T, E>&& other)
+inline Either<T, E>& Either<T, E>::operator=(const Either<T, E>& other)
+{
+    return copyEquality(other, std::is_void<E>());
+}
+
+template <typename T, typename E>
+Either<T, E>& Either<T, E>::moveEquality(Either<T, E>&& other, std::false_type)
 {
     if (other._isFirst) {
         if (_isFirst) {
@@ -251,5 +338,30 @@ inline Either<T, E>& Either<T, E>::operator=(Either<T, E>&& other)
         }
     }
     return *this;
+}
+
+template <typename T, typename E>
+Either<T, E>& Either<T, E>::moveEquality(Either<T, E>&& other, std::true_type)
+{
+    if (other._isFirst) {
+        if (_isFirst) {
+            *asFirst() = std::move(*other.asFirst());
+        } else {
+            _isFirst = true;
+            new (asFirst()) T(std::move(*other.asFirst()));
+        }
+    } else {
+        if (_isFirst) {
+            _isFirst = false;
+            asFirst()->~T();
+        }
+    }
+    return *this;
+}
+
+template <typename T, typename E>
+inline Either<T, E>& Either<T, E>::operator=(Either<T, E>&& other)
+{
+    return moveEquality(std::move(other), std::is_void<E>());
 }
 }

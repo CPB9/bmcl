@@ -23,8 +23,8 @@
 
 namespace bmcl {
 
-BMCL_NORETURN void assertFail(const char* assertion, const char* file, int line);
-BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char* file, int line);
-BMCL_NORETURN void assertFail(const char* assertion, const std::string & msg, const char* file, int line);
+BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* file, int line);
+BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char* file, int line);
+BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const std::string & msg, const char* file, int line);
 
 };

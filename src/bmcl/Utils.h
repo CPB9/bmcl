@@ -10,16 +10,31 @@
 
 #include "bmcl/Config.h"
 
-#include <string>
+#include <utility>
 
 namespace bmcl {
 
-template <typename T, typename E>
-class Result;
+template<class B, class T = B>
+using enableIfVoid = typename std::enable_if<std::is_void<B>::value, T>::type;
 
-class Buffer;
+template<class B, class T = B>
+using enableIfNotVoid = typename std::enable_if<!std::is_void<B>::value, T>::type;
 
-Result<std::string, int> readFileIntoString(const char* path);
-Result<Buffer, int> readFileIntoBuffer(const char* path);
+struct NoneType {
+    inline NoneType()
+    {
+    }
+};
+
+const NoneType None;
+
+struct InPlaceType {
+    inline InPlaceType()
+    {
+    }
+};
+
+const InPlaceType InPlace;
+
 
 }

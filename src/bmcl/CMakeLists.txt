@@ -1,6 +1,11 @@
-add_library(bmcl STATIC
+if(MSVC)
+    add_definitions(-DBMCL_DLL)
+endif()
+
+add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
+    AlignedUnion.h
     Assert.cpp
     Assert.h
     Buffer.cpp
@@ -30,7 +35,8 @@ add_library(bmcl STATIC
     String.cpp
     StringView.cpp
     StringView.h
-    Utils.cpp
+    FileUtils.cpp
+    FileUtils.h
     Utils.h
     Writer.h
 )

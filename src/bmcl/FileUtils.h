@@ -10,13 +10,16 @@
 
 #include "bmcl/Config.h"
 
+#include <string>
+
 namespace bmcl {
 
-typedef void (*PanicHandler)(const char* msg);
+template <typename T, typename E>
+class Result;
 
-BMCL_EXPORT void setPanicHandler(PanicHandler handler);
-BMCL_EXPORT PanicHandler panicHandler();
-BMCL_EXPORT PanicHandler defaultPanicHandler();
+class Buffer;
 
-BMCL_EXPORT BMCL_NORETURN void panic(const char* msg);
-};
+BMCL_EXPORT Result<std::string, int> readFileIntoString(const char* path);
+BMCL_EXPORT Result<Buffer, int> readFileIntoBuffer(const char* path);
+
+}

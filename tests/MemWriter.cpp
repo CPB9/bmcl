@@ -91,6 +91,20 @@ protected:
         _writer->fill(data, size);
     }
 
+    template <std::size_t n>
+    void makeVarUintTest(std::uint64_t value, const uint8_t (&array)[n])
+    {
+        uint8_t* data = new uint8_t[n];
+        MemWriter writer(data, n);
+        bool rv = writer.writeVarUint(value);
+        EXPECT_TRUE(rv);
+        EXPECT_EQ(n, writer.sizeUsed());
+        EXPECT_EQ(0, writer.sizeLeft());
+        EXPECT_EQ_MEM(array, writer.start(), n);
+        delete [] data;
+    }
+
+
 private:
     MemWriter* _writer;
     uint8_t* _data;
@@ -171,4 +185,60 @@ TEST_F(MemWriterTest, append_uint8)
     appendUint8(0x55);
     expect(expected);
     expectSizes(5, 0);
+}
+
+//TODO: refact
+
+TEST_F(MemWriterTest, varUint1)
+{
+    makeVarUintTest(0, {0});
+    makeVarUintTest(240, {240});
+}
+
+TEST_F(MemWriterTest, varUint2)
+{
+    makeVarUintTest(241, {241, 1});
+    makeVarUintTest(2287, {248, 255});
+}
+
+TEST_F(MemWriterTest, varUint3)
+{
+    makeVarUintTest(2288, {249, 0, 0});
+    makeVarUintTest(67823, {249, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint4)
+{
+    makeVarUintTest(67824, {250, 0x01, 0x08, 0xf0});
+    makeVarUintTest(16777215, {250, 255, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint5)
+{
+    makeVarUintTest(16777216, {251, 1, 0, 0, 0});
+    makeVarUintTest(4294967295, {251, 255, 255, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint6)
+{
+    makeVarUintTest(4294967296, {252, 1, 0, 0, 0, 0});
+    makeVarUintTest(1099511627775, {252, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint7)
+{
+    makeVarUintTest(1099511627776, {253, 1, 0, 0, 0, 0, 0});
+    makeVarUintTest(281474976710655, {253, 255, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint8)
+{
+    makeVarUintTest(281474976710656, {254, 1, 0, 0, 0, 0, 0, 0});
+    makeVarUintTest(72057594037927935, {254, 255, 255, 255, 255, 255, 255, 255});
+}
+
+TEST_F(MemWriterTest, varUint9)
+{
+    makeVarUintTest(72057594037927936, {255, 1, 0, 0, 0, 0, 0, 0, 0});
+    makeVarUintTest(18446744073709551615u, {255, 255, 255, 255, 255, 255, 255, 255, 255});
 }
