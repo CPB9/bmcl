@@ -327,49 +327,4 @@ inline bool operator!=(const Option<T>& left, const Option<T>& right)
     return !operator==(left, right);
 }
 
-template <typename T>
-class Option<T*>
-{
-public:
-    Option() : _data(nullptr) {}
-    Option(NoneType) : _data(nullptr) {}
-    ~Option() {}
-    Option(T* value) : _data(value) {}
-    Option(const Option<T*>& other) : _data(other._data) {}
-    Option(Option<T*>&& other) : _data(other._data) {}
-
-    bool isSome() const { return _data != nullptr; }
-    bool isNone() const { return _data == nullptr; }
-
-    const T* unwrap() const { return _data; }
-    T* unwrap() { return _data; }
-
-    void clear() { _data = nullptr; }
-
-    T* take() { T* res = _data; _data = nullptr; return res; }
-
-    Option& operator=(const Option& other) { _data = other._data; return *this; }
-    Option& operator=(Option&& other) { _data = other._data; other.clear(); return *this; }
-    Option& operator=(T* value) { _data = value; return *this; }
-
-    const T* operator->() const { return _data; }
-    T* operator->() { return _data; }
-    const T& operator*() const { BMCL_ASSERT(_data != nullptr); return *_data; }
-    T& operator*() { BMCL_ASSERT(_data != nullptr); return *_data; }
-
-template <class R>
-#ifdef _MSC_VER
-    T* unwrapOr(R* value) const { return _data != nullptr? _data : value; }
-#else
-    T* unwrapOr(R* value) const& { return _data != nullptr? _data : value; }
-
-    template <class R>
-    T* unwrapOr(R* value) && { return _data != nullptr? _data : value; }
-#endif
-
-private:
-
-    T* _data;
-};
-
 }

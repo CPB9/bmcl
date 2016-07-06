@@ -21,6 +21,7 @@ add_library(bmcl SHARED
     MemWriter.cpp
     MemWriter.h
     Option.h
+    OptionPtr.h
     Panic.cpp
     Panic.h
     Reader.h
