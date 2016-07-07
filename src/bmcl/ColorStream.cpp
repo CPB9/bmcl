@@ -48,7 +48,7 @@ ColorStream::ColorStream(std::ostream* stream)
 #endif
 }
 
-inline ColorStream::~ColorStream()
+ColorStream::~ColorStream()
 {
     reset();
 #ifdef BMCL_PLATFORM_WINDOWS
