@@ -33,4 +33,10 @@ BMCL_NORETURN void assertFailTpl(const char* assertion, T msg, const char* file,
     assertFail(assertion, bmcl::toString(msg).c_str(), file, line);
 }
 
+template<>
+BMCL_NORETURN inline void assertFailTpl(const char* assertion, const char * msg, const char* file, int line)
+{
+    assertFail(assertion, msg, file, line);
+}
+
 };
