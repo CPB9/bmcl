@@ -9,22 +9,50 @@
 #include "bmcl/Config.h"
 #include "bmcl/ColorStream.h"
 
+#ifdef BMCL_PLATFORM_WINDOWS
+#include <stdio.h>
+#include <windows.h>
+#endif
+
 namespace bmcl {
 
 #ifdef BMCL_PLATFORM_WINDOWS
-ColorStream::ColorStream(std::ostream* stream, HANDLE handle)
+
+struct ColorStreamPrivate {
+    WORD defaultAttrs;
+    WORD currentFg;
+    WORD currentBg;
+    WORD currentIntensity;
+    WORD otherAttrs;
+    HANDLE handle;
+};
+
+ColorStream::ColorStream(std::ostream* stream, ColorStream::HandleType handle)
     : _stream(stream)
-    , _handle(handle)
 #else
 ColorStream::ColorStream(std::ostream* stream)
     : _stream(stream)
 #endif
 {
 #ifdef BMCL_PLATFORM_WINDOWS
+	_d = new ColorStreamPrivate;
+	if (handle == ColorStream::StdErr) {
+		_d->handle = GetStdHandle(STD_ERROR_HANDLE);
+	} else {
+		_d->handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	}
     CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(_handle, &info);
-    _defaultAttrs = info.wAttributes;
+    GetConsoleScreenBufferInfo(_d->handle, &info);
+    _d->defaultAttrs = info.wAttributes;
     resetAttrs();
+#endif
+}
+
+inline ColorStream::~ColorStream()
+{
+    reset();
+#ifdef BMCL_PLATFORM_WINDOWS
+	delete _d;
 #endif
 }
 
@@ -33,73 +61,73 @@ ColorStream::ColorStream(std::ostream* stream)
 void ColorStream::resetAttrs()
 {
     WORD fgMask = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
-    _currentFg = _defaultAttrs & fgMask;
+    _d->currentFg = _d->defaultAttrs & fgMask;
     WORD bgMask = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
-    _currentBg = _defaultAttrs & bgMask;
-    _currentIntensity = _defaultAttrs & FOREGROUND_INTENSITY; 
-    _otherAttrs = _defaultAttrs & ~(fgMask | bgMask | FOREGROUND_INTENSITY);
+    _d->currentBg = _d->defaultAttrs & bgMask;
+    _d->currentIntensity = _d->defaultAttrs & FOREGROUND_INTENSITY; 
+    _d->otherAttrs = _d->defaultAttrs & ~(fgMask | bgMask | FOREGROUND_INTENSITY);
 }
 
 void ColorStream::applyAttrs(ColorAttr colorAttr)
 {
     switch (colorAttr) {
     case ColorAttr::Reset:
-        SetConsoleTextAttribute(_handle, _defaultAttrs);
+        SetConsoleTextAttribute(_d->handle, _d->defaultAttrs);
         resetAttrs();
         break;
     case ColorAttr::Normal:
-        _currentIntensity = 0;
+        _d->currentIntensity = 0;
         break;
     case ColorAttr::Bright:
-        _currentIntensity |= FOREGROUND_INTENSITY;
+        _d->currentIntensity |= FOREGROUND_INTENSITY;
         break;
     case ColorAttr::FgBlack:
-        _currentFg = 0;
+        _d->currentFg = 0;
         break;
     case ColorAttr::FgRed:
-        _currentFg = FOREGROUND_RED;
+        _d->currentFg = FOREGROUND_RED;
         break;
     case ColorAttr::FgGreen:
-        _currentFg = FOREGROUND_GREEN;
+        _d->currentFg = FOREGROUND_GREEN;
         break;
     case ColorAttr::FgYellow:
-        _currentFg = FOREGROUND_GREEN | FOREGROUND_RED;
+        _d->currentFg = FOREGROUND_GREEN | FOREGROUND_RED;
         break;
     case ColorAttr::FgBlue:
-        _currentFg = FOREGROUND_BLUE;
+        _d->currentFg = FOREGROUND_BLUE;
         break;
     case ColorAttr::FgMagenta:
-        _currentFg = FOREGROUND_BLUE | FOREGROUND_RED;
+        _d->currentFg = FOREGROUND_BLUE | FOREGROUND_RED;
         break;
     case ColorAttr::FgCyan:
-        _currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN;
+        _d->currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN;
         break;
     case ColorAttr::FgWhite:
-        _currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
+        _d->currentFg = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
         break;
     case ColorAttr::BgBlack:
-        _currentBg = 0;
+        _d->currentBg = 0;
         break;
     case ColorAttr::BgRed:
-        _currentBg = BACKGROUND_RED;
+        _d->currentBg = BACKGROUND_RED;
         break;
     case ColorAttr::BgGreen:
-        _currentBg = BACKGROUND_GREEN;
+        _d->currentBg = BACKGROUND_GREEN;
         break;
     case ColorAttr::BgYellow:
-        _currentBg = BACKGROUND_GREEN | BACKGROUND_RED;
+        _d->currentBg = BACKGROUND_GREEN | BACKGROUND_RED;
         break;
     case ColorAttr::BgBlue:
-        _currentBg = BACKGROUND_BLUE;
+        _d->currentBg = BACKGROUND_BLUE;
         break;
     case ColorAttr::BgMagenta:
-        _currentBg = BACKGROUND_BLUE | BACKGROUND_RED;
+        _d->currentBg = BACKGROUND_BLUE | BACKGROUND_RED;
         break;
     case ColorAttr::BgCyan:
-        _currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN;
+        _d->currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN;
         break;
     case ColorAttr::BgWhite:
-        _currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
+        _d->currentBg = BACKGROUND_BLUE | BACKGROUND_GREEN | BACKGROUND_RED;
         break;
     }
 }
@@ -107,7 +135,7 @@ void ColorStream::applyAttrs(ColorAttr colorAttr)
 void ColorStream::setAttribute(ColorAttr colorAttr)
 {
     applyAttrs(colorAttr);
-    SetConsoleTextAttribute(_handle, _currentFg | _currentBg | _currentIntensity | _otherAttrs);
+    SetConsoleTextAttribute(_d->handle, _d->currentFg | _d->currentBg | _d->currentIntensity | _d->otherAttrs);
 }
 
 #else
