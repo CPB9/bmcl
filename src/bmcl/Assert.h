@@ -28,7 +28,7 @@ BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* fil
 BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char* file, int line);
 
 template<class T>
-BMCL_EXPORT BMCL_NORETURN void assertFailTpl(const char* assertion, T msg, const char* file, int line)
+BMCL_NORETURN void assertFailTpl(const char* assertion, T msg, const char* file, int line)
 {
     assertFail(assertion, bmcl::toString(msg).c_str(), file, line);
 }
