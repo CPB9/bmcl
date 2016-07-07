@@ -10,11 +10,6 @@
 
 #include "bmcl/Config.h"
 
-#ifdef BMCL_PLATFORM_WINDOWS
-#include <stdio.h>
-#include <windows.h>
-#endif
-
 #include <iostream>
 
 namespace bmcl {
@@ -44,9 +39,11 @@ enum class ColorAttr {
     BgWhite = 47,
 };
 
+class ColorStreamPrivate;
+
 class BMCL_EXPORT ColorStream {
 public:
-    inline ~ColorStream();
+    ~ColorStream();
 
     inline ColorStream& operator<<(std::ostream& (*func)(std::ostream&));
 
@@ -57,7 +54,11 @@ public:
 
 protected:
 #ifdef BMCL_PLATFORM_WINDOWS
-    ColorStream(std::ostream* stream, HANDLE handle);
+	enum HandleType {
+		StdOut,
+		StdErr
+	};
+    ColorStream(std::ostream* stream, HandleType handle);
 #else
     ColorStream(std::ostream* stream);
 #endif
@@ -68,12 +69,7 @@ private:
 #ifdef BMCL_PLATFORM_WINDOWS
     void applyAttrs(ColorAttr colorAttr);
     void resetAttrs();
-    WORD _defaultAttrs;
-    WORD _currentFg;
-    WORD _currentBg;
-    WORD _currentIntensity;
-    WORD _otherAttrs;
-    HANDLE _handle;
+	ColorStreamPrivate* _d;
 #endif
     std::ostream* _stream;
 };
@@ -81,11 +77,6 @@ private:
 inline void ColorStream::reset()
 {
     setAttribute(ColorAttr::Reset);
-}
-
-inline ColorStream::~ColorStream()
-{
-    reset();
 }
 
 template <typename T>
@@ -111,7 +102,7 @@ inline ColorStream& ColorStream::operator<<(const ColorAttr& attr)
 class BMCL_EXPORT ColorStdOut : public ColorStream {
 public:
 #ifdef BMCL_PLATFORM_WINDOWS
-    inline ColorStdOut(): ColorStream(&std::cout, GetStdHandle(STD_OUTPUT_HANDLE)) {}
+    inline ColorStdOut(): ColorStream(&std::cout, ColorStream::StdOut) {}
 #else
     inline ColorStdOut(): ColorStream(&std::cout) {}
 #endif
@@ -120,7 +111,7 @@ public:
 class BMCL_EXPORT ColorStdError : public ColorStream {
 public:
 #ifdef BMCL_PLATFORM_WINDOWS
-    inline ColorStdError(): ColorStream(&std::cerr, GetStdHandle(STD_ERROR_HANDLE)) {}
+    inline ColorStdError(): ColorStream(&std::cerr, ColorStream::StdErr) {}
 #else
     inline ColorStdError(): ColorStream(&std::cerr) {}
 #endif
