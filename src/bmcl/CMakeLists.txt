@@ -43,6 +43,10 @@ add_library(bmcl SHARED
     Writer.h
 )
 
+if (MSVC)
+	target_link_libraries(bmcl Shlwapi)
+endif()
+
 if (BMCL_HAVE_QT)
     target_link_libraries(bmcl Qt5::Core)
 endif()

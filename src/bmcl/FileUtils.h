@@ -9,8 +9,10 @@
 #pragma once
 
 #include "bmcl/Config.h"
+#include "bmcl/OptionFwd.h"
 
 #include <string>
+#include <cstdint>
 
 namespace bmcl {
 
@@ -22,4 +24,7 @@ class Buffer;
 BMCL_EXPORT Result<std::string, int> readFileIntoString(const char* path);
 BMCL_EXPORT Result<Buffer, int> readFileIntoBuffer(const char* path);
 
+BMCL_EXPORT const bmcl::Option<std::string>& applicationFilePath();
+BMCL_EXPORT const bmcl::Option<std::string>& applicationDirPath();
+BMCL_EXPORT std::uint64_t applicationPid();
 }
