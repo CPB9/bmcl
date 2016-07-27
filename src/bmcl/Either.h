@@ -33,6 +33,11 @@ public:
     Either(Either&& other);
     ~Either();
 
+    template <typename... A>
+    Either(InPlaceFirstType, A&&... args);
+    template <typename... A>
+    Either(InPlaceSecondType, A&&... args);
+
     bool isFirst() const;
     bool isSecond() const;
 
@@ -209,6 +214,22 @@ template <typename T, typename E>
 inline Either<T, E>::~Either()
 {
     destruct(std::is_void<E>());
+}
+
+template <typename T, typename E>
+template <typename... A>
+inline Either<T, E>::Either(InPlaceFirstType, A&&... args)
+    : _isFirst(true)
+{
+    new (asFirst()) T(std::forward<A>(args)...);
+}
+
+template <typename T, typename E>
+template <typename... A>
+inline Either<T, E>::Either(InPlaceSecondType, A&&... args)
+    : _isFirst(false)
+{
+    new (asSecond()) E(std::forward<A>(args)...);
 }
 
 template <typename T, typename E>
