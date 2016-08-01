@@ -34,7 +34,20 @@ struct InPlaceType {
     }
 };
 
-const InPlaceType InPlace;
+struct InPlaceFirstType {
+    inline InPlaceFirstType()
+    {
+    }
+};
 
+struct InPlaceSecondType {
+    inline InPlaceSecondType()
+    {
+    }
+};
+
+const InPlaceType InPlace;
+const InPlaceFirstType InPlaceFirst;
+const InPlaceSecondType InPlaceSecond;
 
 }

@@ -43,6 +43,22 @@ TEST(EitherTest, createMoveEither)
     EXPECT_EQ(std::vector<int>({1, 2, 3, 4, 5}), either.unwrapFirst());
 }
 
+TEST(EitherTest, createInPlaceFirst)
+{
+    Either<std::vector<int>, std::string> either(bmcl::InPlaceFirst, std::initializer_list<int>{1, 2, 3, 4, 5});
+    EXPECT_TRUE(either.isFirst());
+    EXPECT_FALSE(either.isSecond());
+    EXPECT_EQ(std::vector<int>({1, 2, 3, 4, 5}), either.unwrapFirst());
+}
+
+TEST(EitherTest, createInPlaceSecond)
+{
+    Either<std::vector<int>, std::string> either(bmcl::InPlaceSecond, "asdf");
+    EXPECT_FALSE(either.isFirst());
+    EXPECT_TRUE(either.isSecond());
+    EXPECT_EQ(std::string("asdf"), either.unwrapSecond());
+}
+
 TEST(EitherTest, copyConstructSecond)
 {
     std::vector<int> err{3, 2, 1};
