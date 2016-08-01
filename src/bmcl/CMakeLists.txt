@@ -20,11 +20,13 @@ add_library(bmcl SHARED
     MemReader.h
     MemWriter.cpp
     MemWriter.h
+    NonNullUniquePtr.h
     Option.h
     OptionFwd.h
     OptionPtr.h
     Panic.cpp
     Panic.h
+    PtrUtils.h
     Reader.h
     Result.h
     RingArray.cpp

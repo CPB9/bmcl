@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 CPB9 team. See the COPYRIGHT file at the top-level directory.
+ * Copyright (c) 2014-2015 CPB9 team. See the COPYRIGHT file at the top-level directory.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,8 +27,8 @@ public:
     OptionPtr(NoneType);
     ~OptionPtr();
     OptionPtr(T* value);
-    OptionPtr(const OptionPtr<T*>& other);
-    OptionPtr(OptionPtr<T*>&& other);
+    OptionPtr(const OptionPtr<T>& other);
+    OptionPtr(OptionPtr<T>&& other);
 
     bool isSome() const;
     bool isNone() const;
@@ -100,14 +100,14 @@ OptionPtr<T>::OptionPtr(T* value)
 }
 
 template<class T>
-OptionPtr<T>::OptionPtr(const OptionPtr<T*>& other)
+OptionPtr<T>::OptionPtr(const OptionPtr<T>& other)
         : _data(other._data)
 {
 
 }
 
 template<class T>
-OptionPtr<T>::OptionPtr(OptionPtr<T*>&& other)
+OptionPtr<T>::OptionPtr(OptionPtr<T>&& other)
 {
     other.clear();
 }

@@ -14,27 +14,10 @@ namespace bmcl
 {
 
 template<class T>
-inline std::string toString(const T & t)
-{
-    return std::to_string(t);
-}
+std::string toString(const T & t);
 
 template<class T>
-inline std::string toString(const std::vector<T> & t)
-{
-    std::ostringstream s("[");
-    bool isFirst = true;
-    for (const auto & el : t)
-    {
-        if (isFirst)
-            isFirst = false;
-        else
-            s << ", ";
-        s << toString(el);
-    }
-    s << "]";
-    return s.str();
-}
+std::string toString(const std::vector<T> & t);
 
 template<>
 inline std::string toString(const std::string & t)
@@ -45,6 +28,12 @@ inline std::string toString(const std::string & t)
 inline std::string toString(const char * t)
 {
     return std::string(t);
+}
+
+template<class T>
+inline std::string toString(const T & t)
+{
+    return std::to_string(t);
 }
 
 #if defined(BMCL_HAVE_QT)
