@@ -17,7 +17,21 @@ template<class T>
 std::string toString(const T & t);
 
 template<class T>
-std::string toString(const std::vector<T> & t);
+inline std::string toString(const std::vector<T> & t)
+{
+    std::ostringstream s("[");
+    bool isFirst = true;
+    for (const auto & el : t)
+    {
+        if (isFirst)
+            isFirst = false;
+        else
+            s << ", ";
+        s << toString(el);
+    }
+    s << "]";
+    return s.str();
+}
 
 template<>
 inline std::string toString(const std::string & t)
