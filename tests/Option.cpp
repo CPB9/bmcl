@@ -275,3 +275,235 @@ TEST(OptionTest, emplace)
     EXPECT_TRUE(option.isSome());
     EXPECT_EQ("2some", option.unwrap());
 }
+
+static const std::string str = "test_string";
+static const std::string str1 = "test_string_1";
+static const std::string str2 = "test_string_2";
+
+TEST(OptionRefTest, createFromNone)
+{
+    Option<const std::string&> option = None;
+    EXPECT_TRUE(option.isNone());
+    EXPECT_FALSE(option.isSome());
+}
+
+TEST(OptionRefTest, createFromNullptr)
+{
+    Option<const std::string&> option = nullptr;
+    EXPECT_TRUE(option.isNone());
+    EXPECT_FALSE(option.isSome());
+}
+
+TEST(OptionRefTest, createFromValue)
+{
+    Option<const std::string&> option = str;
+    EXPECT_FALSE(option.isNone());
+    EXPECT_TRUE(option.isSome());
+}
+
+TEST(OptionRefTest, createFromConstValue)
+{
+    Option<const std::string&> option = str;
+    EXPECT_FALSE(option.isNone());
+    EXPECT_TRUE(option.isSome());
+}
+
+TEST(OptionRefTest, unwrapConst)
+{
+    Option<const std::string&> option = str;
+    EXPECT_EQ(str, option.unwrap());
+}
+
+TEST(OptionRefTest, unwrap)
+{
+    std::string str = "test777";
+    Option<std::string&> option = str;
+    option.unwrap() = "test567";
+    EXPECT_EQ("test567", option.unwrap());
+    EXPECT_NE("test777", option.unwrap());
+}
+
+TEST(OptionRefTest, copyConstructSome)
+{
+    Option<const std::string&> option = str;
+    Option<const std::string&> other = option;
+    EXPECT_TRUE(option.isSome());
+    EXPECT_TRUE(other.isSome());
+    EXPECT_EQ(str, option.unwrap());
+    EXPECT_EQ(str, other.unwrap());
+}
+
+TEST(OptionRefTest, copyConstructNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = option;
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, moveConstruct)
+{
+    Option<const std::string&> option = str;
+    Option<const std::string&> other = std::move(option);
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isSome());
+    EXPECT_EQ(str, other.unwrap());
+}
+
+TEST(OptionRefTest, moveConstructNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = std::move(option);
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, clearSome)
+{
+    Option<const std::string&> option = str;
+    option.clear();
+    EXPECT_TRUE(option.isNone());
+}
+
+TEST(OptionRefTest, clearNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    option.clear();
+    EXPECT_TRUE(option.isNone());
+}
+
+TEST(OptionRefTest, emplaceToNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    option.emplace(str);
+    EXPECT_TRUE(option.isSome());
+    EXPECT_EQ(str, option.unwrap());
+}
+
+TEST(OptionRefTest, emplaceToSome)
+{
+    Option<const std::string&> option = str1;
+    option.emplace(str2);
+    EXPECT_TRUE(option.isSome());
+    EXPECT_EQ(str2, option.unwrap());
+}
+
+TEST(OptionRefTest, unwrapOrNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    EXPECT_EQ(str, option.unwrapOr(str));
+}
+
+TEST(OptionRefTest, unwrapOrSome)
+{
+    Option<const std::string&> option = str1;
+    EXPECT_EQ(str1, option.unwrapOr(str2));
+}
+
+TEST(OptionRefTest, operatorEqNoneNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = bmcl::None;
+    option = other;
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, operatorEqSomeNone)
+{
+    Option<const std::string&> option = str;
+    Option<const std::string&> other = bmcl::None;
+    option = other;
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, operatorEqNoneSome)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = str;
+    option = other;
+    EXPECT_TRUE(option.isSome());
+    EXPECT_TRUE(other.isSome());
+    EXPECT_EQ(other.unwrap(), option.unwrap());
+    EXPECT_EQ(str, option.unwrap());
+    EXPECT_EQ(str, other.unwrap());
+}
+
+TEST(OptionRefTest, operatorEqSomeSome)
+{
+    Option<const std::string&> option = str1;
+    Option<const std::string&> other = str2;
+    option = other;
+    EXPECT_TRUE(option.isSome());
+    EXPECT_TRUE(other.isSome());
+    EXPECT_EQ(other.unwrap(), option.unwrap());
+    EXPECT_EQ(str2, option.unwrap());
+    EXPECT_EQ(str2, other.unwrap());
+}
+
+TEST(OptionRefTest, operatorEqMoveNoneNone)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = bmcl::None;
+    option = std::move(other);
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, operatorEqMoveSomeNone)
+{
+    Option<const std::string&> option = str;
+    Option<const std::string&> other = bmcl::None;
+    option = std::move(other);
+    EXPECT_TRUE(option.isNone());
+    EXPECT_TRUE(other.isNone());
+}
+
+TEST(OptionRefTest, operatorEqMoveNoneSome)
+{
+    Option<const std::string&> option = bmcl::None;
+    Option<const std::string&> other = str;
+    option = std::move(other);
+    EXPECT_TRUE(option.isSome());
+    EXPECT_TRUE(other.isNone());
+    EXPECT_EQ(str, option.unwrap());
+}
+
+TEST(OptionRefTest, operatorEqMoveSomeSome)
+{
+    Option<const std::string&> option = str1;
+    Option<const std::string&> other = str2;
+    option = std::move(other);
+    EXPECT_TRUE(option.isSome());
+    EXPECT_TRUE(other.isNone());
+    EXPECT_EQ(str2, option.unwrap());
+}
+
+TEST(OptionRefTest, operatorDeref)
+{
+    std::string str = "test_asd";
+    Option<std::string&> option = str;
+    *option = "test_gfd";
+    EXPECT_EQ("test_gfd", option.unwrap());
+}
+
+TEST(OptionRefTest, operatorDerefConst)
+{
+    Option<const std::string&> option = str;
+    EXPECT_EQ(str, *option);
+}
+
+TEST(OptionRefTest, operatorInd)
+{
+    std::string str = "test_asd";
+    Option<std::string&> option = str;
+    option->append("123");
+    EXPECT_EQ("test_asd123", option.unwrap());
+}
+
+TEST(OptionRefTest, operatorIndConst)
+{
+    Option<const std::string&> option = str;
+    EXPECT_EQ(str, option->c_str());
+}
