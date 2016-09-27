@@ -29,6 +29,7 @@ add_library(bmcl SHARED
     PtrUtils.h
     Reader.h
     Result.h
+    ResultFwd.h
     RingArray.cpp
     RingArray.h
     RingBucket.cpp
