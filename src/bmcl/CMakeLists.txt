@@ -27,6 +27,8 @@ add_library(bmcl SHARED
     Panic.cpp
     Panic.h
     PtrUtils.h
+    Rc.h
+    RefCountable.h
     Reader.h
     Result.h
     ResultFwd.h
