@@ -13,6 +13,18 @@ static void expectStringView(const StringView& ref, const char* data, std::size_
     EXPECT_EQ_MEM(data, ref.data(), size);
 }
 
+TEST(StringView, fromNullptr)
+{
+    StringView ref(nullptr);
+    expectStringView(ref, "", 0);
+}
+
+TEST(StringView, fromNothing)
+{
+    StringView ref;
+    expectStringView(ref, "", 0);
+}
+
 TEST(StringView, fromCStr)
 {
     StringView ref("asd");
@@ -30,6 +42,13 @@ TEST(StringView, fromStrString)
     std::string data = "test134";
     StringView ref(data);
     expectStringView(ref, "test134", 7);
+}
+
+TEST(StringView, reset)
+{
+    StringView ref("asd");
+    ref.reset();
+    expectStringView(ref, "", 0);
 }
 
 TEST(StringView, asBytes)
