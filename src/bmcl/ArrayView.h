@@ -45,6 +45,15 @@ public:
     std::size_t size() const;
     bool isEmpty() const;
 
+    //template <std::size_t N>
+    //void reset(const T(&data)[N]);
+    template <std::size_t N>
+    void reset(const std::array<T, N>& lst);
+    void reset(const T* data, std::size_t size);
+    void reset(const T* start, const T* end);
+    void reset(const std::vector<T>& vec);
+    void reset(const std::initializer_list<T>& lst);
+
     // python-style slicing
     // sliceFrom - array[start:]
     // sliceTo - array[:end]
@@ -135,6 +144,42 @@ template <typename T, typename B>
 inline bool ArrayViewBase<T, B>::isEmpty() const
 {
     return _size == 0;
+}
+
+template <typename T, typename B>
+inline void ArrayViewBase<T, B>::reset(const T* data, std::size_t size)
+{
+    _data = data;
+    _size = size;
+}
+
+template <typename T, typename B>
+inline void ArrayViewBase<T, B>::reset(const T* start, const T* end)
+{
+    _data = start;
+    _size = end - start;
+}
+
+template <typename T, typename B>
+inline void ArrayViewBase<T, B>::reset(const std::vector<T>& vec)
+{
+    _data = vec.data();
+    _size = vec.size();
+}
+
+template <typename T, typename B>
+inline void ArrayViewBase<T, B>::reset(const std::initializer_list<T>& lst)
+{
+    _data = lst.begin();
+    _size = lst.size();
+}
+
+template <typename T, typename B>
+template <std::size_t N>
+inline void ArrayViewBase<T, B>::reset(const std::array<T, N>& array)
+{
+    _data = array.data();
+    _size = N;
 }
 
 template <typename T, typename B>

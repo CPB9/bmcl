@@ -11,6 +11,7 @@
 #include "bmcl/Config.h"
 
 #include <utility>
+#include <memory>
 
 namespace bmcl {
 
@@ -50,4 +51,9 @@ const InPlaceType InPlace;
 const InPlaceFirstType InPlaceFirst;
 const InPlaceSecondType InPlaceSecond;
 
+template <typename T, typename... A>
+inline std::unique_ptr<T> makeUnique(A&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<A>(args)...));
+}
 }

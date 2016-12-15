@@ -10,7 +10,9 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/ArrayView.h"
+#include "bmcl/OptionFwd.h"
 
+#include <cassert>
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
@@ -18,11 +20,10 @@
 
 namespace bmcl {
 
-template <typename T>
-class Option;
-
 class BMCL_EXPORT StringView : public ArrayViewBase<char, StringView> {
 public:
+    inline StringView();
+    inline StringView(std::nullptr_t);
     inline StringView(const char* cstr);
     inline StringView(const char* data, std::size_t size);
     inline StringView(const char* start, const char* end);
@@ -59,6 +60,8 @@ public:
     StringView rtrim(StringView chars = " \t\n\v\f\r") const;
     StringView trim(StringView chars = " \t\n\v\f\r") const;
 
+    void reset();
+
     inline bool operator==(StringView other) const;
 
 private:
@@ -68,13 +71,23 @@ private:
     Option<std::size_t> iteratorToIndex(reverse_iterator) const;
 };
 
+inline StringView::StringView()
+    : ArrayViewBase<char, StringView>("", std::size_t(0))
+{
+}
+
+inline StringView::StringView(std::nullptr_t)
+    : StringView()
+{
+}
+
 inline StringView::StringView(const char* cstr)
-    : ArrayViewBase<char, StringView>(cstr, cstr ? std::strlen(cstr) : 0)
+    : ArrayViewBase<char, StringView>(cstr, std::strlen(cstr))
 {
 }
 
 inline StringView::StringView(const char* start, const char* end)
-    : ArrayViewBase<char, bmcl::StringView>(start, end)
+    : ArrayViewBase<char, StringView>(start, end)
 {
 }
 
@@ -122,6 +135,11 @@ inline bool StringView::equals(const char* cstr) const
 inline std::string StringView::toStdString() const
 {
     return std::string(data(), size());
+}
+
+inline void StringView::reset()
+{
+    ArrayViewBase<char, StringView>::reset("", std::size_t(0));
 }
 
 inline bool StringView::operator==(StringView other) const
