@@ -49,6 +49,7 @@ public:
 
     template <typename T>
     Logger& operator<<(const T& value);
+    Logger& operator<<(const char* value);
 
 private:
     LogLevel _allowedLevel;

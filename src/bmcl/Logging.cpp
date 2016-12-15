@@ -94,11 +94,20 @@ Logger::~Logger()
 #endif
 }
 
+Logger& Logger::operator<<(const char* msg)
+{
+    if ((int)_level <= (int)_allowedLevel)
+    {
+        _stream << QString::fromUtf8(msg);
+    }
+    return *this;
+}
+
 template<>
 Logger& Logger::operator<<(const std::string & value)
 {
     if ((int)_level <= (int)_allowedLevel) {
-        _stream << value.c_str();
+        _stream << QString::fromStdString(value);
     }
     return *this;
 }
