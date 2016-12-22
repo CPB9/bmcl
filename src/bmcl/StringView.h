@@ -29,6 +29,8 @@ public:
     inline StringView(const char* start, const char* end);
     inline StringView(const std::string& str);
 
+    static StringView empty();
+
     inline std::string toStdString() const;
     std::string toUpper() const;
     std::string toLower() const;
@@ -101,6 +103,11 @@ inline StringView::StringView(const char* data, std::size_t size)
 {
 }
 
+inline StringView StringView::empty()
+{
+    return StringView("", std::size_t(0));
+}
+
 inline Bytes StringView::asBytes() const
 {
     return Bytes((const uint8_t*)data(), size());
@@ -152,9 +159,19 @@ inline bool operator==(const std::string& lhs, StringView rhs)
     return rhs.equals(lhs);
 }
 
+inline bool operator!=(const std::string& lhs, StringView rhs)
+{
+    return !rhs.equals(lhs);
+}
+
 inline bool operator==(StringView lhs, const std::string& rhs)
 {
     return lhs.equals(rhs);
+}
+
+inline bool operator!=(StringView lhs, const std::string& rhs)
+{
+    return !lhs.equals(rhs);
 }
 
 inline bool operator==(const char* lhs, StringView rhs)
@@ -162,8 +179,18 @@ inline bool operator==(const char* lhs, StringView rhs)
     return rhs.equals(lhs);
 }
 
+inline bool operator!=(const char* lhs, StringView rhs)
+{
+    return !rhs.equals(lhs);
+}
+
 inline bool operator==(StringView lhs, const char* rhs)
 {
     return lhs.equals(rhs);
+}
+
+inline bool operator!=(StringView lhs, const char* rhs)
+{
+    return !lhs.equals(rhs);
 }
 }
