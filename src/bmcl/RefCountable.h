@@ -17,6 +17,7 @@ template <typename T>
 class RefCountable {
 public:
     RefCountable();
+    virtual ~RefCountable();
 
     T refCount() const;
 
@@ -29,6 +30,11 @@ private:
 template <typename T>
 inline RefCountable<T>::RefCountable()
     : _rc(0)
+{
+}
+
+template <typename T>
+inline RefCountable<T>::~RefCountable()
 {
 }
 
