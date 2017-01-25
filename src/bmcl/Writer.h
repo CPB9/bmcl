@@ -60,13 +60,12 @@ public:
     void writeFloat32Be(float value);
     void writeFloat64Be(double value);
 
-private:
     template <typename T>
     void writeType(T value);
 
+private:
     template <typename T, typename H, typename C>
     inline void writeFloat(T value, C convert);
-
 };
 
 template <typename B>

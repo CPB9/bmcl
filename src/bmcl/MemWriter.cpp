@@ -149,4 +149,10 @@ bool MemWriter::writeVarUint(uint64_t value)
     _current += 9;
     return true;
 }
+
+bool MemWriter::writeVarInt(int64_t value)
+{
+    uint64_t n = (uint64_t)value;
+    return writeVarUint((n << 1) ^ (n >> 63));
+}
 }

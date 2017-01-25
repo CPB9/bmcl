@@ -121,4 +121,14 @@ Result<uint64_t, void> MemReader::readVarUint()
     }
     return Result<uint64_t, void>();
 }
+
+bool MemReader::readVarInt(int64_t* dest)
+{
+    uint64_t n;
+    if (!readVarUint(&n)) {
+        return false;
+    }
+    *dest = (n >> 1) ^ -(int64_t)(n & 1);
+    return true;
+}
 }

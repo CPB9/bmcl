@@ -58,10 +58,10 @@ public:
     float readFloat32Be();
     double readFloat64Be();
 
-private:
     template <typename T>
     inline T readType();
 
+private:
     template <typename T, typename H, typename C>
     inline T readFloat(C convert);
 };

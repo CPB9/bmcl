@@ -48,6 +48,7 @@ public:
 
     Result<uint64_t, void> readVarUint();
     bool readVarUint(uint64_t* dest);
+    bool readVarInt(int64_t* dest);
 
     inline uint8_t readUint8();
     inline int8_t readInt8();
