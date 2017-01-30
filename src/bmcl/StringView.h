@@ -29,8 +29,6 @@ public:
     inline StringView(const char* start, const char* end);
     inline StringView(const std::string& str);
 
-    static StringView empty();
-
     inline std::string toStdString() const;
     std::string toUpper() const;
     std::string toLower() const;
@@ -101,11 +99,6 @@ inline StringView::StringView(const std::string& str)
 inline StringView::StringView(const char* data, std::size_t size)
     : ArrayViewBase<char, StringView>(data, size)
 {
-}
-
-inline StringView StringView::empty()
-{
-    return StringView("", std::size_t(0));
 }
 
 inline Bytes StringView::asBytes() const

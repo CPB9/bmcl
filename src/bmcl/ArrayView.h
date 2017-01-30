@@ -18,6 +18,106 @@
 
 namespace bmcl {
 
+template <typename T, size_t S>
+class FixedArrayView {
+public:
+    typedef std::size_t size_type;
+    typedef const T* iterator;
+    typedef const T* const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+
+    FixedArrayView(const T(&data)[S]);
+    FixedArrayView(const std::array<T, S>& lst);
+
+    static FixedArrayView<T, S> fromRawData(const T* data);
+
+    iterator begin() const;
+    iterator end() const;
+
+    reverse_iterator rbegin() const;
+    reverse_iterator rend() const;
+
+    const T* data() const;
+    std::size_t size() const;
+    bool isEmpty() const;
+
+    const T& operator[](std::size_t index) const;
+
+private:
+    FixedArrayView() = default;
+
+    const T* _data;
+};
+
+template <typename T, size_t S>
+inline FixedArrayView<T, S>::FixedArrayView(const T(&data)[S])
+    : _data(data)
+{
+}
+
+template <typename T, size_t S>
+inline FixedArrayView<T, S>::FixedArrayView(const std::array<T, S>& lst)
+    : _data(lst.data())
+{
+}
+
+template <typename T, size_t S>
+inline FixedArrayView<T, S> FixedArrayView<T, S>::fromRawData(const T* data)
+{
+    FixedArrayView<T, S> view;
+    view._data = data;
+    return view;
+}
+
+template <typename T, size_t S>
+inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::begin() const
+{
+    return _data;
+}
+
+template <typename T, size_t S>
+inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::end() const
+{
+    return _data + S;
+}
+
+template <typename T, size_t S>
+inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rbegin() const
+{
+    return reverse_iterator(rend());
+}
+
+template <typename T, size_t S>
+inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rend() const
+{
+    return reverse_iterator(rbegin());
+}
+
+template <typename T, size_t S>
+inline const T* FixedArrayView<T, S>::data() const
+{
+    return _data;
+}
+
+template <typename T, size_t S>
+inline std::size_t FixedArrayView<T, S>::size() const
+{
+    return S;
+}
+
+template <typename T, size_t S>
+inline bool FixedArrayView<T, S>::isEmpty() const
+{
+    return S == 0;
+}
+
+template <typename T, size_t S>
+inline const T& FixedArrayView<T, S>::operator[](std::size_t index) const
+{
+    BMCL_ASSERT(index < S);
+    return _data[index];
+}
+
 template <typename T, typename B>
 class ArrayViewBase {
 public:
@@ -34,6 +134,8 @@ public:
     ArrayViewBase(const T* start, const T* end);
     ArrayViewBase(const std::vector<T>& vec);
     ArrayViewBase(const std::initializer_list<T>& lst);
+
+    static B empty();
 
     iterator begin() const;
     iterator end() const;
@@ -114,6 +216,12 @@ inline ArrayViewBase<T, B>::ArrayViewBase(const std::array<T, N>& array)
     : _data(array.data())
     , _size(N)
 {
+}
+
+template <typename T, typename B>
+inline B ArrayViewBase<T, B>::empty()
+{
+    return B(nullptr, std::size_t(0));
 }
 
 template <typename T, typename B>
