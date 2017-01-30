@@ -38,6 +38,8 @@ add_library(bmcl SHARED
     RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
+    Sha3.cpp
+    Sha3.h
     String.h
     String.cpp
     StringView.cpp
