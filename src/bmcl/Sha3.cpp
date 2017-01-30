@@ -135,6 +135,12 @@ void Sha3<bits>::reset()
 }
 
 template <std::size_t bits>
+void Sha3<bits>::update(Bytes data)
+{
+    update(data.begin(), data.size());
+}
+
+template <std::size_t bits>
 void Sha3<bits>::update(const void* src, std::size_t len)
 {
     /* 0...7 -- how much is needed to have a word */

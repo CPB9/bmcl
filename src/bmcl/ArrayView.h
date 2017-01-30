@@ -10,10 +10,13 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Assert.h"
+#include "bmcl/Buffer.h"
 
 #include <array>
 #include <cstddef>
 #include <vector>
+#include <utility>
+
 #include <stdint.h>
 
 namespace bmcl {
@@ -130,6 +133,8 @@ public:
     ArrayViewBase(const T(&data)[N]);
     template <std::size_t N>
     ArrayViewBase(const std::array<T, N>& lst);
+    template <std::size_t N>
+    ArrayViewBase(FixedArrayView<T, N> view);
     ArrayViewBase(const T* data, std::size_t size);
     ArrayViewBase(const T* start, const T* end);
     ArrayViewBase(const std::vector<T>& vec);
@@ -214,6 +219,14 @@ template <typename T, typename B>
 template <std::size_t N>
 inline ArrayViewBase<T, B>::ArrayViewBase(const std::array<T, N>& array)
     : _data(array.data())
+    , _size(N)
+{
+}
+
+template <typename T, typename B>
+template <std::size_t N>
+inline ArrayViewBase<T, B>::ArrayViewBase(FixedArrayView<T, N> view)
+    : _data(view.data())
     , _size(N)
 {
 }
@@ -343,6 +356,11 @@ public:
     template <typename... A>
     ArrayView(A&&... args)
         : ArrayViewBase<T, ArrayView>(std::forward<A>(args)...)
+    {
+    }
+
+    ArrayView(typename std::enable_if<std::is_same<T, uint8_t>::value, bmcl::Buffer>::type& buf)
+        : ArrayViewBase<T, ArrayView>(buf.begin(), buf.size())
     {
     }
 

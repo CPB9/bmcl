@@ -33,6 +33,7 @@ public:
 
     void reset();
     void update(const void* src, std::size_t len);
+    void update(Bytes data);
     FixedArrayView<uint8_t, bits / 8> finalize();
 
 private:

@@ -27,8 +27,14 @@ public:
     inline std::size_t size() const;
     inline std::size_t capacity() const;
     inline bool isEmpty() const;
-    inline uint8_t* start() const;
-    inline uint8_t* end() const;
+
+    inline const uint8_t* start() const;
+    inline const uint8_t* begin() const;
+    inline const uint8_t* end() const;
+
+    inline uint8_t* start();
+    inline uint8_t* begin();
+    inline uint8_t* end();
 
     void resize(std::size_t size);
     void resize(std::size_t size, uint8_t filler);
@@ -65,12 +71,32 @@ inline std::size_t Buffer::capacity() const
     return _capacity;
 }
 
-inline uint8_t* Buffer::start() const
+inline const uint8_t* Buffer::start() const
 {
     return _ptr;
 }
 
-inline uint8_t* Buffer::end() const
+inline const uint8_t* Buffer::begin() const
+{
+    return _ptr;
+}
+
+inline const uint8_t* Buffer::end() const
+{
+    return _ptr + _size;
+}
+
+inline uint8_t* Buffer::start()
+{
+    return _ptr;
+}
+
+inline uint8_t* Buffer::begin()
+{
+    return _ptr;
+}
+
+inline uint8_t* Buffer::end()
 {
     return _ptr + _size;
 }
