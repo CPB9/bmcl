@@ -10,6 +10,8 @@
 
 #include "bmcl/Config.h"
 
+#include <cstdint>
+
 #if defined(BMCL_PLATFORM_LINUX)
     #include <endian.h>
 #elif defined(BMCL_PLATFORM_BSD)
