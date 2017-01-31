@@ -253,6 +253,7 @@ FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
     return FixedArrayView<uint8_t, bits / 8>::fromRawData(_s8.data());
 }
 
+template class Sha3<224>;
 template class Sha3<256>;
 template class Sha3<384>;
 template class Sha3<512>;

@@ -51,6 +51,7 @@ private:
                                   * (starts from 0) */
 };
 
+extern template class Sha3<224>;
 extern template class Sha3<256>;
 extern template class Sha3<384>;
 extern template class Sha3<512>;
