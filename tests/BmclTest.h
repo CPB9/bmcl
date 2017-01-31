@@ -10,7 +10,11 @@ static inline void print_mem(const void* mem, std::size_t size)
     std::ios::fmtflags f(std::cout.flags());
     std::cout << std::hex;
     for (std::size_t i = 0; i < size; i++) {
-        std::cout << (std::size_t) * ((uint8_t*)mem + i);
+        unsigned value = *((uint8_t*)mem + i);
+        if (value < 16) {
+            std::cout << '0';
+        }
+        std::cout << value;
     }
     std::cout.flags(f);
 }
