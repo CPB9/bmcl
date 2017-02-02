@@ -11,6 +11,7 @@
 #include "bmcl/Config.h"
 #include "bmcl/Reader.h"
 #include "bmcl/Writer.h"
+#include "bmcl/ArrayView.h"
 
 #include <cassert>
 #include <cstddef>
@@ -21,6 +22,16 @@ namespace bmcl {
 
 class BMCL_EXPORT RingBuffer : public Reader<RingBuffer>, public Writer<RingBuffer> {
 public:
+    struct Chunks {
+        Chunks(const uint8_t* first, std::size_t firstSize, const uint8_t* second, std::size_t secondSize)
+            : first(first, firstSize)
+            , second(second, secondSize)
+        {
+        }
+        Bytes first;
+        Bytes second;
+    };
+
     RingBuffer(void* data, std::size_t size);
 
 #if BMCL_HAVE_MALLOC
@@ -30,9 +41,13 @@ public:
 
 #endif
 
+    inline void write(Bytes data);
+
     void clear();
     void peek(void* dest, std::size_t size, std::size_t offset = 0) const;
     void erase(std::size_t size);
+
+    inline uint8_t peekUint8() const;
 
     inline std::size_t freeSpace() const;
     inline std::size_t usedSpace() const;
@@ -40,11 +55,16 @@ public:
     inline bool isEmpty() const;
     inline std::size_t size() const;
 
-    inline std::size_t writableSizeImpl() const;
-    void writeImpl(const void* data, std::size_t size);
-    inline std::size_t readableSizeImpl() const;
-    void readImpl(void* dest, std::size_t size);
-    inline void skipImpl(std::size_t size);
+    inline const uint8_t* data() const;
+    inline uint8_t* data();
+
+    inline std::size_t writableSize() const;
+    void write(const void* data, std::size_t size);
+    inline std::size_t readableSize() const;
+    void read(void* dest, std::size_t size);
+    inline void skip(std::size_t size);
+
+    Chunks readableChunks();
 
 private:
     void init(void* data, std::size_t size);
@@ -59,6 +79,17 @@ private:
     bool _hasAllocatedMem;
 #endif
 };
+
+inline void RingBuffer::write(Bytes data)
+{
+    write(data.begin(), data.size());
+}
+
+inline uint8_t RingBuffer::peekUint8() const
+{
+    BMCL_ASSERT(_freeSpace != _size);
+    return *(_data + _readOffset);
+}
 
 inline std::size_t RingBuffer::freeSpace() const
 {
@@ -85,17 +116,27 @@ inline std::size_t RingBuffer::size() const
     return _size;
 }
 
-inline std::size_t RingBuffer::writableSizeImpl() const
+inline const uint8_t* RingBuffer::data() const
+{
+    return _data;
+}
+
+inline uint8_t* RingBuffer::data()
+{
+    return _data;
+}
+
+inline std::size_t RingBuffer::writableSize() const
 {
     return freeSpace();
 }
 
-inline void RingBuffer::skipImpl(std::size_t size)
+inline void RingBuffer::skip(std::size_t size)
 {
     erase(size);
 }
 
-inline std::size_t RingBuffer::readableSizeImpl() const
+inline std::size_t RingBuffer::readableSize() const
 {
     return usedSpace();
 }

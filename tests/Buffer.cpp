@@ -42,7 +42,7 @@ protected:
     void expectData(const R(&array)[n])
     {
         assert(_buf);
-        EXPECT_EQ_MEM(array, _buf->start(), sizeof(R) * n);
+        EXPECT_EQ_MEM(array, _buf->data(), sizeof(R) * n);
     }
 
     template <std::size_t n, typename R>

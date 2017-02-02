@@ -22,11 +22,8 @@ namespace bmcl {
 template <typename B>
 class Writer {
 public:
-    std::size_t writableSize() const;
-    void write(const void* data, std::size_t size);
-
     template <std::size_t n, typename R>
-    void write(R(&array)[n]);
+    void writeArray(R(&array)[n]);
 
     void writeUint8(uint8_t value);
     void writeUint16(uint16_t value);
@@ -69,29 +66,17 @@ private:
 };
 
 template <typename B>
-inline std::size_t Writer<B>::writableSize() const
-{
-    return static_cast<const B*>(this)->writableSizeImpl();
-}
-
-template <typename B>
-inline void Writer<B>::write(const void* data, std::size_t size)
-{
-    static_cast<B*>(this)->writeImpl(data, size);
-}
-
-template <typename B>
 template <std::size_t n, typename R>
-inline void Writer<B>::write(R(&array)[n])
+inline void Writer<B>::writeArray(R(&array)[n])
 {
-    write(array, n * sizeof(R));
+    static_cast<B*>(this)->write(array, n * sizeof(R));
 }
 
 template <typename B>
 template <typename T>
 inline void Writer<B>::writeType(T value)
 {
-    write(&value, sizeof(value));
+    static_cast<B*>(this)->write(&value, sizeof(value));
 }
 
 template <typename B>

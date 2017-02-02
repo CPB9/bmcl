@@ -21,6 +21,7 @@ using enableIfVoid = typename std::enable_if<std::is_void<B>::value, T>::type;
 template<class B, class T = B>
 using enableIfNotVoid = typename std::enable_if<!std::is_void<B>::value, T>::type;
 
+
 struct NoneType {
     inline NoneType()
     {

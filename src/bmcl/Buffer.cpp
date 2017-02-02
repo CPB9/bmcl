@@ -136,7 +136,7 @@ void Buffer::shrink()
     realloc(_size);
 }
 
-void Buffer::writeImpl(const void* data, std::size_t size)
+void Buffer::write(const void* data, std::size_t size)
 {
     if ((_capacity - _size) < size) {
         realloc(BMCL_MAX(_capacity + size, _size * 1.5));

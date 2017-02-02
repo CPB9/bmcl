@@ -40,8 +40,8 @@ public:
     void fillUp(uint8_t byte);
     void fill(uint8_t byte, std::size_t size);
 
-    void writeImpl(const void* data, std::size_t size);
-    inline std::size_t writableSizeImpl() const;
+    void write(const void* data, std::size_t size);
+    inline std::size_t writableSize() const;
 
     bool writeVarUint(uint64_t value);
     bool writeVarInt(int64_t value);
@@ -105,7 +105,7 @@ inline void MemWriter::reset()
     _current = _start;
 };
 
-inline std::size_t MemWriter::writableSizeImpl() const
+inline std::size_t MemWriter::writableSize() const
 {
     return _end - _current;
 }

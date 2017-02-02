@@ -42,9 +42,9 @@ public:
     inline void reset();
     void peek(void* dest, std::size_t size, std::size_t offset) const;
 
-    inline std::size_t readableSizeImpl() const;
-    void readImpl(void* dest, std::size_t size);
-    void skipImpl(std::size_t size);
+    inline std::size_t readableSize() const;
+    void read(void* dest, std::size_t size);
+    void skip(std::size_t size);
 
     Result<uint64_t, void> readVarUint();
     bool readVarUint(uint64_t* dest);
@@ -112,7 +112,7 @@ inline void MemReader::reset()
     _current = _start;
 }
 
-inline std::size_t MemReader::readableSizeImpl() const
+inline std::size_t MemReader::readableSize() const
 {
     return sizeLeft();
 }

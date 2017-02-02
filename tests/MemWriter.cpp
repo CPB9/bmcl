@@ -73,7 +73,7 @@ protected:
     template <std::size_t n, typename R>
     void append(const R(&array)[n])
     {
-        _writer->write(array);
+        _writer->writeArray(array);
     }
 
     void appendUint8(uint8_t data)

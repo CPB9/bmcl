@@ -23,8 +23,6 @@ template <typename B>
 class Reader {
 public:
     void read(void* dest, std::size_t size);
-    void skip(std::size_t size);
-    std::size_t readableSize() const;
 
     uint8_t readUint8();
     uint16_t readUint16();
@@ -69,19 +67,7 @@ private:
 template <typename B>
 inline void Reader<B>::read(void* dest, std::size_t size)
 {
-    static_cast<B*>(this)->readImpl(dest, size);
-}
-
-template <typename B>
-inline void Reader<B>::skip(std::size_t size)
-{
-    static_cast<B*>(this)->skipImpl(size);
-}
-
-template <typename B>
-inline std::size_t Reader<B>::readableSize() const
-{
-    return static_cast<const B*>(this)->readableSizeImpl();
+    static_cast<B*>(this)->read(dest, size);
 }
 
 template <typename B>

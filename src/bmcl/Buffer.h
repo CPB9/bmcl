@@ -18,6 +18,12 @@ namespace bmcl {
 
 class BMCL_EXPORT Buffer : public Writer<Buffer> {
 public:
+    typedef std::size_t size_type;
+    typedef uint8_t* iterator;
+    typedef const uint8_t* const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
     Buffer();
     Buffer(std::size_t size);
     Buffer(const Buffer& other);
@@ -28,21 +34,25 @@ public:
     inline std::size_t capacity() const;
     inline bool isEmpty() const;
 
-    inline const uint8_t* start() const;
-    inline const uint8_t* begin() const;
-    inline const uint8_t* end() const;
+    inline iterator begin();
+    inline const_iterator cbegin() const;
+    inline iterator end();
+    inline const_iterator cend() const;
+    inline reverse_iterator rbegin();
+    inline const_reverse_iterator crbegin() const;
+    inline reverse_iterator rend();
+    inline const_reverse_iterator crend() const;
 
-    inline uint8_t* start();
-    inline uint8_t* begin();
-    inline uint8_t* end();
+    const uint8_t* data() const;
+    uint8_t* data();
 
     void resize(std::size_t size);
     void resize(std::size_t size, uint8_t filler);
     void reserve(std::size_t size);
     void shrink();
 
-    void writeImpl(const void* data, std::size_t size);
-    inline std::size_t writableSizeImpl() const;
+    void write(const void* data, std::size_t size);
+    inline std::size_t writableSize() const;
 
     Buffer& operator=(const Buffer& other);
     Buffer& operator=(Buffer&& other);
@@ -71,34 +81,54 @@ inline std::size_t Buffer::capacity() const
     return _capacity;
 }
 
-inline const uint8_t* Buffer::start() const
+inline uint8_t* Buffer::data()
 {
     return _ptr;
 }
 
-inline const uint8_t* Buffer::begin() const
+inline const uint8_t* Buffer::data() const
 {
     return _ptr;
 }
 
-inline const uint8_t* Buffer::end() const
+inline Buffer::iterator Buffer::begin()
+{
+    return _ptr;
+}
+
+inline Buffer::const_iterator Buffer::cbegin() const
+{
+    return _ptr;
+}
+
+inline Buffer::iterator Buffer::end()
 {
     return _ptr + _size;
 }
 
-inline uint8_t* Buffer::start()
-{
-    return _ptr;
-}
-
-inline uint8_t* Buffer::begin()
-{
-    return _ptr;
-}
-
-inline uint8_t* Buffer::end()
+inline Buffer::const_iterator Buffer::cend() const
 {
     return _ptr + _size;
+}
+
+inline Buffer::reverse_iterator Buffer::rbegin()
+{
+    return reverse_iterator(end());
+}
+
+inline Buffer::const_reverse_iterator Buffer::crbegin() const
+{
+    return const_reverse_iterator(cend());
+}
+
+inline Buffer::reverse_iterator Buffer::rend()
+{
+    return reverse_iterator(begin());
+}
+
+inline Buffer::const_reverse_iterator Buffer::crend() const
+{
+    return const_reverse_iterator(cbegin());
 }
 
 inline bool Buffer::isEmpty() const
@@ -106,7 +136,7 @@ inline bool Buffer::isEmpty() const
     return _size == 0;
 }
 
-inline std::size_t Buffer::writableSizeImpl() const
+inline std::size_t Buffer::writableSize() const
 {
     return _capacity - _size;
 }

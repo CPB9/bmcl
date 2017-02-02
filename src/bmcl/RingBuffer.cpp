@@ -59,7 +59,7 @@ void RingBuffer::erase(std::size_t size)
     }
 }
 
-void RingBuffer::readImpl(void* dest, std::size_t size)
+void RingBuffer::read(void* dest, std::size_t size)
 {
     peek(dest, size, 0);
     erase(size);
@@ -84,7 +84,7 @@ void RingBuffer::extend(std::size_t size)
     _freeSpace -= size;
 }
 
-void RingBuffer::writeImpl(const void* data, std::size_t size)
+void RingBuffer::write(const void* data, std::size_t size)
 {
     BMCL_ASSERT(size > 0);
     BMCL_ASSERT(size <= _size);
@@ -111,7 +111,7 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
     if (readOffset >= _size) {
         readOffset -= _size;
     }
-    BMCL_ASSERT(size > 0);
+    BMCL_ASSERT(size >= 0);
     BMCL_ASSERT(size + offset <= _size - _freeSpace);
     if (readOffset < _writeOffset) { /* ----------r**************w---------- */
         std::memcpy(dest, _data + readOffset, size);
@@ -124,5 +124,22 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
             std::memcpy((uint8_t*)dest + firstChunkSize, _data, secondChunkSize);
         }
     }
+}
+
+
+RingBuffer::Chunks RingBuffer::readableChunks()
+{
+    if (_freeSpace == 0) {
+        /* ------------------------wr------------ */
+        return Chunks(_data + _readOffset, 0, _data + _readOffset, 0);
+    } else if (_writeOffset < _readOffset) {
+        /* ---------r***************w------------ */
+        return Chunks(_data + _readOffset, _writeOffset - _readOffset, _data + _writeOffset, 0);
+    } else if (_readOffset > _writeOffset) {
+        /* *********w---------------r************ */
+        return Chunks(_data + _readOffset, _size - _readOffset, _data, _writeOffset);
+    }
+    /* ************************wr************ */
+    return Chunks(_data + _readOffset, _size - _readOffset, _data, _writeOffset);
 }
 }

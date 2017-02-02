@@ -1,4 +1,6 @@
 #include "bmcl/ArrayView.h"
+#include "bmcl/StringView.h"
+#include "bmcl/Buffer.h"
 
 #include "BmclTest.h"
 
@@ -7,7 +9,7 @@
 using namespace bmcl;
 
 template <typename T>
-static void expectArrayView(const ArrayView<T>& ref, const std::initializer_list<T>& lst)
+static void expectArrayView(ArrayView<T> ref, std::initializer_list<T> lst)
 {
     ASSERT_EQ(lst.size(), ref.size());
     EXPECT_TRUE(std::equal(ref.begin(), ref.end(), lst.begin()));
@@ -16,8 +18,33 @@ static void expectArrayView(const ArrayView<T>& ref, const std::initializer_list
 TEST(ArrayView, fromStaticArray)
 {
     int array[5] = {1, 2, 3, 4, 5};
-    ArrayView<int> ref(array);
+    auto ref = ArrayView<int>::fromStaticArray(array);
     expectArrayView(ref, {1, 2, 3, 4, 5});
+}
+
+TEST(ArrayView, fromStdArray)
+{
+    std::array<int, 3> array = {{3, 4, 5}};
+    ArrayView<int> ref(array);
+    expectArrayView(ref, {3, 4, 5});
+}
+
+TEST(ArrayView, fromFixedArrayView)
+{
+    FixedArrayView<int, 3> view = {{3, 4, 5}};
+    ArrayView<int> ref(view);
+    expectArrayView(ref, {3, 4, 5});
+}
+
+TEST(ArrayView, fromBuffer)
+{
+    Buffer buf;
+    buf.writeUint8(9);
+    buf.writeUint8(8);
+    buf.writeUint8(7);
+    ArrayView<uint8_t> ref(buf);
+    expectArrayView<uint8_t>(ref, {9, 8, 7});
+    EXPECT_EQ(buf.data(), ref.data());
 }
 
 TEST(ArrayView, fromDataSize)
@@ -48,11 +75,18 @@ TEST(ArrayView, fromStdInitializerList)
     expectArrayView(ref, std::initializer_list<std::string>{"test", "asd", "dsa"});
 }
 
-TEST(ArrayView, fromStdArray)
+TEST(ArrayView, fromStringView)
 {
-    std::array<int, 3> array = {{3, 4, 5}};
-    ArrayView<int> ref(array);
-    expectArrayView(ref, {3, 4, 5});
+    StringView strView("qwer");
+    ArrayView<char> ref(strView);
+    expectArrayView(ref, {'q', 'w', 'e', 'r'});
+}
+
+TEST(ArrayView, empty)
+{
+    auto view = ArrayView<uint16_t>::empty();
+    EXPECT_EQ(0, view.size());
+    EXPECT_TRUE(view.isEmpty());
 }
 
 TEST(ArrayView, iterator)
@@ -84,15 +118,14 @@ TEST(ArrayView, isEmpty)
 
 TEST(ArrayView, isNotEmpty)
 {
-    int array[1] = {1};
-    ArrayView<int> ref(array);
+    ArrayView<int> ref = {1};
     EXPECT_FALSE(ref.isEmpty());
 }
 
 TEST(ArrayView, toStdVector)
 {
     uint8_t array[5] = {5, 4, 3, 2, 1};
-    ArrayView<uint8_t> ref(array);
+    auto ref = ArrayView<uint8_t>::fromStaticArray(array);
     std::vector<uint8_t> vec = ref.toStdVector();
     ASSERT_EQ(5, vec.size());
     EXPECT_TRUE(std::equal(vec.begin(), vec.end(), &array[0]));
@@ -128,4 +161,28 @@ TEST(ArrayView, slice)
     expectArrayView(ref.slice(0, 6), {6, 5, 4, 3, 2, 1});
     expectArrayView(ref.slice(1, 5), {5, 4, 3, 2});
     EXPECT_TRUE(ref.slice(3, 3).isEmpty());
+}
+
+TEST(ArrayView, sliceFromBack)
+{
+    ArrayView<int> ref{6, 5, 4, 3, 2, 1};
+    expectArrayView(ref.sliceFromBack(0), {6, 5, 4, 3, 2, 1});
+    expectArrayView(ref.sliceFromBack(2), {6, 5, 4, 3});
+    EXPECT_TRUE(ref.sliceFromBack(6).isEmpty());
+}
+
+TEST(ArrayView, assign)
+{
+    ArrayView<char> ref = ArrayView<char>::empty();
+    ref = {'a', 's', 'd'};
+    expectArrayView(ref, {'a', 's', 'd'});
+
+    std::vector<char> vec{'t', 's', 'd'};
+    ref = vec;
+    expectArrayView(ref, {'t', 's', 'd'});
+
+
+    std::array<char, 4> arr{{'t', 'r', 'd', 'f'}};
+    ref = arr;
+    expectArrayView(ref, {'t', 'r', 'd', 'f'});
 }

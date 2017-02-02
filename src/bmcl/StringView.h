@@ -28,6 +28,9 @@ public:
     inline StringView(const char* data, std::size_t size);
     inline StringView(const char* start, const char* end);
     inline StringView(const std::string& str);
+    inline StringView(ArrayView<char> view);
+    template <std::size_t S>
+    inline StringView(FixedArrayView<char, S> view);
 
     inline std::string toStdString() const;
     std::string toUpper() const;
@@ -37,10 +40,6 @@ public:
 
     inline bool startsWith(StringView prefix) const;
     inline bool endsWith(StringView postfix) const;
-
-    inline bool equals(StringView other) const;
-    inline bool equals(const std::string& other) const;
-    inline bool equals(const char* cstr) const;
 
     Option<std::size_t> findFirstOf(char c, std::size_t from = 0) const;
     Option<std::size_t> findFirstOf(StringView chars, std::size_t from = 0) const;
@@ -59,10 +58,6 @@ public:
     StringView ltrim(StringView chars = " \t\n\v\f\r") const;
     StringView rtrim(StringView chars = " \t\n\v\f\r") const;
     StringView trim(StringView chars = " \t\n\v\f\r") const;
-
-    void reset();
-
-    inline bool operator==(StringView other) const;
 
 private:
     template <typename C>
@@ -96,8 +91,19 @@ inline StringView::StringView(const std::string& str)
 {
 }
 
+inline StringView::StringView(ArrayView<char> view)
+    : ArrayViewBase<char, StringView>(view.data(), view.size())
+{
+}
+
 inline StringView::StringView(const char* data, std::size_t size)
     : ArrayViewBase<char, StringView>(data, size)
+{
+}
+
+template <std::size_t S>
+inline StringView::StringView(FixedArrayView<char, S> view)
+    : ArrayViewBase<char, StringView>(view.data(), view.size())
 {
 }
 
@@ -116,74 +122,20 @@ inline bool StringView::endsWith(StringView prefix) const
     return (size() >= prefix.size()) && (std::memcmp(end() - prefix.size(), prefix.data(), prefix.size()) == 0);
 }
 
-inline bool StringView::equals(StringView other) const
-{
-    return (size() == other.size()) && (std::memcmp(data(), other.data(), size()) == 0);
-}
-
-inline bool StringView::equals(const std::string& other) const
-{
-    return (size() == other.size()) && (std::memcmp(data(), other.data(), size()) == 0);
-}
-
-inline bool StringView::equals(const char* cstr) const
-{
-    std::size_t otherSize = std::strlen(cstr);
-    return (size() == otherSize) && (std::memcmp(data(), cstr, size()) == 0);
-}
-
 inline std::string StringView::toStdString() const
 {
     return std::string(data(), size());
 }
 
-inline void StringView::reset()
+template <typename T>
+inline bool operator==(const T& lhs, StringView rhs)
 {
-    ArrayViewBase<char, StringView>::reset("", std::size_t(0));
+    return StringView(lhs).operator==(rhs);
 }
 
-inline bool StringView::operator==(StringView other) const
+template <typename T>
+inline bool operator!=(const T& lhs, StringView rhs)
 {
-    return equals(other);
-}
-
-inline bool operator==(const std::string& lhs, StringView rhs)
-{
-    return rhs.equals(lhs);
-}
-
-inline bool operator!=(const std::string& lhs, StringView rhs)
-{
-    return !rhs.equals(lhs);
-}
-
-inline bool operator==(StringView lhs, const std::string& rhs)
-{
-    return lhs.equals(rhs);
-}
-
-inline bool operator!=(StringView lhs, const std::string& rhs)
-{
-    return !lhs.equals(rhs);
-}
-
-inline bool operator==(const char* lhs, StringView rhs)
-{
-    return rhs.equals(lhs);
-}
-
-inline bool operator!=(const char* lhs, StringView rhs)
-{
-    return !rhs.equals(lhs);
-}
-
-inline bool operator==(StringView lhs, const char* rhs)
-{
-    return lhs.equals(rhs);
-}
-
-inline bool operator!=(StringView lhs, const char* rhs)
-{
-    return !lhs.equals(rhs);
+    return StringView(lhs).operator!=(rhs);
 }
 }
