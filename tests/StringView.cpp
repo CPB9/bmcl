@@ -7,7 +7,6 @@
 
 using namespace bmcl;
 
-
 static void expectStringView(StringView ref, const char* data, std::size_t size)
 {
     ASSERT_EQ(size, ref.size());

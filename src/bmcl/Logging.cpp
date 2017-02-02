@@ -98,7 +98,11 @@ Logger& Logger::operator<<(const char* msg)
 {
     if ((int)_level <= (int)_allowedLevel)
     {
+#if BMCL_HAVE_QT
         _stream << QString::fromUtf8(msg);
+#else
+        _stream << msg;
+#endif
     }
     return *this;
 }
@@ -107,7 +111,11 @@ template<>
 Logger& Logger::operator<<(const std::string & value)
 {
     if ((int)_level <= (int)_allowedLevel) {
+#if BMCL_HAVE_QT
         _stream << QString::fromStdString(value);
+#else
+        _stream << value.c_str();
+#endif
     }
     return *this;
 }
