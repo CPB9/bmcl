@@ -205,7 +205,7 @@ inline void Writer<B>::writeFloat(T value, C convert)
 {
     BMCL_ASSERT(std::numeric_limits<T>::is_iec559);
     H swapped = convert(&value);
-    write(&swapped, sizeof(H));
+    static_cast<B*>(this)->write(&swapped, sizeof(H));
 }
 
 template <typename B>

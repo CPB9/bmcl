@@ -21,7 +21,7 @@ namespace bmcl {
 /* 'Words' here refers to uint64_t */
 
 template <std::size_t bits>
-class Sha3 {
+class BMCL_EXPORT Sha3 {
 public:
     /* the double size of the hash output in
      * words (e.g. 16 for Keccak 512) */
