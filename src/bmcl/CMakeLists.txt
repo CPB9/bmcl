@@ -50,8 +50,12 @@ add_library(bmcl SHARED
     Writer.h
 )
 
+if(MINGW)
+    target_link_libraries(bmcl shlwapi)
+endif()
+
 if (MSVC)
-	target_link_libraries(bmcl Shlwapi)
+    target_link_libraries(bmcl Shlwapi)
 endif()
 
 if (BMCL_HAVE_QT)

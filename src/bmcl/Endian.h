@@ -264,6 +264,30 @@ inline std::uint64_t htole(std::uint64_t value)
     return htole64(value);
 }
 
+template <>
+inline std::int8_t htole(std::int8_t value)
+{
+    return value;
+}
+
+template <>
+inline std::int16_t htole(std::int16_t value)
+{
+    return htole16(value);
+}
+
+template <>
+inline std::int32_t htole(std::int32_t value)
+{
+    return htole32(value);
+}
+
+template <>
+inline std::int64_t htole(std::int64_t value)
+{
+    return htole64(value);
+}
+
 template <typename T>
 T letoh(T value);
 
@@ -287,6 +311,30 @@ inline std::uint32_t letoh(std::uint32_t value)
 
 template <>
 inline std::uint64_t letoh(std::uint64_t value)
+{
+    return le64toh(value);
+}
+
+template <>
+inline std::int8_t letoh(std::int8_t value)
+{
+    return value;
+}
+
+template <>
+inline std::int16_t letoh(std::int16_t value)
+{
+    return le16toh(value);
+}
+
+template <>
+inline std::int32_t letoh(std::int32_t value)
+{
+    return le32toh(value);
+}
+
+template <>
+inline std::int64_t letoh(std::int64_t value)
 {
     return le64toh(value);
 }
@@ -318,6 +366,30 @@ inline std::uint64_t htobe(std::uint64_t value)
     return htobe64(value);
 }
 
+template <>
+inline std::int8_t htobe(std::int8_t value)
+{
+    return value;
+}
+
+template <>
+inline std::int16_t htobe(std::int16_t value)
+{
+    return htobe16(value);
+}
+
+template <>
+inline std::int32_t htobe(std::int32_t value)
+{
+    return htobe32(value);
+}
+
+template <>
+inline std::int64_t htobe(std::int64_t value)
+{
+    return htobe64(value);
+}
+
 template <typename T>
 T betoh(T value);
 
@@ -341,6 +413,30 @@ inline std::uint32_t betoh(std::uint32_t value)
 
 template <>
 inline std::uint64_t betoh(std::uint64_t value)
+{
+    return be64toh(value);
+}
+
+template <>
+inline std::int8_t betoh(std::int8_t value)
+{
+    return value;
+}
+
+template <>
+inline std::int16_t betoh(std::int16_t value)
+{
+    return be16toh(value);
+}
+
+template <>
+inline std::int32_t betoh(std::int32_t value)
+{
+    return be32toh(value);
+}
+
+template <>
+inline std::int64_t betoh(std::int64_t value)
 {
     return be64toh(value);
 }

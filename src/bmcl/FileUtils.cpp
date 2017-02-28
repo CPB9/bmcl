@@ -21,7 +21,7 @@
 
 #if defined(BMCL_PLATFORM_WINDOWS)
 # include <windows.h>
-# include <Shlwapi.h>
+# include <shlwapi.h>
 #elif defined(BMCL_PLATFORM_UNIX)
 # include <sys/types.h>
 # include <unistd.h>
