@@ -70,9 +70,14 @@ static void coutHandler(LogLevel level, const char* msg)
 
 static LogHandler currentLogHandler = coutHandler;
 
-void setLogHandler(LogHandler handler)
+void setLogHandler(const LogHandler& handler)
 {
     currentLogHandler = handler;
+}
+
+void setLogHandler(LogHandler&& handler)
+{
+    currentLogHandler = std::move(handler);
 }
 
 void setDefaulLogHandler()
