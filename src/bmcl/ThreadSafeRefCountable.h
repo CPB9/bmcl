@@ -28,12 +28,12 @@ public:
     }
 
 private:
-    friend void bmclRcAddRef(bmcl::ThreadSafeRefCountable<T>* rc)
+    friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountable<T>* rc)
     {
         rc->_rc.fetch_add(1, std::memory_order_relaxed);
     }
 
-    friend void bmclRcRelease(bmcl::ThreadSafeRefCountable<T>* rc)
+    friend void bmclRcRelease(const bmcl::ThreadSafeRefCountable<T>* rc)
     {
         if (rc->_rc.fetch_sub(1, std::memory_order_release) == 1) {
             std::atomic_thread_fence(std::memory_order_acquire);
@@ -41,6 +41,6 @@ private:
         }
     }
 
-    std::atomic<T> _rc;
+    mutable std::atomic<T> _rc;
 };
 }

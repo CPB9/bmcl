@@ -26,12 +26,12 @@ public:
     }
 
 private:
-    friend void bmclRcAddRef(bmcl::RefCountable<T>* rc)
+    friend void bmclRcAddRef(const bmcl::RefCountable<T>* rc)
     {
         rc->_rc++;
     }
 
-    friend void bmclRcRelease(bmcl::RefCountable<T>* rc)
+    friend void bmclRcRelease(const bmcl::RefCountable<T>* rc)
     {
         rc->_rc--;
         if (rc->_rc == 0) {
@@ -39,7 +39,7 @@ private:
         }
     }
 
-    T _rc;
+    mutable T _rc;
 };
 }
 
