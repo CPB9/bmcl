@@ -65,14 +65,23 @@ static void coutHandler(LogLevel level, const char* msg)
     ColorStdError out;
     out << ColorAttr::Bright << timeStr << ' ';
     out << attr << prefix << ColorAttr::Reset << ' ';
+#if BMCL_HAVE_QT
+    out << QString::fromUtf8(msg).toLocal8Bit().constData() << std::endl;
+#else
     out << msg << std::endl;
+#endif
 }
 
 static LogHandler currentLogHandler = coutHandler;
 
-void setLogHandler(LogHandler handler)
+void setLogHandler(const LogHandler& handler)
 {
     currentLogHandler = handler;
+}
+
+void setLogHandler(LogHandler&& handler)
+{
+    currentLogHandler = std::move(handler);
 }
 
 void setDefaulLogHandler()
@@ -88,7 +97,7 @@ void log(LogLevel level, const char* msg)
 Logger::~Logger()
 {
 #if BMCL_HAVE_QT
-    log(_level, _buffer.toLocal8Bit().constData());
+    log(_level, _buffer.toUtf8().constData());
 #else
     log(_level, _stream.str().c_str());
 #endif
