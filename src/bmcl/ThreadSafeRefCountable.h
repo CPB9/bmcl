@@ -11,35 +11,36 @@
 #include "bmcl/Config.h"
 #include "bmcl/Rc.h"
 
+#include <atomic>
+
 namespace bmcl {
 
 template <typename T>
-class RefCountable {
+class ThreadSafeRefCountable {
 public:
-    RefCountable()
+    ThreadSafeRefCountable()
         : _rc(0)
     {
     }
 
-    virtual ~RefCountable()
+    virtual ~ThreadSafeRefCountable()
     {
     }
 
 private:
-    friend void bmclRcAddRef(const bmcl::RefCountable<T>* rc)
+    friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountable<T>* rc)
     {
-        rc->_rc++;
+        rc->_rc.fetch_add(1, std::memory_order_relaxed);
     }
 
-    friend void bmclRcRelease(const bmcl::RefCountable<T>* rc)
+    friend void bmclRcRelease(const bmcl::ThreadSafeRefCountable<T>* rc)
     {
-        rc->_rc--;
-        if (rc->_rc == 0) {
+        if (rc->_rc.fetch_sub(1, std::memory_order_release) == 1) {
+            std::atomic_thread_fence(std::memory_order_acquire);
             delete rc;
         }
     }
 
-    mutable T _rc;
+    mutable std::atomic<T> _rc;
 };
 }
-

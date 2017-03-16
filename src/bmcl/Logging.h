@@ -10,6 +10,8 @@
 
 #include "bmcl/Config.h"
 
+#include <functional>
+
 #if BMCL_HAVE_QT
 #include <QTextStream>
 #include <QBuffer>
@@ -34,11 +36,12 @@ enum class LogLevel {
     Debug = 5
 };
 
-typedef void (*LogHandler)(LogLevel level, const char* msg);
+using LogHandler = std::function<void(LogLevel level, const char* msg)>;
 
 BMCL_EXPORT void setLogLevel(LogLevel level);
 BMCL_EXPORT LogLevel logLevel();
-BMCL_EXPORT void setLogHandler(LogHandler handler);
+BMCL_EXPORT void setLogHandler(const LogHandler& handler);
+BMCL_EXPORT void setLogHandler(LogHandler&& handler);
 BMCL_EXPORT void setDefaulLogHandler();
 BMCL_EXPORT void log(LogLevel level, const char* msg);
 

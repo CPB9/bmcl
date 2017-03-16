@@ -44,6 +44,7 @@ add_library(bmcl SHARED
     String.cpp
     StringView.cpp
     StringView.h
+    ThreadSafeRefCountable.h
     FileUtils.cpp
     FileUtils.h
     Utils.h
