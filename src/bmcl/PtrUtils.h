@@ -10,15 +10,10 @@
 
 #include <memory>
 #include "bmcl/NonNullUniquePtr.h"
+#include "bmcl/Utils.h"
 
 namespace bmcl
 {
-
-template <typename T, typename... A>
-inline std::unique_ptr<T> makeUnique(A&&... args)
-{
-    return std::unique_ptr<T>(new T(std::forward<A>(args)...));
-}
 
 template <typename R, typename T, typename... A>
 inline std::unique_ptr<R> makeUniqueSubType(A&&... args)

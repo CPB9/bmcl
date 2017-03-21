@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "bmcl/Config.h"
+#include "bmcl/Fwd.h"
+
 #include "bmcl/AlignedUnion.h"
 #include "bmcl/Alloca.h"
 #include "bmcl/ArrayView.h"
@@ -25,12 +28,16 @@
 #include "bmcl/OptionPtr.h"
 #include "bmcl/Panic.h"
 #include "bmcl/PtrUtils.h"
+#include "bmcl/Rc.h"
 #include "bmcl/Reader.h"
+#include "bmcl/RefCountable.h"
 #include "bmcl/Result.h"
 #include "bmcl/RingArray.h"
 #include "bmcl/RingBucket.h"
 #include "bmcl/RingBuffer.h"
+#include "bmcl/Sha3.h"
 #include "bmcl/String.h"
 #include "bmcl/StringView.h"
+#include "bmcl/ThreadSafeRefCountable.h"
 #include "bmcl/Utils.h"
 #include "bmcl/Writer.h"

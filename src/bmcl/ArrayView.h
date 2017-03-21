@@ -413,5 +413,5 @@ inline bool operator!=(const T& lhs, ArrayView<R> rhs)
     return ArrayView<R>(lhs).operator!=(rhs);
 }
 
-typedef ArrayView<uint8_t> Bytes;
+using Bytes = ArrayView<uint8_t>;
 }
