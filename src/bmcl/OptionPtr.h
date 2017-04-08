@@ -15,8 +15,7 @@
 #include "bmcl/Utils.h"
 #include "bmcl/Assert.h"
 
-namespace bmcl
-{
+namespace bmcl {
 
 template <typename T>
 class OptionPtr
@@ -30,6 +29,11 @@ public:
     OptionPtr(const OptionPtr<T>& other);
     OptionPtr(OptionPtr<T>&& other);
 
+    template <typename C>
+    OptionPtr(const OptionPtr<C>& other);
+    template <typename C>
+    OptionPtr(OptionPtr<C>&& other);
+
     bool isSome() const;
     bool isNone() const;
 
@@ -40,6 +44,9 @@ public:
 
     T* take();
 
+    const T* data() const;
+    T* data();
+
     OptionPtr& operator=(const OptionPtr& other);
     OptionPtr& operator=(OptionPtr&& other);
     OptionPtr& operator=(T* value);
@@ -49,95 +56,109 @@ public:
     const T& operator*() const;
     T& operator*();
 
-    template <class R>
+    template <typename R>
 #ifdef _MSC_VER
     T* unwrapOr(R* value) const;
 #else
     T* unwrapOr(R* value) const&;
 
-    template <class R>
+    template <typename R>
     T* unwrapOr(R* value) &&;
 #endif
 
 private:
-
     T* _data;
-
 };
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr()
         : _data(nullptr)
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr(std::nullptr_t)
         : OptionPtr()
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr(NoneType)
         : OptionPtr()
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::~OptionPtr()
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr(T* value)
         : _data(value)
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr(const OptionPtr<T>& other)
         : _data(other._data)
 {
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>::OptionPtr(OptionPtr<T>&& other)
         : _data(other._data)
 {
     other.clear();
 }
 
-template<class T>
+template <typename T>
+template <typename C>
+OptionPtr<T>::OptionPtr(const OptionPtr<C>& other)
+    : _data(other.data())
+{
+}
+
+template <typename T>
+template <typename C>
+OptionPtr<T>::OptionPtr(OptionPtr<C>&& other)
+    : _data(other.data())
+{
+    other.clear();
+}
+
+
+template <typename T>
 bool OptionPtr<T>::isSome() const
 {
     return _data != nullptr;
 }
 
-template<class T>
+template <typename T>
 bool OptionPtr<T>::isNone() const
 {
     return _data == nullptr;
 }
 
-template<class T>
+template <typename T>
 const T* OptionPtr<T>::unwrap() const
 {
     return _data;
 }
 
-template<class T>
+template <typename T>
 T* OptionPtr<T>::unwrap()
 {
     return _data;
 }
 
-template<class T>
+template <typename T>
 void OptionPtr<T>::clear()
 {
     _data = nullptr;
 }
 
-template<class T>
+template <typename T>
 T* OptionPtr<T>::take()
 {
     T* res = _data;
@@ -145,14 +166,26 @@ T* OptionPtr<T>::take()
     return res;
 }
 
-template<class T>
+template <typename T>
+T* OptionPtr<T>::data()
+{
+    return _data;
+}
+
+template <typename T>
+const T* OptionPtr<T>::data() const
+{
+    return _data;
+}
+
+template <typename T>
 OptionPtr<T>& OptionPtr<T>::operator=(const OptionPtr<T>& other)
 {
     _data = other._data;
     return *this;
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>& OptionPtr<T>::operator=(OptionPtr<T>&& other)
 {
     _data = other._data;
@@ -160,33 +193,33 @@ OptionPtr<T>& OptionPtr<T>::operator=(OptionPtr<T>&& other)
     return *this;
 }
 
-template<class T>
+template <typename T>
 OptionPtr<T>& OptionPtr<T>::operator=(T* value)
 {
     _data = value;
     return *this;
 }
 
-template<class T>
+template <typename T>
 inline const T* OptionPtr<T>::operator->() const
 {
     return _data;
 }
 
-template<class T>
+template <typename T>
 inline T* OptionPtr<T>::operator->()
 {
     return _data;
 }
 
-template<class T>
+template <typename T>
 inline const T& OptionPtr<T>::operator*() const
 {
     BMCL_ASSERT(_data != nullptr);
     return *_data;
 }
 
-template<class T>
+template <typename T>
 inline T& OptionPtr<T>::operator*()
 {
     BMCL_ASSERT(_data != nullptr);
@@ -195,8 +228,8 @@ inline T& OptionPtr<T>::operator*()
 
 #ifdef _MSC_VER
 
-template<class T>
-template <class R>
+template <typename T>
+template <typename R>
 T* OptionPtr<T>::unwrapOr(R* value) const
 {
     return _data != nullptr? _data : value;
@@ -204,19 +237,18 @@ T* OptionPtr<T>::unwrapOr(R* value) const
 
 #else
 
-template<class T>
-template <class R>
+template <typename T>
+template <typename R>
 inline T* OptionPtr<T>::unwrapOr(R* value) const&
 {
     return _data != nullptr ? _data : value;
 }
 
-template<class T>
-template <class R>
+template <typename T>
+template <typename R>
 inline T* OptionPtr<T>::unwrapOr(R* value) &&
 {
-    if (_data != nullptr)
-    {
+    if (_data != nullptr) {
         T* res = _data;
         clear();
         return res;
