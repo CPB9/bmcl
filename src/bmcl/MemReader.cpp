@@ -50,7 +50,7 @@ void MemReader::read(void* dest, std::size_t size)
 // sqlite varuint
 
 #define RETURN_IF_SIZE_LESS(size)   \
-    if (sizeLeft() < size) {           \
+    if (sizeLeft() < size) {        \
         return false;               \
     }
 

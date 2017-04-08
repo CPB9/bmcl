@@ -69,45 +69,40 @@ template<class T>
 OptionPtr<T>::OptionPtr()
         : _data(nullptr)
 {
-
 }
 
 template<class T>
 OptionPtr<T>::OptionPtr(std::nullptr_t)
         : OptionPtr()
 {
-
 }
 
 template<class T>
 OptionPtr<T>::OptionPtr(NoneType)
         : OptionPtr()
 {
-
 }
 
 template<class T>
 OptionPtr<T>::~OptionPtr()
 {
-
 }
 
 template<class T>
 OptionPtr<T>::OptionPtr(T* value)
         : _data(value)
 {
-
 }
 
 template<class T>
 OptionPtr<T>::OptionPtr(const OptionPtr<T>& other)
         : _data(other._data)
 {
-
 }
 
 template<class T>
 OptionPtr<T>::OptionPtr(OptionPtr<T>&& other)
+        : _data(other._data)
 {
     other.clear();
 }
@@ -145,7 +140,8 @@ void OptionPtr<T>::clear()
 template<class T>
 T* OptionPtr<T>::take()
 {
-    T* res = _data; clear();
+    T* res = _data;
+    clear();
     return res;
 }
 

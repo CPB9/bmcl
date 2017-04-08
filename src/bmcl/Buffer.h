@@ -54,6 +54,8 @@ public:
     void write(const void* data, std::size_t size);
     inline std::size_t writableSize() const;
 
+    void writeVarUint(uint64_t value);
+
     Buffer& operator=(const Buffer& other);
     Buffer& operator=(Buffer&& other);
 
@@ -61,6 +63,7 @@ public:
     inline uint8_t operator[](std::size_t index) const;
 
 private:
+    void extend(std::size_t additionalSize);
     void dealloc();
     void copyFrom(const Buffer& other);
     void moveFrom(Buffer&& other);

@@ -15,6 +15,8 @@ namespace bmcl {
 template <typename T>
 class Rc {
 public:
+    using value_type = T;
+
     Rc();
     Rc(T* ptr);
     Rc(const Rc& other);
@@ -32,7 +34,7 @@ public:
 
     Rc& operator=(Rc&& other);
     Rc& operator=(const Rc& other);
-    Rc& operator=(T * other);
+    Rc& operator=(T* other);
     template <typename U>
     Rc& operator=(const Rc<U>& other);
 
@@ -150,7 +152,7 @@ Rc<T>& Rc<T>::operator=(const Rc<T>& other)
 }
 
 template <typename T>
-Rc<T>& Rc<T>::operator=(T * other)
+Rc<T>& Rc<T>::operator=(T* other)
 {
     Rc<T>(other).swap(*this);
     return *this;
@@ -187,25 +189,25 @@ inline bool operator!=(const Rc<T>& left, const Rc<U>& right)
 }
 
 template <typename T, typename U>
-inline bool operator==(const Rc<T>& left, U * right)
+inline bool operator==(const Rc<T>& left, U* right)
 {
     return left.get() == right;
 }
 
 template <typename T, typename U>
-inline bool operator!=(const Rc<T>& left, U * right)
+inline bool operator!=(const Rc<T>& left, U* right)
 {
     return left.get() != right;
 }
 
 template <typename T, typename U>
-inline bool operator==(T * left, const Rc<U>& right)
+inline bool operator==(T* left, const Rc<U>& right)
 {
     return left == right.get();
 }
 
 template <typename T, typename U>
-inline bool operator!=(T * left, const Rc<U>& right)
+inline bool operator!=(T* left, const Rc<U>& right)
 {
     return left != right.get();
 }

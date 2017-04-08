@@ -122,6 +122,11 @@ void Buffer::resize(std::size_t size)
     _size = size;
 }
 
+void Buffer::extend(std::size_t additionalSize)
+{
+    resize(_size + additionalSize);
+}
+
 void Buffer::resize(std::size_t size, uint8_t filler)
 {
     if (size > _capacity) {
@@ -143,5 +148,97 @@ void Buffer::write(const void* data, std::size_t size)
     }
     std::memcpy(_ptr + _size, data, size);
     _size += size;
+}
+
+void Buffer::writeVarUint(uint64_t value)
+{
+    std::size_t lastSize = _size;
+    if (value <= 240) {
+        extend(1);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = uint8_t(value);
+        return;
+    }
+    if (value <= 2287) {
+        extend(2);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = uint8_t((value - 240) / 256 + 241);
+        current[1] = uint8_t((value - 240) % 256);
+        return;
+    }
+    if (value <= 67823) {
+        extend(3);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 249;
+        current[1] = uint8_t((value - 2288) / 256);
+        current[2] = uint8_t((value - 2288) % 256);
+        return;
+    }
+    if (value <= 16777215) {
+        extend(4);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 250;
+        current[1] = uint8_t(value >> 16);
+        current[2] = uint8_t(value >> 8);
+        current[3] = uint8_t(value);
+        return;
+    }
+    if (value <= 4294967295) {
+        extend(5);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 251;
+        current[1] = uint8_t(value >> 24);
+        current[2] = uint8_t(value >> 16);
+        current[3] = uint8_t(value >> 8);
+        current[4] = uint8_t(value);
+        return;
+    }
+    if (value <= 1099511627775) {
+        extend(6);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 252;
+        current[1] = uint8_t(value >> 32);
+        current[2] = uint8_t(value >> 24);
+        current[3] = uint8_t(value >> 16);
+        current[4] = uint8_t(value >> 8);
+        current[5] = uint8_t(value);
+        return;
+    }
+    if (value <= 281474976710655) {
+        extend(7);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 253;
+        current[1] = uint8_t(value >> 40);
+        current[2] = uint8_t(value >> 32);
+        current[3] = uint8_t(value >> 24);
+        current[4] = uint8_t(value >> 16);
+        current[5] = uint8_t(value >> 8);
+        current[6] = uint8_t(value);
+        return;
+    }
+    if (value <= 72057594037927935) {
+        extend(8);
+        uint8_t* current = _ptr + lastSize;
+        current[0] = 254;
+        current[1] = uint8_t(value >> 48);
+        current[2] = uint8_t(value >> 40);
+        current[3] = uint8_t(value >> 32);
+        current[4] = uint8_t(value >> 24);
+        current[5] = uint8_t(value >> 16);
+        current[6] = uint8_t(value >> 8);
+        current[7] = uint8_t(value);
+        return;
+    }
+    extend(9);
+    uint8_t* current = _ptr + lastSize;
+    current[0] = 255;
+    current[1] = uint8_t(value >> 56);
+    current[2] = uint8_t(value >> 48);
+    current[3] = uint8_t(value >> 40);
+    current[4] = uint8_t(value >> 32);
+    current[5] = uint8_t(value >> 24);
+    current[6] = uint8_t(value >> 16);
+    current[7] = uint8_t(value >> 8);
+    current[8] = uint8_t(value);
 }
 }
