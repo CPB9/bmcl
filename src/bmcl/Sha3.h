@@ -9,7 +9,7 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/ArrayView.h"
+#include "bmcl/Fwd.h"
 
 #include <array>
 

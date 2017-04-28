@@ -3,6 +3,7 @@
 #include "BmclTest.h"
 #include "bmcl/Logging.h"
 #include "bmcl/ArrayView.h"
+#include "bmcl/FixedArrayView.h"
 #include "bmcl/StringView.h"
 
 #include <cstddef>

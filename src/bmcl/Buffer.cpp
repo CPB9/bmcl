@@ -7,6 +7,7 @@
  */
 
 #include "bmcl/Buffer.h"
+#include "bmcl/MemWriter.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -28,6 +29,11 @@ Buffer::Buffer(std::size_t size)
     , _capacity(size)
 {
     _ptr = (uint8_t*)std::malloc(size);
+}
+
+MemWriter Buffer::dataWriter()
+{
+    return MemWriter(_ptr, _size);
 }
 
 void Buffer::copyFrom(const Buffer& other)

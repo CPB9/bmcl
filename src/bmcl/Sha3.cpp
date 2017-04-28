@@ -27,6 +27,8 @@
  * ---------------------------------------------------------------------- */
 
 #include "bmcl/Sha3.h"
+#include "bmcl/ArrayView.h"
+#include "bmcl/FixedArrayView.h"
 
 #include <cstdio>
 #include <cstdint>

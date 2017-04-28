@@ -10,7 +10,7 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/ArrayView.h"
-#include "bmcl/OptionFwd.h"
+#include "bmcl/Fwd.h"
 
 #include <cassert>
 #include <algorithm>

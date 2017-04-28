@@ -101,3 +101,12 @@ TEST_F(BufferTest, writeSeveral)
     expectSize(10);
     expectData(expected);
 }
+
+TEST_F(BufferTest, toBytesAutoConv)
+{
+    init();
+    writeUint8(3);
+    Bytes b = *_buf;
+    EXPECT_EQ(1, b.size());
+    EXPECT_EQ(3, b[0]);
+}

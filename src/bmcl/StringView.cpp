@@ -6,8 +6,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "bmcl/Config.h"
 #include "bmcl/StringView.h"
+#include "bmcl/FixedArrayView.h"
 #include "bmcl/Option.h"
 
 #include <bitset>

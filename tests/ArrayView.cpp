@@ -1,4 +1,5 @@
 #include "bmcl/ArrayView.h"
+#include "bmcl/FixedArrayView.h"
 #include "bmcl/StringView.h"
 #include "bmcl/Buffer.h"
 

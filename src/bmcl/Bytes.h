@@ -9,5 +9,10 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/bits/BufferDecl.h"
-#include "bmcl/bits/BufferImpl.h"
+#include "bmcl/ArrayView.h"
+
+namespace bmcl {
+
+using Bytes = ArrayView<uint8_t>;
+}
+

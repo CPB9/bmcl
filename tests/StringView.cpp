@@ -1,4 +1,6 @@
 #include "bmcl/StringView.h"
+#include "bmcl/ArrayView.h"
+#include "bmcl/FixedArrayView.h"
 #include "bmcl/Option.h"
 
 #include "BmclTest.h"
