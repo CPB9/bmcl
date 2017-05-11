@@ -40,6 +40,7 @@ public:
     void fill(uint8_t byte, std::size_t size);
 
     void write(const void* data, std::size_t size);
+    inline void write(Bytes data);
     inline std::size_t writableSize() const;
 
     bool writeVarUint(uint64_t value);

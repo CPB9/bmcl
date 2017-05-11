@@ -74,4 +74,9 @@ inline std::size_t MemWriter::writableSize() const
 {
     return _end - _current;
 }
+
+inline void MemWriter::write(Bytes data)
+{
+    write(data.data(), data.size());
+}
 }

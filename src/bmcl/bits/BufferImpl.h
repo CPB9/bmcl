@@ -98,8 +98,13 @@ inline uint8_t Buffer::operator[](std::size_t index) const
     return _ptr[index];
 }
 
-inline Buffer::operator Bytes() const
+inline Bytes Buffer::asBytes() const
 {
     return Bytes(_ptr, _size);
+}
+
+inline Buffer::operator Bytes() const
+{
+    return asBytes();
 }
 }

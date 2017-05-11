@@ -31,6 +31,14 @@ Buffer::Buffer(std::size_t size)
     _ptr = (uint8_t*)std::malloc(size);
 }
 
+Buffer::Buffer(bmcl::Bytes data)
+    : _size(data.size())
+    , _capacity(data.size())
+{
+    _ptr = (uint8_t*)std::malloc(data.size());
+    std::memcpy(_ptr, data.data(), data.size());
+}
+
 MemWriter Buffer::dataWriter()
 {
     return MemWriter(_ptr, _size);
@@ -118,6 +126,14 @@ void Buffer::reserve(std::size_t capacity)
     if (capacity > _capacity) {
         realloc(capacity);
     }
+}
+
+void Buffer::removeFront(std::size_t size)
+{
+    BMCL_ASSERT(size <= _size);
+    std::size_t newSize = _size - size;
+    std::memmove(_ptr, _ptr + size, newSize);
+    _size = newSize;
 }
 
 void Buffer::resize(std::size_t size)

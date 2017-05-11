@@ -28,6 +28,7 @@ public:
 
     Buffer();
     Buffer(std::size_t size);
+    Buffer(bmcl::Bytes data);
     Buffer(const Buffer& other);
     Buffer(Buffer&& other);
     ~Buffer();
@@ -53,6 +54,7 @@ public:
     void resize(std::size_t size);
     void resize(std::size_t size, uint8_t filler);
     void reserve(std::size_t size);
+    void removeFront(std::size_t size);
     void shrink();
 
     void write(const void* data, std::size_t size);
@@ -66,6 +68,7 @@ public:
     inline uint8_t& operator[](std::size_t index);
     inline uint8_t operator[](std::size_t index) const;
 
+    inline Bytes asBytes() const;
     inline operator Bytes() const;
 
 private:
