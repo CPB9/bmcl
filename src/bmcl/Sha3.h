@@ -11,8 +11,6 @@
 #include "bmcl/Config.h"
 #include "bmcl/Fwd.h"
 
-#include <array>
-
 #include <cstdint>
 #include <cstddef>
 
@@ -37,13 +35,11 @@ public:
     FixedArrayView<uint8_t, bits / 8> finalize();
 
 private:
-    void keccakf();
-
     uint64_t _saved;             /* the portion of the input message that we
                                   * didn't consume yet */
     union {                     /* Keccak's state */
-        std::array<std::uint64_t, keccakSpongeWords> _s64;
-        std::array<std::uint8_t, keccakSpongeBytes> _s8;
+        std::uint64_t _s64[keccakSpongeWords];
+        std::uint8_t _s8[keccakSpongeBytes];
     };
     unsigned _byteIndex;         /* 0..7--the next byte after the set one
                                   * (starts from 0; 0--none are buffered) */

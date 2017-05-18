@@ -51,7 +51,7 @@ namespace bmcl {
 
 #define KECCAK_ROUNDS 24
 
-static const uint64_t keccakf_rndc[KECCAK_ROUNDS] = {
+static const uint64_t keccakfRndc[KECCAK_ROUNDS] = {
     SHA3_CONST(0x0000000000000001UL), SHA3_CONST(0x0000000000008082UL),
     SHA3_CONST(0x800000000000808aUL), SHA3_CONST(0x8000000080008000UL),
     SHA3_CONST(0x000000000000808bUL), SHA3_CONST(0x0000000080000001UL),
@@ -66,58 +66,94 @@ static const uint64_t keccakf_rndc[KECCAK_ROUNDS] = {
     SHA3_CONST(0x0000000080000001UL), SHA3_CONST(0x8000000080008008UL)
 };
 
-static const unsigned keccakf_rotc[KECCAK_ROUNDS] = {
-    1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
-    18, 39, 61, 20, 44
-};
-
-static const unsigned keccakf_piln[KECCAK_ROUNDS] = {
-    10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20,
-    14, 22, 9, 6, 1
-};
-
-
-template <std::size_t bits>
-void Sha3<bits>::keccakf()
+static void keccakf(uint64_t* s)
 {
     uint64_t t;
     uint64_t bc[5];
 
     for (std::size_t round = 0; round < KECCAK_ROUNDS; round++) {
-
         /* Theta */
-        for (std::size_t i = 0; i < 5; i++) {
-            bc[i] = _s64[i] ^ _s64[i + 5] ^ _s64[i + 10] ^ _s64[i + 15] ^ _s64[i + 20];
-        }
+        bc[0] = s[0] ^ s[5] ^ s[10] ^ s[15] ^ s[20];
+        bc[1] = s[1] ^ s[6] ^ s[11] ^ s[16] ^ s[21];
+        bc[2] = s[2] ^ s[7] ^ s[12] ^ s[17] ^ s[22];
+        bc[3] = s[3] ^ s[8] ^ s[13] ^ s[18] ^ s[23];
+        bc[4] = s[4] ^ s[9] ^ s[14] ^ s[19] ^ s[24];
 
         for (std::size_t i = 0; i < 5; i++) {
             t = bc[(i + 4) % 5] ^ SHA3_ROTL64(bc[(i + 1) % 5], 1);
-            for (std::size_t j = 0; j < 25; j += 5) {
-                _s64[j + i] ^= t;
-            }
+            s[0 + i] ^= t;
+            s[5 + i] ^= t;
+            s[10 + i] ^= t;
+            s[15 + i] ^= t;
+            s[20 + i] ^= t;
         }
 
-        /* Rho Pi */
-        t = _s64[1];
-        for (std::size_t i = 0; i < KECCAK_ROUNDS; i++) {
-            std::size_t j = keccakf_piln[i];
-            bc[0] = _s64[j];
-            _s64[j] = SHA3_ROTL64(t, keccakf_rotc[i]);
-            t = bc[0];
-        }
+        /* Rho */
+        s[ 1] = SHA3_ROTL64(s[ 1],  1);
+        s[ 2] = SHA3_ROTL64(s[ 2], 62);
+        s[ 3] = SHA3_ROTL64(s[ 3], 28);
+        s[ 4] = SHA3_ROTL64(s[ 4], 27);
+        s[ 5] = SHA3_ROTL64(s[ 5], 36);
+        s[ 6] = SHA3_ROTL64(s[ 6], 44);
+        s[ 7] = SHA3_ROTL64(s[ 7],  6);
+        s[ 8] = SHA3_ROTL64(s[ 8], 55);
+        s[ 9] = SHA3_ROTL64(s[ 9], 20);
+        s[10] = SHA3_ROTL64(s[10],  3);
+        s[11] = SHA3_ROTL64(s[11], 10);
+        s[12] = SHA3_ROTL64(s[12], 43);
+        s[13] = SHA3_ROTL64(s[13], 25);
+        s[14] = SHA3_ROTL64(s[14], 39);
+        s[15] = SHA3_ROTL64(s[15], 41);
+        s[16] = SHA3_ROTL64(s[16], 45);
+        s[17] = SHA3_ROTL64(s[17], 15);
+        s[18] = SHA3_ROTL64(s[18], 21);
+        s[19] = SHA3_ROTL64(s[19],  8);
+        s[20] = SHA3_ROTL64(s[20], 18);
+        s[21] = SHA3_ROTL64(s[21],  2);
+        s[22] = SHA3_ROTL64(s[22], 61);
+        s[23] = SHA3_ROTL64(s[23], 56);
+        s[24] = SHA3_ROTL64(s[24], 14);
+
+        /* Pi */
+        t        = s[1];
+        s[ 1] = s[ 6];
+        s[ 6] = s[ 9];
+        s[ 9] = s[22];
+        s[22] = s[14];
+        s[14] = s[20];
+        s[20] = s[ 2];
+        s[ 2] = s[12];
+        s[12] = s[13];
+        s[13] = s[19];
+        s[19] = s[23];
+        s[23] = s[15];
+        s[15] = s[ 4];
+        s[ 4] = s[24];
+        s[24] = s[21];
+        s[21] = s[ 8];
+        s[ 8] = s[16];
+        s[16] = s[ 5];
+        s[ 5] = s[ 3];
+        s[ 3] = s[18];
+        s[18] = s[17];
+        s[17] = s[11];
+        s[11] = s[ 7];
+        s[ 7] = s[10];
+        s[10] = t;
 
         /* Chi */
         for (std::size_t j = 0; j < 25; j += 5) {
-            for (std::size_t i = 0; i < 5; i++) {
-                bc[i] = _s64[j + i];
-            }
-            for (std::size_t i = 0; i < 5; i++) {
-                _s64[j + i] ^= (~bc[(i + 1) % 5]) & bc[(i + 2) % 5];
-            }
+            bc[0] = s[j + 0];
+            bc[1] = s[j + 1];
+            s[j + 0] ^= ~bc[1] & s[j + 2];
+            s[j + 1] ^= ~s[j + 2] & s[j + 3];
+            s[j + 2] ^= ~s[j + 3] & s[j + 4];
+            s[j + 3] ^= ~s[j + 4] & bc[0];
+            s[j + 4] ^= ~bc[0] & bc[1];
         }
 
         /* Iota */
-        _s64[0] ^= keccakf_rndc[round];
+        s[0] ^= keccakfRndc[round];
     }
 }
 
@@ -131,7 +167,7 @@ template <std::size_t bits>
 void Sha3<bits>::reset()
 {
     _saved = 0;
-    _s64.fill(0);
+    std::memset(_s8, 0, sizeof(_s8));
     _byteIndex = 0;
     _wordIndex = 0;
 }
@@ -176,7 +212,7 @@ void Sha3<bits>::update(const void* src, std::size_t len)
         _byteIndex = 0;
         _saved = 0;
         if (++_wordIndex == (keccakSpongeWords - capacityWords)) {
-            keccakf();
+            keccakf(_s64);
             _wordIndex = 0;
         }
     }
@@ -202,7 +238,7 @@ void Sha3<bits>::update(const void* src, std::size_t len)
 #endif
         _s64[_wordIndex] ^= t;
         if (++_wordIndex == (keccakSpongeWords - capacityWords)) {
-            keccakf();
+            keccakf(_s64);
             _wordIndex = 0;
         }
     }
@@ -230,13 +266,14 @@ FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
 
     _s64[_wordIndex] ^= (_saved ^ ((uint64_t) ((uint64_t) (0x02 | (1 << 2)) << ((_byteIndex) * 8))));
     _s64[keccakSpongeWords - capacityWords - 1] ^= SHA3_CONST(0x8000000000000000UL);
-    keccakf();
+    keccakf(_s64);
 
     /* Return first bytes of the _state64. This conversion is not needed for
      * little-endian platforms e.g. wrap with #if !defined(__BYTE_ORDER__)
      * || !defined(__ORDER_LITTLE_ENDIAN__) || \
      * __BYTE_ORDER__!=__ORDER_LITTLE_ENDIAN__ ... the conversion below ...
      * #endif */
+#ifndef BMCL_LITTLE_ENDIAN
     {
         for (std::size_t i = 0; i < keccakSpongeWords; i++) {
             const unsigned t1 = (uint32_t) _s64[i];
@@ -251,8 +288,9 @@ FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
             _s8[i * 8 + 7] = (uint8_t) (t2 >> 24);
         }
     }
+#endif
 
-    return FixedArrayView<uint8_t, bits / 8>::fromRawData(_s8.data());
+    return FixedArrayView<uint8_t, bits / 8>::fromRawData(_s8);
 }
 
 template class Sha3<224>;
