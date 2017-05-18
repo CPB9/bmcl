@@ -115,7 +115,7 @@ static void keccakf(uint64_t* s)
         s[24] = SHA3_ROTL64(s[24], 14);
 
         /* Pi */
-        t        = s[1];
+        t     = s[ 1];
         s[ 1] = s[ 6];
         s[ 6] = s[ 9];
         s[ 9] = s[22];

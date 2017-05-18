@@ -32,6 +32,7 @@ public:
     typedef const T* const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
 
+    ArrayViewBase();
     template <std::size_t N>
     ArrayViewBase(const std::array<T, N>& lst);
     template <std::size_t N>

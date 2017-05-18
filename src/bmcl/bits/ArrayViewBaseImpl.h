@@ -17,6 +17,13 @@
 namespace bmcl {
 
 template <typename T, typename B>
+inline ArrayViewBase<T, B>::ArrayViewBase()
+    : _data(nullptr)
+    , _size(0)
+{
+}
+
+template <typename T, typename B>
 template <std::size_t N>
 inline B ArrayViewBase<T, B>::fromStaticArray(const T(&data)[N])
 {

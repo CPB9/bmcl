@@ -83,6 +83,13 @@ TEST(ArrayView, fromStringView)
     expectArrayView(ref, {'q', 'w', 'e', 'r'});
 }
 
+TEST(ArrayView, emptyConstructor)
+{
+    ArrayView<uint16_t> view;
+    EXPECT_EQ(0, view.size());
+    EXPECT_TRUE(view.isEmpty());
+}
+
 TEST(ArrayView, empty)
 {
     auto view = ArrayView<uint16_t>::empty();
