@@ -231,11 +231,13 @@ TEST(OptionTest, operatorEqMoveSomeValue)
 
 TEST(OptionTest, operatorEqEq)
 {
+    std::string some = "some";
+    std::string emos = "emos";
     Option<std::string> none1;
     Option<std::string> none2;
-    Option<std::string> some1("some");
-    Option<std::string> some2("some");
-    Option<std::string> some3("emos");
+    Option<std::string> some1(some);
+    Option<std::string> some2(some);
+    Option<std::string> some3(emos);
     EXPECT_TRUE(none1 == none2);
     EXPECT_TRUE(none2 == none1);
     EXPECT_TRUE(some1 == some2);
@@ -244,6 +246,12 @@ TEST(OptionTest, operatorEqEq)
     EXPECT_FALSE(some2 == none2);
     EXPECT_FALSE(some1 == some3);
     EXPECT_FALSE(some3 == some2);
+    EXPECT_TRUE(some1 == some);
+    EXPECT_TRUE(some2 == some);
+    EXPECT_TRUE(some3 == emos);
+    EXPECT_TRUE(some == some1);
+    EXPECT_TRUE(some == some2);
+    EXPECT_TRUE(emos == some3);
 }
 
 TEST(OptionTest, operatorDeref)
@@ -306,6 +314,15 @@ TEST(OptionRefTest, createFromConstValue)
     Option<const std::string&> option = str;
     EXPECT_FALSE(option.isNone());
     EXPECT_TRUE(option.isSome());
+}
+
+TEST(OptionRefTest, createConstOptFromMut)
+{
+    std::string someStr = "some";
+    Option<std::string&> option1 = someStr;
+    Option<const std::string&> option2 = option1;
+    EXPECT_TRUE(option2.isSome());
+    EXPECT_EQ(option1, option2);
 }
 
 TEST(OptionRefTest, unwrapConst)
@@ -480,6 +497,15 @@ TEST(OptionRefTest, operatorEqMoveSomeSome)
     EXPECT_EQ(str2, option.unwrap());
 }
 
+TEST(OptionRefTest, operatorEqSomeValue)
+{
+    Option<const std::string&> option = str1;
+    std::string other = str2;
+    option = other;
+    EXPECT_TRUE(option.isSome());
+    EXPECT_EQ(str2, option.unwrap());
+}
+
 TEST(OptionRefTest, operatorDeref)
 {
     std::string str = "test_asd";
@@ -506,4 +532,19 @@ TEST(OptionRefTest, operatorIndConst)
 {
     Option<const std::string&> option = str;
     EXPECT_EQ(str, option->c_str());
+}
+
+TEST(OptionRefTest, operatorEqEq)
+{
+    std::string someStr = "some";
+    bmcl::Option<const std::string&> none;
+    bmcl::Option<std::string&> mutSome = someStr;
+    bmcl::Option<const std::string&> constSome = someStr;
+    EXPECT_NE(none, mutSome);
+    EXPECT_NE(none, constSome);
+    EXPECT_EQ(constSome, mutSome);
+    EXPECT_EQ(mutSome, someStr);
+    EXPECT_EQ(constSome, someStr);
+    EXPECT_EQ(someStr, mutSome);
+    EXPECT_EQ(someStr, constSome);
 }

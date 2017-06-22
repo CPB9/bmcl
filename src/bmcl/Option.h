@@ -315,11 +315,20 @@ inline T& Option<T>::operator*()
 template <typename T>
 class Option<T&> {
 public:
+    Option();
     Option(NoneType);
     Option(std::nullptr_t);
     Option(T& value);
     Option(const Option& other);
     Option(Option&& other);
+
+    template <typename C>
+    Option(const Option<C&>& other);
+    template <typename C>
+    Option(Option<C&>&& other);
+
+    const T* data() const;
+    T* data();
 
     bool isSome() const;
     bool isNone() const;
@@ -334,6 +343,7 @@ public:
 
     Option& operator=(const Option& other);
     Option& operator=(Option&& other);
+    Option& operator=(T& other);
 
     const T* operator->() const;
     T* operator->();
@@ -343,6 +353,12 @@ public:
 private:
     T* _data;
 };
+
+template <typename T>
+inline Option<T&>::Option()
+    : _data(nullptr)
+{
+}
 
 template <typename T>
 inline Option<T&>::Option(NoneType)
@@ -373,6 +389,33 @@ inline Option<T&>::Option(Option<T&>&& other)
     : _data(other._data)
 {
     other._data = nullptr;
+}
+
+template <typename T>
+template <typename C>
+inline Option<T&>::Option(const Option<C&>& other)
+    : _data(other.data())
+{
+}
+
+template <typename T>
+template <typename C>
+inline Option<T&>::Option(Option<C&>&& other)
+    : _data(other.data())
+{
+    other.clear();
+}
+
+template <typename T>
+inline T* Option<T&>::data()
+{
+    return _data;
+}
+
+template <typename T>
+inline const T* Option<T&>::data() const
+{
+    return _data;
 }
 
 template <typename T>
@@ -438,6 +481,13 @@ Option<T&>& Option<T&>::operator=(Option<T&>&& other)
 }
 
 template <typename T>
+Option<T&>& Option<T&>::operator=(T& other)
+{
+    _data = &other;
+    return *this;
+}
+
+template <typename T>
 inline const T* Option<T&>::operator->() const
 {
     BMCL_ASSERT(isSome());
@@ -466,8 +516,8 @@ inline T& Option<T&>::operator*()
 }
 
 
-template <typename T>
-bool operator==(const Option<T>& left, const Option<T>& right)
+template <typename T, typename U>
+bool operator==(const Option<T>& left, const Option<U>& right)
 {
     if (left.isSome() && right.isSome()) {
         return left.unwrap() == right.unwrap();
@@ -475,8 +525,38 @@ bool operator==(const Option<T>& left, const Option<T>& right)
     return left.isSome() == right.isSome();
 }
 
-template <typename T>
-inline bool operator!=(const Option<T>& left, const Option<T>& right)
+template <typename T, typename U>
+inline bool operator!=(const Option<T>& left, const Option<U>& right)
+{
+    return !operator==(left, right);
+}
+
+template <typename T, typename U>
+bool operator==(const Option<T>& left, const U& right)
+{
+    if (left.isSome()) {
+        return left.unwrap() == right;
+    }
+    return false;
+}
+
+template <typename T, typename U>
+inline bool operator!=(const Option<T>& left, const U& right)
+{
+    return !operator==(left, right);
+}
+
+template <typename T, typename U>
+bool operator==(const T& left, const bmcl::Option<U>& right)
+{
+    if (right.isSome()) {
+        return left == right.unwrap();
+    }
+    return false;
+}
+
+template <typename T, typename U>
+inline bool operator!=(const T& left, const Option<U>& right)
 {
     return !operator==(left, right);
 }
