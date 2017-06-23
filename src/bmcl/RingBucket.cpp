@@ -22,17 +22,6 @@ RingBucket::RingBucket(void* data, std::size_t size)
     _count = 0;
 }
 
-#if BMCL_HAVE_MALLOC
-
-RingBucket::RingBucket(std::size_t size)
-    : _ringbuf(size)
-{
-    BMCL_ASSERT(size != 0);
-    _count = 0;
-}
-
-#endif
-
 void RingBucket::reset()
 
 {

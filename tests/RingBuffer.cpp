@@ -7,16 +7,24 @@ using namespace bmcl;
 class RingBufferTest : public ::testing::Test {
 protected:
     RingBufferTest()
-        : _ringbuf(0)
+        : _ringbuf(nullptr)
+        , _data(nullptr)
     {
     }
 
-    void SetUp() { _ringbuf = 0; }
+    void SetUp()
+    {
+        _ringbuf = nullptr;
+        _data = nullptr;
+    }
 
     void TearDown()
     {
         if (_ringbuf) {
             delete _ringbuf;
+        }
+        if (_data) {
+            delete [] _data;
         }
     }
 
@@ -24,14 +32,17 @@ protected:
     void initRingBufferWithSizeOf(const R (&array)[n])
     {
         (void)array;
-        assert(_ringbuf == 0);
-        _ringbuf = new RingBuffer(sizeof(R) * n);
+        assert(_ringbuf == nullptr);
+        assert(_data == nullptr);
+        _data = new uint8_t[sizeof(R) * n];
+        _ringbuf = new RingBuffer(_data, sizeof(R) * n);
     }
 
     void initRingBufferWithSize(std::size_t size)
     {
-        assert(_ringbuf == 0);
-        _ringbuf = new RingBuffer(size);
+        assert(_data == nullptr);
+        _data = new uint8_t[size];
+        _ringbuf = new RingBuffer(_data, size);
     }
 
     template <std::size_t n, typename R>
@@ -75,6 +86,7 @@ protected:
 
 private:
     RingBuffer* _ringbuf;
+    uint8_t* _data;
 };
 
 TEST_F(RingBufferTest, init)

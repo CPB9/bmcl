@@ -7,23 +7,33 @@ using namespace bmcl;
 class RingBucketTest : public ::testing::Test {
 protected:
     RingBucketTest()
-        : _ringbucket(0)
+        : _ringbucket(nullptr)
+        , _data(nullptr)
     {
     }
 
-    void SetUp() { _ringbucket = 0; }
+    void SetUp()
+    {
+        _ringbucket = nullptr;
+        _data = nullptr;
+    }
 
     void TearDown()
     {
         if (_ringbucket) {
             delete _ringbucket;
         }
+        if (_data) {
+            delete [] _data;
+        }
     }
 
     void initRingBucket(std::size_t size)
     {
-        assert(_ringbucket == 0);
-        _ringbucket = new RingBucket(size);
+        assert(_ringbucket == nullptr);
+        assert(_data == nullptr);
+        _data = new uint8_t[size];
+        _ringbucket = new RingBucket(_data, size);
     }
 
     template <std::size_t n, typename R>
@@ -57,6 +67,7 @@ protected:
 
 private:
     RingBucket* _ringbucket;
+    uint8_t* _data;
 };
 
 TEST_F(RingBucketTest, init)

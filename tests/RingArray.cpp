@@ -7,23 +7,33 @@ using namespace bmcl;
 class RingArrayTest : public ::testing::Test {
 protected:
     RingArrayTest()
-        : _ringarray(0)
+        : _ringarray(nullptr)
+        , _data(nullptr)
     {
     }
 
-    void SetUp() { _ringarray = 0; }
+    void SetUp()
+    {
+        _ringarray = nullptr;
+        _data = nullptr;
+    }
 
     void TearDown()
     {
         if (_ringarray) {
             delete _ringarray;
         }
+        if (_data) {
+            delete [] _data;
+        }
     }
 
     void initRingArray(std::size_t elementNum, std::size_t elementSize)
     {
-        assert(_ringarray == 0);
-        _ringarray = new RingArray(elementNum, elementSize);
+        assert(_ringarray == nullptr);
+        assert(_data == nullptr);
+        _data = new uint8_t[elementNum * elementSize];
+        _ringarray = new RingArray(_data, elementNum * elementSize, elementSize);
     }
 
     template <std::size_t n, typename R>
@@ -56,6 +66,7 @@ protected:
 
 private:
     RingArray* _ringarray;
+    uint8_t* _data;
 };
 
 TEST_F(RingArrayTest, init)
