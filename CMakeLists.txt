@@ -99,6 +99,7 @@ target_include_directories(bmcl
 if(NOT HAS_PARENT_SCOPE)
     set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
     add_subdirectory(tests)
+    add_subdirectory(bench)
 endif()
 
 set_target_properties(bmcl

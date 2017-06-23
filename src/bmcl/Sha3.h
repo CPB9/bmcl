@@ -16,6 +16,8 @@
 
 namespace bmcl {
 
+void keccakf(uint64_t* state);
+
 /* 'Words' here refers to uint64_t */
 
 template <std::size_t bits>
