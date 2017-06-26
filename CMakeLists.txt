@@ -102,9 +102,3 @@ if(NOT HAS_PARENT_SCOPE)
     add_subdirectory(bench)
 endif()
 
-set_target_properties(bmcl
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)
