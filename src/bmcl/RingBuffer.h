@@ -34,13 +34,6 @@ public:
 
     RingBuffer(void* data, std::size_t size);
 
-#if BMCL_HAVE_MALLOC
-
-    RingBuffer(std::size_t size);
-    ~RingBuffer();
-
-#endif
-
     inline void write(Bytes data);
 
     void clear();
@@ -75,9 +68,6 @@ private:
     std::size_t _size;
     std::size_t _freeSpace;
     uint8_t* _data;
-#if BMCL_HAVE_MALLOC
-    bool _hasAllocatedMem;
-#endif
 };
 
 inline void RingBuffer::write(Bytes data)

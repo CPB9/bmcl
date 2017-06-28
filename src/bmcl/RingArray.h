@@ -20,13 +20,6 @@ class BMCL_EXPORT RingArray {
 public:
     RingArray(void* ptr, std::size_t bufSize, std::size_t elementSize);
 
-#if BMCL_HAVE_MALLOC
-
-    RingArray(std::size_t numElements, std::size_t elementSize);
-    ~RingArray();
-
-#endif
-
     inline bool isEmpty() const;
     inline bool isFull() const;
 
@@ -54,9 +47,6 @@ private:
     std::size_t _readOffset;
     std::size_t _writeOffset;
     std::size_t _count;
-#if BMCL_HAVE_MALLOC
-    bool _hasAllocatedMem;
-#endif
 };
 
 inline bool RingArray::isEmpty() const

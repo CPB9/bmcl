@@ -19,28 +19,7 @@ namespace bmcl {
 RingBuffer::RingBuffer(void* data, std::size_t size)
 {
     init(data, size);
-#if BMCL_HAVE_MALLOC
-    _hasAllocatedMem = false;
-#endif
 }
-
-#if BMCL_HAVE_MALLOC
-
-RingBuffer::RingBuffer(std::size_t size)
-{
-    uint8_t* data = new uint8_t[size];
-    init(data, size);
-    _hasAllocatedMem = true;
-}
-
-RingBuffer::~RingBuffer()
-{
-    if (_hasAllocatedMem) {
-        delete[] _data;
-    }
-}
-
-#endif
 
 void RingBuffer::clear()
 {

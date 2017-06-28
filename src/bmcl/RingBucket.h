@@ -21,12 +21,6 @@ class BMCL_EXPORT RingBucket {
 public:
     RingBucket(void* data, std::size_t size);
 
-#if BMCL_HAVE_MALLOC
-
-    RingBucket(std::size_t size);
-
-#endif
-
     inline bool isEmpty() const;
 
     inline std::size_t freeSpace() const;

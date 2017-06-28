@@ -45,9 +45,7 @@ namespace bmcl {
 #define SHA3_CONST(x) x##L
 #endif
 
-#ifndef SHA3_ROTL64
 #define SHA3_ROTL64(x, y) (((x) << (y)) | ((x) >> ((sizeof(uint64_t)*8) - (y))))
-#endif
 
 #define KECCAK_ROUNDS 24
 
@@ -66,94 +64,87 @@ static const uint64_t keccakfRndc[KECCAK_ROUNDS] = {
     SHA3_CONST(0x0000000080000001UL), SHA3_CONST(0x8000000080008008UL)
 };
 
-static void keccakf(uint64_t* s)
+void keccakf(uint64_t* state)
 {
-    uint64_t t;
+    uint64_t t[5];
     uint64_t bc[5];
 
     for (std::size_t round = 0; round < KECCAK_ROUNDS; round++) {
-        /* Theta */
-        bc[0] = s[0] ^ s[5] ^ s[10] ^ s[15] ^ s[20];
-        bc[1] = s[1] ^ s[6] ^ s[11] ^ s[16] ^ s[21];
-        bc[2] = s[2] ^ s[7] ^ s[12] ^ s[17] ^ s[22];
-        bc[3] = s[3] ^ s[8] ^ s[13] ^ s[18] ^ s[23];
-        bc[4] = s[4] ^ s[9] ^ s[14] ^ s[19] ^ s[24];
+        bc[0] = state[0] ^ state[5] ^ state[10] ^ state[15] ^ state[20];
+        bc[1] = state[1] ^ state[6] ^ state[11] ^ state[16] ^ state[21];
+        bc[2] = state[2] ^ state[7] ^ state[12] ^ state[17] ^ state[22];
+        bc[3] = state[3] ^ state[8] ^ state[13] ^ state[18] ^ state[23];
+        bc[4] = state[4] ^ state[9] ^ state[14] ^ state[19] ^ state[24];
 
-        for (std::size_t i = 0; i < 5; i++) {
-            t = bc[(i + 4) % 5] ^ SHA3_ROTL64(bc[(i + 1) % 5], 1);
-            s[0 + i] ^= t;
-            s[5 + i] ^= t;
-            s[10 + i] ^= t;
-            s[15 + i] ^= t;
-            s[20 + i] ^= t;
-        }
+        t[0] = bc[4] ^ SHA3_ROTL64(bc[1], 1);
+        t[1] = bc[0] ^ SHA3_ROTL64(bc[2], 1);
+        t[2] = bc[1] ^ SHA3_ROTL64(bc[3], 1);
+        t[3] = bc[2] ^ SHA3_ROTL64(bc[4], 1);
+        t[4] = bc[3] ^ SHA3_ROTL64(bc[0], 1);
 
-        /* Rho */
-        s[ 1] = SHA3_ROTL64(s[ 1],  1);
-        s[ 2] = SHA3_ROTL64(s[ 2], 62);
-        s[ 3] = SHA3_ROTL64(s[ 3], 28);
-        s[ 4] = SHA3_ROTL64(s[ 4], 27);
-        s[ 5] = SHA3_ROTL64(s[ 5], 36);
-        s[ 6] = SHA3_ROTL64(s[ 6], 44);
-        s[ 7] = SHA3_ROTL64(s[ 7],  6);
-        s[ 8] = SHA3_ROTL64(s[ 8], 55);
-        s[ 9] = SHA3_ROTL64(s[ 9], 20);
-        s[10] = SHA3_ROTL64(s[10],  3);
-        s[11] = SHA3_ROTL64(s[11], 10);
-        s[12] = SHA3_ROTL64(s[12], 43);
-        s[13] = SHA3_ROTL64(s[13], 25);
-        s[14] = SHA3_ROTL64(s[14], 39);
-        s[15] = SHA3_ROTL64(s[15], 41);
-        s[16] = SHA3_ROTL64(s[16], 45);
-        s[17] = SHA3_ROTL64(s[17], 15);
-        s[18] = SHA3_ROTL64(s[18], 21);
-        s[19] = SHA3_ROTL64(s[19],  8);
-        s[20] = SHA3_ROTL64(s[20], 18);
-        s[21] = SHA3_ROTL64(s[21],  2);
-        s[22] = SHA3_ROTL64(s[22], 61);
-        s[23] = SHA3_ROTL64(s[23], 56);
-        s[24] = SHA3_ROTL64(s[24], 14);
+        state[ 0] ^= t[0];
+        state[ 1] = SHA3_ROTL64(state[ 1] ^ t[1],  1);
+        state[ 2] = SHA3_ROTL64(state[ 2] ^ t[2], 62);
+        state[ 3] = SHA3_ROTL64(state[ 3] ^ t[3], 28);
+        state[ 4] = SHA3_ROTL64(state[ 4] ^ t[4], 27);
+        state[ 5] = SHA3_ROTL64(state[ 5] ^ t[0], 36);
+        state[ 6] = SHA3_ROTL64(state[ 6] ^ t[1], 44);
+        state[ 7] = SHA3_ROTL64(state[ 7] ^ t[2],  6);
+        state[ 8] = SHA3_ROTL64(state[ 8] ^ t[3], 55);
+        state[ 9] = SHA3_ROTL64(state[ 9] ^ t[4], 20);
+        state[10] = SHA3_ROTL64(state[10] ^ t[0],  3);
+        state[11] = SHA3_ROTL64(state[11] ^ t[1], 10);
+        state[12] = SHA3_ROTL64(state[12] ^ t[2], 43);
+        state[13] = SHA3_ROTL64(state[13] ^ t[3], 25);
+        state[14] = SHA3_ROTL64(state[14] ^ t[4], 39);
+        state[15] = SHA3_ROTL64(state[15] ^ t[0], 41);
+        state[16] = SHA3_ROTL64(state[16] ^ t[1], 45);
+        state[17] = SHA3_ROTL64(state[17] ^ t[2], 15);
+        state[18] = SHA3_ROTL64(state[18] ^ t[3], 21);
+        state[19] = SHA3_ROTL64(state[19] ^ t[4],  8);
+        state[20] = SHA3_ROTL64(state[20] ^ t[0], 18);
+        state[21] = SHA3_ROTL64(state[21] ^ t[1],  2);
+        state[22] = SHA3_ROTL64(state[22] ^ t[2], 61);
+        state[23] = SHA3_ROTL64(state[23] ^ t[3], 56);
+        state[24] = SHA3_ROTL64(state[24] ^ t[4], 14);
 
-        /* Pi */
-        t     = s[ 1];
-        s[ 1] = s[ 6];
-        s[ 6] = s[ 9];
-        s[ 9] = s[22];
-        s[22] = s[14];
-        s[14] = s[20];
-        s[20] = s[ 2];
-        s[ 2] = s[12];
-        s[12] = s[13];
-        s[13] = s[19];
-        s[19] = s[23];
-        s[23] = s[15];
-        s[15] = s[ 4];
-        s[ 4] = s[24];
-        s[24] = s[21];
-        s[21] = s[ 8];
-        s[ 8] = s[16];
-        s[16] = s[ 5];
-        s[ 5] = s[ 3];
-        s[ 3] = s[18];
-        s[18] = s[17];
-        s[17] = s[11];
-        s[11] = s[ 7];
-        s[ 7] = s[10];
-        s[10] = t;
+        t[0]      = state[ 1];
+        state[ 1] = state[ 6];
+        state[ 6] = state[ 9];
+        state[ 9] = state[22];
+        state[22] = state[14];
+        state[14] = state[20];
+        state[20] = state[ 2];
+        state[ 2] = state[12];
+        state[12] = state[13];
+        state[13] = state[19];
+        state[19] = state[23];
+        state[23] = state[15];
+        state[15] = state[ 4];
+        state[ 4] = state[24];
+        state[24] = state[21];
+        state[21] = state[ 8];
+        state[ 8] = state[16];
+        state[16] = state[ 5];
+        state[ 5] = state[ 3];
+        state[ 3] = state[18];
+        state[18] = state[17];
+        state[17] = state[11];
+        state[11] = state[ 7];
+        state[ 7] = state[10];
+        state[10] = t[0];
 
-        /* Chi */
         for (std::size_t j = 0; j < 25; j += 5) {
-            bc[0] = s[j + 0];
-            bc[1] = s[j + 1];
-            s[j + 0] ^= ~bc[1] & s[j + 2];
-            s[j + 1] ^= ~s[j + 2] & s[j + 3];
-            s[j + 2] ^= ~s[j + 3] & s[j + 4];
-            s[j + 3] ^= ~s[j + 4] & bc[0];
-            s[j + 4] ^= ~bc[0] & bc[1];
+            bc[0] = state[j + 0];
+            bc[1] = state[j + 1];
+            state[j + 0] ^= ~bc[1] & state[j + 2];
+            state[j + 1] ^= ~state[j + 2] & state[j + 3];
+            state[j + 2] ^= ~state[j + 3] & state[j + 4];
+            state[j + 3] ^= ~state[j + 4] & bc[0];
+            state[j + 4] ^= ~bc[0] & bc[1];
         }
 
-        /* Iota */
-        s[0] ^= keccakfRndc[round];
+        state[0] ^= keccakfRndc[round];
     }
 }
 
@@ -225,7 +216,8 @@ void Sha3<bits>::update(const void* src, std::size_t len)
     unsigned tail = len - words * sizeof(uint64_t);
 
     for (std::size_t i = 0; i < words; i++, buf += sizeof(uint64_t)) {
-        const uint64_t t = (uint64_t) (buf[0]) |
+        const uint64_t t =
+                 (uint64_t) (buf[0])           |
                 ((uint64_t) (buf[1]) << 8 * 1) |
                 ((uint64_t) (buf[2]) << 8 * 2) |
                 ((uint64_t) (buf[3]) << 8 * 3) |

@@ -18,11 +18,6 @@ if(NOT BMCL_NO_QT)
     endif()
 endif()
 
-set(BMCL_HAVE_MALLOC 1)
-if(BMCL_NO_MALLOC)
-    set(BMCL_HAVE_MALLOC 0)
-endif()
-
 include(TestBigEndian)
 
 test_big_endian(IS_BIG_ENDIAN)
@@ -104,15 +99,8 @@ target_include_directories(bmcl
 )
 
 if(NOT HAS_PARENT_SCOPE)
-    if(BMCL_HAVE_MALLOC)
-        set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
-        add_subdirectory(tests)
-    endif()
+    set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest/include)
+    add_subdirectory(tests)
+    add_subdirectory(bench)
 endif()
 
-set_target_properties(bmcl
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)
