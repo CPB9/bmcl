@@ -12,6 +12,8 @@
 #include "bmcl/bits/MemWriterDecl.h"
 #include "bmcl/bits/ArrayViewImpl.h"
 
+#include <cstring>
+
 namespace bmcl {
 
 template <std::size_t n, typename R>
@@ -79,4 +81,12 @@ inline void MemWriter::write(Bytes data)
 {
     write(data.data(), data.size());
 }
+
+inline void MemWriter::write(const void* data, std::size_t size)
+{
+    BMCL_ASSERT(writableSize() >= size);
+    std::memcpy(_current, data, size);
+    _current += size;
+}
+
 }

@@ -40,12 +40,6 @@ void MemReader::peek(void* dest, std::size_t size, std::size_t offset) const
     std::memcpy(dest, _current + offset, size);
 }
 
-void MemReader::read(void* dest, std::size_t size)
-{
-    BMCL_ASSERT(sizeLeft() >= size);
-    std::memcpy(dest, _current, size);
-    _current += size;
-}
 
 // sqlite varuint
 

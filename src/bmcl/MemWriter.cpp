@@ -23,13 +23,6 @@ void MemWriter::advance(std::size_t size)
     _current += size;
 }
 
-void MemWriter::write(const void* data, std::size_t size)
-{
-    BMCL_ASSERT(writableSize() >= size);
-    std::memcpy(_current, data, size);
-    _current += size;
-}
-
 void MemWriter::fill(uint8_t byte, std::size_t size)
 {
     BMCL_ASSERT(writableSize() >= size);
