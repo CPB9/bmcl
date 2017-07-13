@@ -60,6 +60,7 @@ class MemReader;
 class MemWriter;
 class RingBuffer;
 class StringView;
+class SharedBytes;
 
 using Bytes = ArrayView<std::uint8_t>;
 }

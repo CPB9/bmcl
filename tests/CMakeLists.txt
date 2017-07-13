@@ -46,6 +46,7 @@ add_unit_test(utils_tests Utils.cpp)
 add_unit_test(arrayview_tests ArrayView.cpp)
 add_unit_test(stringview_tests StringView.cpp)
 add_unit_test(sha3_tests Sha3.cpp)
+add_unit_test(sharedbytes_tests SharedBytes.cpp)
 
 add_executable(colorstream_test ColorStream.cpp)
 target_link_libraries(colorstream_test bmcl)
