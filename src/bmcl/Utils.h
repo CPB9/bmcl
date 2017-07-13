@@ -11,15 +11,31 @@
 #include "bmcl/Config.h"
 
 #include <utility>
+#include <type_traits>
 #include <memory>
 
 namespace bmcl {
+
+template <typename T, typename... Ts>
+struct ContainsType
+    : std::true_type {};
+
+template <typename T>
+struct ContainsType<T>
+    : std::false_type {};
+
+template <typename T1, typename T2, typename... Ts>
+struct ContainsType<T1, T2, Ts...>
+    : std::conditional<std::is_same<T1, T2>::value, std::true_type, ContainsType<T1, Ts...>>::type {};
 
 template<class B, class T = B>
 using enableIfVoid = typename std::enable_if<std::is_void<B>::value, T>::type;
 
 template<class B, class T = B>
 using enableIfNotVoid = typename std::enable_if<!std::is_void<B>::value, T>::type;
+
+template<typename T, typename... Ts>
+using enableIfOneOf = typename std::enable_if<ContainsType<T, Ts...>::value, T>::type;
 
 struct NoneType {
     inline NoneType()
