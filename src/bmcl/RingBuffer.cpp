@@ -90,7 +90,6 @@ void RingBuffer::peek(void* dest, std::size_t size, std::size_t offset) const
     if (readOffset >= _size) {
         readOffset -= _size;
     }
-    BMCL_ASSERT(size >= 0);
     BMCL_ASSERT(size + offset <= _size - _freeSpace);
     if (readOffset < _writeOffset) { /* ----------r**************w---------- */
         std::memcpy(dest, _data + readOffset, size);
@@ -111,7 +110,7 @@ RingBuffer::Chunks RingBuffer::readableChunks()
     if (_freeSpace == 0) {
         /* ------------------------wr------------ */
         return Chunks(_data + _readOffset, 0, _data + _readOffset, 0);
-    } else if (_writeOffset < _readOffset) {
+    } else if (_writeOffset < _readOffset) { //TODO: V517 https://www.viva64.com/en/w/V517 The use of 'if (A) {...} else if (A) {...}' pattern was detected. There is a probability of logical error presence. Check lines: 114, 117.
         /* ---------r***************w------------ */
         return Chunks(_data + _readOffset, _writeOffset - _readOffset, _data + _writeOffset, 0);
     } else if (_readOffset > _writeOffset) {
