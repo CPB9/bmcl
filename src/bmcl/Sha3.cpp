@@ -29,6 +29,7 @@
 #include "bmcl/Sha3.h"
 #include "bmcl/ArrayView.h"
 #include "bmcl/FixedArrayView.h"
+#include "bmcl/Buffer.h"
 
 #include <cstdio>
 #include <cstdint>
@@ -283,6 +284,21 @@ FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
 #endif
 
     return FixedArrayView<uint8_t, bits / 8>::fromRawData(_s8);
+}
+
+template <std::size_t bits>
+Buffer Sha3<bits>::calcInOneStep(const void* src, std::size_t len)
+{
+    Sha3<bits> state;
+    state.update(src, len);
+    auto hash = state.finalize();
+    return Buffer(hash.data(), hash.size());
+}
+
+template <std::size_t bits>
+Buffer Sha3<bits>::calcInOneStep(Bytes data)
+{
+    return calcInOneStep(data.data(), data.size());
 }
 
 template class Sha3<224>;

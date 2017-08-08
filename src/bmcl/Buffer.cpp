@@ -31,6 +31,14 @@ Buffer::Buffer(std::size_t size)
     _ptr = (uint8_t*)std::malloc(size);
 }
 
+Buffer::Buffer(const void* data, std::size_t size)
+    : _size(size)
+    , _capacity(size)
+{
+    _ptr = (uint8_t*)std::malloc(size);
+    std::memcpy(_ptr, data, size);
+}
+
 Buffer::Buffer(bmcl::Bytes data)
     : _size(data.size())
     , _capacity(data.size())

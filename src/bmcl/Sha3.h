@@ -36,6 +36,9 @@ public:
     void update(Bytes data);
     FixedArrayView<uint8_t, bits / 8> finalize();
 
+    static Buffer calcInOneStep(const void* src, std::size_t len);
+    static Buffer calcInOneStep(Bytes data);
+
 private:
     uint64_t _saved;             /* the portion of the input message that we
                                   * didn't consume yet */

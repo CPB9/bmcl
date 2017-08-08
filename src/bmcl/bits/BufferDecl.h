@@ -28,6 +28,7 @@ public:
 
     Buffer();
     Buffer(std::size_t size);
+    Buffer(const void* data, std::size_t size);
     Buffer(bmcl::Bytes data);
     Buffer(const Buffer& other);
     Buffer(Buffer&& other);

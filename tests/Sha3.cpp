@@ -5,6 +5,7 @@
 #include "bmcl/ArrayView.h"
 #include "bmcl/FixedArrayView.h"
 #include "bmcl/StringView.h"
+#include "bmcl/Buffer.h"
 
 #include <cstddef>
 #include <cstdio>
@@ -224,3 +225,9 @@ TYPED_TEST(Sha3Test, ByteByByte)
     EXPECT_EQ_MEM(param.hash.data(), hash.data(), param.hash.size());
 }
 
+TEST(Sha3OneStepTest, Sha3_512_1600bit)
+{
+    Sha3_512_1600bit testData;
+    Buffer hash = Sha3<512>::calcInOneStep(testData.data);
+    EXPECT_EQ(testData.hash, Bytes(hash));
+}
