@@ -9,7 +9,6 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/String.h"
 
 #define BMCL_STRINGIFY(expr) #expr
 
@@ -26,17 +25,4 @@ namespace bmcl {
 BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* file, int line);
 
 BMCL_EXPORT BMCL_NORETURN void assertFail(const char* assertion, const char* msg, const char* file, int line);
-
-template<class T>
-BMCL_NORETURN void assertFailTpl(const char* assertion, T msg, const char* file, int line)
-{
-    assertFail(assertion, bmcl::toString(msg).c_str(), file, line);
-}
-
-template<>
-BMCL_NORETURN inline void assertFailTpl(const char* assertion, const char * msg, const char* file, int line)
-{
-    assertFail(assertion, msg, file, line);
-}
-
 };

@@ -8,11 +8,12 @@
 
 #pragma once
 
+#include "bmcl/Config.h"
+#include "bmcl/Bytes.h"
+
 #include <string>
 #include <vector>
 #include <sstream>
-
-#include "bmcl/Config.h"
 
 #if defined(BMCL_HAVE_QT)
 #include <QString>
@@ -66,8 +67,19 @@ inline std::string toString(const QString & t)
 }
 #endif
 
-BMCL_EXPORT std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
+BMCL_EXPORT std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems);
+BMCL_EXPORT std::vector<std::string> split(const std::string& s, char delim);
 
-BMCL_EXPORT std::vector<std::string> split(const std::string &s, char delim);
+BMCL_EXPORT std::string bytesToHexStringLower(const uint8_t* data, std::size_t size);
+BMCL_EXPORT std::string bytesToHexStringUpper(const uint8_t* data, std::size_t size);
 
+inline std::string bytesToHexStringLower(bmcl::Bytes bytes)
+{
+    return bytesToHexStringLower(bytes.data(), bytes.size());
+}
+
+inline std::string bytesToHexStringUpper(bmcl::Bytes bytes)
+{
+    return bytesToHexStringUpper(bytes.data(), bytes.size());
+}
 }
