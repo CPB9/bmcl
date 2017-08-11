@@ -1,3 +1,5 @@
+#pragma once
+
 #include "bmcl/Config.h"
 #include "bmcl/AlignedUnion.h"
 
