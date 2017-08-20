@@ -161,7 +161,10 @@ inline const uint8_t* SharedBytes::data() const
 
 inline std::size_t SharedBytes::size() const
 {
-    return _cont->size;
+    if (_cont) {
+        return _cont->size;
+    }
+    return 0;
 }
 
 inline SharedBytes& SharedBytes::operator=(const SharedBytes& other)
