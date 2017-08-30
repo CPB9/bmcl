@@ -256,6 +256,8 @@ inline T* OptionPtr<T>::unwrapOr(R* value) &&
     return value;
 }
 
+#endif
+
 template <typename T, typename U>
 bool operator==(bmcl::OptionPtr<T> left, bmcl::OptionPtr<U> right)
 {
@@ -291,7 +293,4 @@ bool operator!=(T* left, bmcl::OptionPtr<U> right)
 {
     return left != right.data();
 }
-
-#endif
-
 }
