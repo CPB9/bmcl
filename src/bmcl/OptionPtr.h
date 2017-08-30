@@ -256,6 +256,42 @@ inline T* OptionPtr<T>::unwrapOr(R* value) &&
     return value;
 }
 
+template <typename T, typename U>
+bool operator==(bmcl::OptionPtr<T> left, bmcl::OptionPtr<U> right)
+{
+    return left.data() == right.data();
+}
+
+template <typename T, typename U>
+bool operator==(bmcl::OptionPtr<T> left, U* right)
+{
+    return left.data() == right;
+}
+
+template <typename T, typename U>
+bool operator==(T* left, bmcl::OptionPtr<U> right)
+{
+    return left == right.data();
+}
+
+template <typename T, typename U>
+bool operator!=(bmcl::OptionPtr<T> left, bmcl::OptionPtr<U> right)
+{
+    return left.data() != right.data();
+}
+
+template <typename T, typename U>
+bool operator!=(bmcl::OptionPtr<T> left, U* right)
+{
+    return left.data() != right;
+}
+
+template <typename T, typename U>
+bool operator!=(T* left, bmcl::OptionPtr<U> right)
+{
+    return left != right.data();
+}
+
 #endif
 
 }
