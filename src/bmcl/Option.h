@@ -37,13 +37,23 @@ public:
     bool isSome() const;
     bool isNone() const;
 
+    template <typename U>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+    Option<U> into() const;
+#else
+    Option<U> into() const&;
+
+    template <typename U>
+    Option<U> into() &&;
+#endif
+
     const T& unwrap() const;
     T& unwrap();
 
     void clear();
 
     template <class R>
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
     T unwrapOr(R&& value) const;
 #else
     T unwrapOr(R&& value) const&;
@@ -158,6 +168,33 @@ inline bool Option<T>::isNone() const
 }
 
 template <typename T>
+template <typename U>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+Option<U> Option<T>::into()
+#else
+Option<U> Option<T>::into() const&
+#endif
+{
+    if (isSome()) {
+        return Option<U>(unwrap());
+    }
+    return bmcl::None;
+}
+
+#ifndef _MSC_VER
+template <typename T>
+template <typename U>
+Option<U> Option<T>::into() &&
+{
+    if (isSome()) {
+        return Option<U>(take());
+    }
+    return bmcl::None;
+}
+#endif
+
+
+template <typename T>
 inline const T& Option<T>::unwrap() const
 {
     BMCL_ASSERT(_isSome);
@@ -182,10 +219,10 @@ void Option<T>::clear()
 
 template <typename T>
 template <typename R>
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
 T Option<T>::unwrapOr(R&& value) const
 #else
-T Option<T>::unwrapOr(R&& value) const &
+T Option<T>::unwrapOr(R&& value) const&
 #endif
 {
     if (_isSome) {

@@ -284,6 +284,26 @@ TEST(OptionTest, emplace)
     EXPECT_EQ("2some", option.unwrap());
 }
 
+TEST(OptionTest, into)
+{
+    Option<const char*> option("test4");
+    Option<std::string> option2 = option.into<std::string>();
+    EXPECT_EQ("test4", option2.unwrap());
+}
+
+TEST(OptionTest, intoRval)
+{
+    Option<std::string> option2 = Option<const char*>("test5").into<std::string>();
+    EXPECT_EQ("test5", option2.unwrap());
+}
+
+TEST(OptionTest, intoNone)
+{
+    Option<int> option = bmcl::None;
+    Option<double> option2 = option.into<double>();
+    EXPECT_TRUE(option2.isNone());
+}
+
 static const std::string str = "test_string";
 static const std::string str1 = "test_string_1";
 static const std::string str2 = "test_string_2";
