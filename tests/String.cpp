@@ -8,7 +8,7 @@ using namespace bmcl;
 
 TEST(BytesToHex, lowerEmpty)
 {
-    uint8_t data[] = {};
+    uint8_t data[] = {1};
     std::string expected = "";
     EXPECT_EQ(expected, bytesToHexStringLower(data, 0));
 }
@@ -22,7 +22,7 @@ TEST(BytesToHex, lower)
 
 TEST(BytesToHex, upperEmpty)
 {
-    uint8_t data[] = {};
+    uint8_t data[] = {1};
     std::string expected = "";
     EXPECT_EQ(expected, bytesToHexStringUpper(data, 0));
 }

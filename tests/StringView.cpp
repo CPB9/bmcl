@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
+
 using namespace bmcl;
 
 static void expectStringView(StringView ref, const char* data, std::size_t size)
@@ -53,14 +55,15 @@ TEST(StringView, fromStrString)
 
 TEST(StringView, fromArrayView)
 {
-    ArrayView<char> data = {'a', 'b', 'k'};
+    static std::array<char, 3> arr = { 'a', 'b', 'k' };
+    ArrayView<char> data = arr;
     StringView ref(data);
     expectStringView(ref, "abk");
 }
 
 TEST(StringView, fromFixedArrayView)
 {
-    char arr[3] = {'a', 'b', 's'};
+    static char arr[3] = {'a', 'b', 's'};
     auto data = FixedArrayView<char, 3>::fromStaticArray(arr);
     StringView ref(data);
     expectStringView(ref, "abs");

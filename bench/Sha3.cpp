@@ -28,7 +28,7 @@ void sha3Bench(benchmark::State& state)
     std::vector<uint8_t> data;
     data.reserve(size);
     for (std::size_t i = 0; i < size; i++) {
-        data[i] = i;
+        data.push_back(i);
     }
 
     while (state.KeepRunning()) {
@@ -40,11 +40,11 @@ void sha3Bench(benchmark::State& state)
 
 BENCHMARK(keccakfBench);
 
-#define SHA3_BENCH(bits)                        \
-    BENCHMARK_TEMPLATE(sha3Bench, bits, 1);     \
-    BENCHMARK_TEMPLATE(sha3Bench, bits, 100);   \
-    BENCHMARK_TEMPLATE(sha3Bench, bits, 1000);  \
-    BENCHMARK_TEMPLATE(sha3Bench, bits, 10000);
+#define SHA3_BENCH(bits)                         \
+    BENCHMARK_TEMPLATE2(sha3Bench, bits, 1);     \
+    BENCHMARK_TEMPLATE2(sha3Bench, bits, 100);   \
+    BENCHMARK_TEMPLATE2(sha3Bench, bits, 1000);  \
+    BENCHMARK_TEMPLATE2(sha3Bench, bits, 10000);
 
 SHA3_BENCH(224);
 SHA3_BENCH(256);

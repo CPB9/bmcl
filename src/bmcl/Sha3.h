@@ -16,7 +16,7 @@
 
 namespace bmcl {
 
-void keccakf(uint64_t* state);
+BMCL_EXPORT void keccakf(uint64_t* state);
 
 /* 'Words' here refers to uint64_t */
 

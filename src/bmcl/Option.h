@@ -181,7 +181,7 @@ BMCL_DLL_INLINE Option<U> Option<T>::into() const&
     return bmcl::None;
 }
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 template <typename T>
 template <typename U>
 BMCL_DLL_INLINE Option<U> Option<T>::into() &&
@@ -231,7 +231,7 @@ BMCL_DLL_INLINE T Option<T>::unwrapOr(R&& value) const&
     return std::forward<R>(value);
 }
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
 template <typename T>
 template <typename R>
 BMCL_DLL_INLINE T Option<T>::unwrapOr(R&& value) &&
