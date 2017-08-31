@@ -39,12 +39,12 @@ public:
 
     template <typename U>
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-    Option<U> into() const;
+    BMCL_DLL_INLINE Option<U> into() const;
 #else
-    Option<U> into() const&;
+    BMCL_DLL_INLINE Option<U> into() const&;
 
     template <typename U>
-    Option<U> into() &&;
+    BMCL_DLL_INLINE Option<U> into() &&;
 #endif
 
     const T& unwrap() const;
@@ -54,12 +54,12 @@ public:
 
     template <class R>
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-    T unwrapOr(R&& value) const;
+    BMCL_DLL_INLINE T unwrapOr(R&& value) const;
 #else
-    T unwrapOr(R&& value) const&;
+    BMCL_DLL_INLINE T unwrapOr(R&& value) const&;
 
     template <class R>
-    T unwrapOr(R&& value) && ;
+    BMCL_DLL_INLINE T unwrapOr(R&& value) && ;
 #endif
 
     T take();
@@ -170,9 +170,9 @@ inline bool Option<T>::isNone() const
 template <typename T>
 template <typename U>
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-Option<U> Option<T>::into()
+BMCL_DLL_INLINE Option<U> Option<T>::into()
 #else
-Option<U> Option<T>::into() const&
+BMCL_DLL_INLINE Option<U> Option<T>::into() const&
 #endif
 {
     if (isSome()) {
@@ -184,7 +184,7 @@ Option<U> Option<T>::into() const&
 #ifndef _MSC_VER
 template <typename T>
 template <typename U>
-Option<U> Option<T>::into() &&
+BMCL_DLL_INLINE Option<U> Option<T>::into() &&
 {
     if (isSome()) {
         return Option<U>(take());
@@ -220,9 +220,9 @@ void Option<T>::clear()
 template <typename T>
 template <typename R>
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-T Option<T>::unwrapOr(R&& value) const
+BMCL_DLL_INLINE T Option<T>::unwrapOr(R&& value) const
 #else
-T Option<T>::unwrapOr(R&& value) const&
+BMCL_DLL_INLINE T Option<T>::unwrapOr(R&& value) const&
 #endif
 {
     if (_isSome) {
@@ -234,7 +234,7 @@ T Option<T>::unwrapOr(R&& value) const&
 #ifndef _MSC_VER
 template <typename T>
 template <typename R>
-T Option<T>::unwrapOr(R&& value) &&
+BMCL_DLL_INLINE T Option<T>::unwrapOr(R&& value) &&
 {
     if (_isSome) {
         return take();
