@@ -191,7 +191,7 @@ TEST(ArrayView, sliceFromBack)
 
 TEST(ArrayView, assign)
 {
-    static char s[3] = { 'a', 's', 'd' };
+    static std::array<char, 3> s = { 'a', 's', 'd' };
     ArrayView<char> ref = ArrayView<char>::empty();
     ref = s;
     expectArrayView(ref, {'a', 's', 'd'});
