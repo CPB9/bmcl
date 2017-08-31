@@ -20,7 +20,7 @@ TEST(ArrayView, fromStaticArray)
 {
     int array[5] = {1, 2, 3, 4, 5};
     auto ref = ArrayView<int>::fromStaticArray(array);
-    expectArrayView(ref, {1, 2, 3, 4, 5});
+    expectArrayView<int>(ref, {1, 2, 3, 4, 5});
 }
 
 TEST(ArrayView, fromStdArray)
@@ -32,7 +32,8 @@ TEST(ArrayView, fromStdArray)
 
 TEST(ArrayView, fromFixedArrayView)
 {
-    FixedArrayView<int, 3> view = {{3, 4, 5}};
+    std::array<int, 3> array = {{3, 4, 5}};
+    FixedArrayView<int, 3> view = array;
     ArrayView<int> ref(view);
     expectArrayView(ref, {3, 4, 5});
 }

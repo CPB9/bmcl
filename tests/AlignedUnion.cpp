@@ -16,7 +16,6 @@ TEST(AlignedUnion, set)
     alignedUnion.set<std::string>(std::string("asd"));
     EXPECT_EQ("asd", alignedUnion.as<std::string>());
     alignedUnion.destruct<std::string>();
-    alignedUnion.destruct<std::string>();
 
     alignedUnion.set<int>(4);
     alignedUnion.set<double>(4.1);

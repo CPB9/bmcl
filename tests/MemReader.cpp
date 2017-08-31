@@ -151,54 +151,72 @@ TEST_F(MemReaderTest, read)
 
 TEST_F(MemReaderTest, varUint1)
 {
-    makeVarUintTest(0, {0});
-    makeVarUintTest(240, {240});
+    uint8_t data1[1] = {0};
+    uint8_t data2[1] = {240};
+    makeVarUintTest(0, data1);
+    makeVarUintTest(240, data2);
 }
 
 TEST_F(MemReaderTest, varUint2)
 {
-    makeVarUintTest(241, {241, 1});
-    makeVarUintTest(2287, {248, 255});
+    uint8_t data1[2] = {241, 1};
+    uint8_t data2[2] = {248, 255};
+    makeVarUintTest(241, data1);
+    makeVarUintTest(2287, data2);
 }
 
 TEST_F(MemReaderTest, varUint3)
 {
-    makeVarUintTest(2288, {249, 0, 0});
-    makeVarUintTest(67823, {249, 255, 255});
+    uint8_t data1[3] = {249, 0, 0};
+    uint8_t data2[3] = {249, 255, 255};
+    makeVarUintTest(2288, data1);
+    makeVarUintTest(67823, data2);
 }
 
 TEST_F(MemReaderTest, varUint4)
 {
-    makeVarUintTest(67824, {250, 0x01, 0x08, 0xf0});
-    makeVarUintTest(16777215, {250, 255, 255, 255});
+    uint8_t data1[4] = {250, 0x01, 0x08, 0xf0};
+    uint8_t data2[4] = {250, 255, 255, 255};
+    makeVarUintTest(67824, data1);
+    makeVarUintTest(16777215, data2);
 }
 
 TEST_F(MemReaderTest, varUint5)
 {
-    makeVarUintTest(16777216, {251, 1, 0, 0, 0});
-    makeVarUintTest(4294967295, {251, 255, 255, 255, 255});
+    uint8_t data1[5] = {251, 1, 0, 0, 0};
+    uint8_t data2[5] = {251, 255, 255, 255, 255};
+    makeVarUintTest(16777216, data1);
+    makeVarUintTest(4294967295, data2);
 }
 
 TEST_F(MemReaderTest, varUint6)
 {
-    makeVarUintTest(4294967296, {252, 1, 0, 0, 0, 0});
-    makeVarUintTest(1099511627775, {252, 255, 255, 255, 255, 255});
+    uint8_t data1[6] = {252, 1, 0, 0, 0, 0};
+    uint8_t data2[6] = {252, 255, 255, 255, 255, 255};
+    makeVarUintTest(4294967296, data1);
+    makeVarUintTest(1099511627775, data2);
 }
 
 TEST_F(MemReaderTest, varUint7)
 {
-    makeVarUintTest(1099511627776, {253, 1, 0, 0, 0, 0, 0});
-    makeVarUintTest(281474976710655, {253, 255, 255, 255, 255, 255, 255});
+    uint8_t data1[7] = {253, 1, 0, 0, 0, 0, 0};
+    uint8_t data2[7] = {253, 255, 255, 255, 255, 255, 255};
+    makeVarUintTest(1099511627776, data1);
+    makeVarUintTest(281474976710655, data2);
 }
 
 TEST_F(MemReaderTest, varUint8)
 {
-    makeVarUintTest(281474976710656, {254, 1, 0, 0, 0, 0, 0, 0});
-    makeVarUintTest(72057594037927935, {254, 255, 255, 255, 255, 255, 255, 255});
+    uint8_t data1[8] = {254, 1, 0, 0, 0, 0, 0, 0};
+    uint8_t data2[8] = {254, 255, 255, 255, 255, 255, 255, 255};
+    makeVarUintTest(281474976710656, data1);
+    makeVarUintTest(72057594037927935, data2);
 }
 
 TEST_F(MemReaderTest, varUint9)
 {
-    makeVarUintTest(72057594037927936, {255, 1, 0, 0, 0, 0, 0, 0, 0});
-    makeVarUintTest(18446744073709551615u, {255, 255, 255, 255, 255, 255, 255, 255, 255});
+    uint8_t data1[9] = {255, 1, 0, 0, 0, 0, 0, 0, 0};
+    uint8_t data2[9] = {255, 255, 255, 255, 255, 255, 255, 255, 255};
+    makeVarUintTest(72057594037927936, data1);
+    makeVarUintTest(18446744073709551615u, data2);
 }
