@@ -7,7 +7,7 @@
 
 namespace bmcl {
 
-class Ipv4Address {
+class BMCL_EXPORT Ipv4Address {
 public:
     Ipv4Address();
     Ipv4Address(uint8_t a, uint8_t b, uint8_t c, uint8_t d);
@@ -60,7 +60,7 @@ inline bool Ipv4Address::operator==(const Ipv4Address& other) const
     return _data == other._data;
 }
 
-class SocketAddressV4 {
+class BMCL_EXPORT SocketAddressV4 {
 public:
     SocketAddressV4();
     SocketAddressV4(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint16_t port);
