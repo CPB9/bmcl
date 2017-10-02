@@ -21,6 +21,8 @@ add_library(bmcl SHARED
     MemWriter.cpp
     MemWriter.h
     NonNullUniquePtr.h
+    IpAddress.h
+    IpAddress.cpp
     Option.h
     OptionFwd.h
     OptionPtr.h
