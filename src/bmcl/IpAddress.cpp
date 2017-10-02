@@ -3,6 +3,20 @@
 
 #include <cstring>
 
+//TODO: move to endian.h
+
+#ifdef BMCL_LITTLE_ENDIAN
+# define hton32(value) htobe32(value)
+# define ntoh32(value) be32toh(value)
+# define hton16(value) htobe16(value)
+# define ntoh16(value) be16toh(value)
+#else
+# define hton32(value) (value)
+# define ntoh32(value) (value)
+# define hton16(value) (value)
+# define ntoh16(value) (value)
+#endif
+
 namespace bmcl {
 
 Ipv4Address::Ipv4Address(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
@@ -15,28 +29,65 @@ Ipv4Address::Ipv4Address(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
 }
 
 Ipv4Address::Ipv4Address(uint32_t address)
-#ifdef BMCL_LITTLE_ENDIAN
-    : _data(htobe32(address))
-#else
-    : _data(data)
-#endif
+    : _data(hton32(address))
 {
+}
+
+Ipv4Address::Ipv4Address(const std::array<uint8_t, 4>& address)
+{
+    std::memcpy(&_data, address.data(), 4);
 }
 
 uint32_t Ipv4Address::toUint32() const
 {
-#ifdef BMCL_LITTLE_ENDIAN
-    return htobe32(_data);
-#else
-    return _data;
-#endif
+    return ntoh32(_data);
 }
 
 std::array<uint8_t, 4> Ipv4Address::toArray() const
 {
-    std::array<uint8_t, 4> data;
-    std::memcpy(data.data(), &_data, 4);
-    return data;
+    std::array<uint8_t, 4> address;
+    std::memcpy(address.data(), &_data, 4);
+    return address;
+}
+
+SocketAddressV4::SocketAddressV4(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint16_t port)
+    : _address(a, b, c, d)
+    , _port(hton16(port))
+{
+}
+
+SocketAddressV4::SocketAddressV4(uint32_t address, uint16_t port)
+    : _address(address)
+    , _port(hton16(port))
+{
+}
+
+SocketAddressV4::SocketAddressV4(Ipv4Address address, uint16_t port)
+    : _address(address)
+    , _port(hton16(port))
+{
+}
+
+SocketAddressV4::SocketAddressV4(const SocketAddressV4& other)
+    : _address(other._address)
+    , _port(other._port)
+{
+}
+
+SocketAddressV4::SocketAddressV4(SocketAddressV4&& other)
+    : _address(other._address)
+    , _port(other._port)
+{
+}
+
+uint16_t SocketAddressV4::port() const
+{
+    return ntoh16(_port);
+}
+
+void SocketAddressV4::setPort(uint16_t port)
+{
+    _port = hton16(port);
 }
 
 SocketAddressV4& SocketAddressV4::operator=(const SocketAddressV4& other)

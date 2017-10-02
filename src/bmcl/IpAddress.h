@@ -12,6 +12,7 @@ public:
     Ipv4Address();
     Ipv4Address(uint8_t a, uint8_t b, uint8_t c, uint8_t d);
     Ipv4Address(uint32_t data);
+    Ipv4Address(const std::array<uint8_t, 4>& address);
     Ipv4Address(const Ipv4Address& other);
     Ipv4Address(Ipv4Address&& other);
 
@@ -89,53 +90,13 @@ inline SocketAddressV4::SocketAddressV4()
 {
 }
 
-inline SocketAddressV4::SocketAddressV4(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint16_t port)
-    : _address(a, b, c, d)
-    , _port(port)
-{
-}
-
-inline SocketAddressV4::SocketAddressV4(uint32_t address, uint16_t port)
-    : _address(address)
-    , _port(port)
-{
-}
-
-inline SocketAddressV4::SocketAddressV4(Ipv4Address address, uint16_t port)
-    : _address(address)
-    , _port(port)
-{
-}
-
-inline SocketAddressV4::SocketAddressV4(const SocketAddressV4& other)
-    : _address(other._address)
-    , _port(other._port)
-{
-}
-
-inline SocketAddressV4::SocketAddressV4(SocketAddressV4&& other)
-    : _address(other._address)
-    , _port(other._port)
-{
-}
-
 inline Ipv4Address SocketAddressV4::address() const
 {
     return _address;
 }
 
-inline uint16_t SocketAddressV4::port() const
-{
-    return _port;
-}
-
 inline void SocketAddressV4::setIpAddress(Ipv4Address address)
 {
     _address = address;
-}
-
-inline void SocketAddressV4::setPort(uint16_t port)
-{
-    _port = port;
 }
 }
