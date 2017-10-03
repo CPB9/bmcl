@@ -61,6 +61,8 @@ class MemWriter;
 class RingBuffer;
 class StringView;
 class SharedBytes;
+class Ipv4Address;
+class SocketAddressV4;
 
 using Bytes = ArrayView<std::uint8_t>;
 }
