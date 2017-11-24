@@ -62,6 +62,7 @@ public:
     inline std::size_t writableSize() const;
 
     void writeVarUint(uint64_t value);
+    void writeVarInt(int64_t value);
 
     Buffer& operator=(const Buffer& other);
     Buffer& operator=(Buffer&& other);

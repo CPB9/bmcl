@@ -271,4 +271,11 @@ void Buffer::writeVarUint(uint64_t value)
     current[7] = uint8_t(value >> 8);
     current[8] = uint8_t(value);
 }
+
+void Buffer::writeVarInt(int64_t value)
+{
+    //zigzag
+    uint64_t n = (uint64_t)value;
+    return writeVarUint((n << 1) ^ (n >> 63));
+}
 }
