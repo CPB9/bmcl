@@ -1,8 +1,8 @@
-if(MSVC)
+if(MSVC OR MINGW)
     add_definitions(-DBMCL_DLL)
 endif()
 
-add_library(bmcl SHARED
+bmcl_add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
     AlignedUnion.h
@@ -66,15 +66,9 @@ if (BMCL_HAVE_QT)
     target_link_libraries(bmcl Qt5::Core)
 endif()
 
-set_target_properties(bmcl
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+target_include_directories(bmcl
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+    ${CMAKE_CURRENT_BINARY_DIR}/..
 )
 
-install(TARGETS bmcl
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)

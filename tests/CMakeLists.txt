@@ -4,69 +4,41 @@ include_directories(
     ${GTEST_INCLUDE_DIRS}
 )
 
+bmcl_create_tests_directory()
+
 add_definitions(-DDATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/data")
-set(TESTS_DIR ${CMAKE_BINARY_DIR}/bin/tests)
-file(MAKE_DIRECTORY ${TESTS_DIR})
 
-set(ALL_TESTS "")
-
-macro(add_unit_test test file)
-    add_executable(${test} ${file})
-    target_link_libraries(${test}
-        ${ARGN}
-        bmcl
-        gtest
-        gtest_main
+function(add_unit_test target file)
+    bmcl_add_unit_test(bmcl-test-${target} ${file})
+    target_link_libraries(bmcl-test-${target} bmcl)
+    target_include_directories(bmcl-test-${target}
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../src
+        ${CMAKE_CURRENT_BINARY_DIR}/../src
     )
+endfunction()
 
-    set_target_properties(${test}
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${TESTS_DIR}
-        FOLDER "tests"
-    )
-    add_test(${test} ${TESTS_DIR}/${test})
-    list(APPEND ALL_TESTS ${file})
-endmacro()
+add_unit_test(environment Environment.cpp)
+add_unit_test(buffer Buffer.cpp)
+add_unit_test(memreader MemReader.cpp)
+add_unit_test(memwriter MemWriter.cpp)
+add_unit_test(ringarray RingArray.cpp)
+add_unit_test(ringbucket RingBucket.cpp)
+add_unit_test(ringbuf RingBuffer.cpp)
+add_unit_test(option Option.cpp)
+add_unit_test(either Either.cpp)
+add_unit_test(result Result.cpp)
+add_unit_test(logging Logging.cpp)
+add_unit_test(utils Utils.cpp)
+add_unit_test(arrayview ArrayView.cpp)
+add_unit_test(stringview StringView.cpp)
+add_unit_test(string String.cpp)
+add_unit_test(sha3 Sha3.cpp)
+add_unit_test(sharedbytes SharedBytes.cpp)
+add_unit_test(alignedunion AlignedUnion.cpp)
+add_unit_test(variant Variant.cpp)
+add_unit_test(colorstream ColorStream.cpp)
 
-add_unit_test(environment_tests Environment.cpp)
-add_unit_test(buffer_tests Buffer.cpp)
-add_unit_test(memreader_tests MemReader.cpp)
-add_unit_test(memwriter_tests MemWriter.cpp)
 #add_unit_test(reader_tests Reader.cpp)
-add_unit_test(ringarray_tests RingArray.cpp)
-add_unit_test(ringbucket_tests RingBucket.cpp)
-add_unit_test(ringbuf_tests RingBuffer.cpp)
 #add_unit_test(writer_tests Writer.cpp)
-add_unit_test(option_tests Option.cpp)
-add_unit_test(either_tests Either.cpp)
-add_unit_test(result_tests Result.cpp)
 #add_unit_test(panic_tests Panic.cpp)
-add_unit_test(logging_tests Logging.cpp)
-add_unit_test(utils_tests Utils.cpp)
-add_unit_test(arrayview_tests ArrayView.cpp)
-add_unit_test(stringview_tests StringView.cpp)
-add_unit_test(string_tests String.cpp)
-add_unit_test(sha3_tests Sha3.cpp)
-add_unit_test(sharedbytes_tests SharedBytes.cpp)
-add_unit_test(alignedunion_test AlignedUnion.cpp)
-add_unit_test(variant_test Variant.cpp)
-
-add_executable(colorstream_test ColorStream.cpp)
-target_link_libraries(colorstream_test bmcl)
-set_target_properties(colorstream_test
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${TESTS_DIR}
-    FOLDER "tests"
-)
-
-add_executable(all_tests EXCLUDE_FROM_ALL ${ALL_TESTS})
-target_link_libraries(all_tests
-    bmcl
-    gtest
-    gtest_main
-)
-
-set_target_properties(all_tests
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${TESTS_DIR}
-)
