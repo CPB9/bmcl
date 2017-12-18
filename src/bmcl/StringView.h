@@ -22,11 +22,12 @@ namespace bmcl {
 
 class BMCL_EXPORT StringView : public ArrayViewBase<char, StringView> {
 public:
-    inline StringView();
-    inline StringView(std::nullptr_t);
-    inline StringView(const char* cstr);
-    inline StringView(const char* data, std::size_t size);
-    inline StringView(const char* start, const char* end);
+    constexpr inline StringView();
+    constexpr inline StringView(std::nullptr_t);
+
+    BMCL_CONSTEXPR_CPP17 inline StringView(const char* cstr);
+    constexpr inline StringView(const char* data, std::size_t size);
+    constexpr inline StringView(const char* start, const char* end);
     inline StringView(const std::string& str);
     inline StringView(ArrayView<char> view);
     template <std::size_t S>
@@ -66,22 +67,22 @@ private:
     Option<std::size_t> iteratorToIndex(reverse_iterator) const;
 };
 
-inline StringView::StringView()
+constexpr inline StringView::StringView()
     : ArrayViewBase<char, StringView>("", std::size_t(0))
 {
 }
 
-inline StringView::StringView(std::nullptr_t)
+constexpr inline StringView::StringView(std::nullptr_t)
     : StringView()
 {
 }
 
-inline StringView::StringView(const char* cstr)
-    : ArrayViewBase<char, StringView>(cstr, std::strlen(cstr))
+BMCL_CONSTEXPR_CPP17 inline StringView::StringView(const char* cstr)
+    : ArrayViewBase<char, StringView>(cstr, std::char_traits<char>::length(cstr))
 {
 }
 
-inline StringView::StringView(const char* start, const char* end)
+constexpr inline StringView::StringView(const char* start, const char* end)
     : ArrayViewBase<char, StringView>(start, end)
 {
 }
@@ -96,7 +97,7 @@ inline StringView::StringView(ArrayView<char> view)
 {
 }
 
-inline StringView::StringView(const char* data, std::size_t size)
+constexpr inline StringView::StringView(const char* data, std::size_t size)
     : ArrayViewBase<char, StringView>(data, size)
 {
 }

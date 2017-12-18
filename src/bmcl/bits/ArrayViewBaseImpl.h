@@ -17,7 +17,7 @@
 namespace bmcl {
 
 template <typename T, typename B>
-inline ArrayViewBase<T, B>::ArrayViewBase()
+constexpr inline ArrayViewBase<T, B>::ArrayViewBase()
     : _data(nullptr)
     , _size(0)
 {
@@ -25,20 +25,20 @@ inline ArrayViewBase<T, B>::ArrayViewBase()
 
 template <typename T, typename B>
 template <std::size_t N>
-inline B ArrayViewBase<T, B>::fromStaticArray(const T(&data)[N])
+constexpr inline B ArrayViewBase<T, B>::fromStaticArray(const T(&data)[N])
 {
     return B(data, N);
 }
 
 template <typename T, typename B>
-inline ArrayViewBase<T, B>::ArrayViewBase(const T* data, std::size_t size)
+constexpr inline ArrayViewBase<T, B>::ArrayViewBase(const T* data, std::size_t size)
     : _data(data)
     , _size(size)
 {
 }
 
 template <typename T, typename B>
-inline ArrayViewBase<T, B>::ArrayViewBase(const T* start, const T* end)
+constexpr inline ArrayViewBase<T, B>::ArrayViewBase(const T* start, const T* end)
     : _data(start)
     , _size(end - start)
 {
@@ -52,7 +52,7 @@ inline ArrayViewBase<T, B>::ArrayViewBase(const std::vector<T>& vec)
 }
 
 template <typename T, typename B>
-inline ArrayViewBase<T, B>::ArrayViewBase(std::initializer_list<T> lst)
+constexpr inline ArrayViewBase<T, B>::ArrayViewBase(std::initializer_list<T> lst)
     : _data(lst.begin())
     , _size(lst.size())
 {
@@ -83,44 +83,44 @@ inline ArrayViewBase<T, B>::ArrayViewBase(FixedArrayView<T, N> view)
 
 template <typename T, typename B>
 template <typename U>
-inline ArrayViewBase<T, B>::ArrayViewBase(typename std::enable_if<std::is_same<U, char>::value, const char*>::type str)
+BMCL_CONSTEXPR_CPP17 inline ArrayViewBase<T, B>::ArrayViewBase(typename std::enable_if<std::is_same<U, char>::value, const char*>::type str)
     : _data(str)
-    , _size(std::strlen(str))
+    , _size(std::char_traits<char>::length(str))
 {
 }
 
 template <typename T, typename B>
-inline B ArrayViewBase<T, B>::empty()
+constexpr inline B ArrayViewBase<T, B>::empty()
 {
     return B(nullptr, std::size_t(0));
 }
 
 template <typename T, typename B>
-inline typename ArrayViewBase<T, B>::iterator ArrayViewBase<T, B>::begin() const
+constexpr inline typename ArrayViewBase<T, B>::iterator ArrayViewBase<T, B>::begin() const
 {
     return _data;
 }
 
 template <typename T, typename B>
-inline typename ArrayViewBase<T, B>::iterator ArrayViewBase<T, B>::end() const
+constexpr inline typename ArrayViewBase<T, B>::iterator ArrayViewBase<T, B>::end() const
 {
     return _data + _size;
 }
 
 template <typename T, typename B>
-inline typename ArrayViewBase<T, B>::reverse_iterator ArrayViewBase<T, B>::rbegin() const
+constexpr inline typename ArrayViewBase<T, B>::reverse_iterator ArrayViewBase<T, B>::rbegin() const
 {
     return reverse_iterator(end());
 }
 
 template <typename T, typename B>
-inline typename ArrayViewBase<T, B>::reverse_iterator ArrayViewBase<T, B>::rend() const
+constexpr inline typename ArrayViewBase<T, B>::reverse_iterator ArrayViewBase<T, B>::rend() const
 {
     return reverse_iterator(begin());
 }
 
 template <typename T, typename B>
-inline bool ArrayViewBase<T, B>::isEmpty() const
+constexpr inline bool ArrayViewBase<T, B>::isEmpty() const
 {
     return _size == 0;
 }
@@ -132,13 +132,13 @@ inline std::vector<T> ArrayViewBase<T, B>::toStdVector() const
 }
 
 template <typename T, typename B>
-inline const T* ArrayViewBase<T, B>::data() const
+constexpr inline const T* ArrayViewBase<T, B>::data() const
 {
     return _data;
 }
 
 template <typename T, typename B>
-inline std::size_t ArrayViewBase<T, B>::size() const
+constexpr inline std::size_t ArrayViewBase<T, B>::size() const
 {
     return _size;
 }

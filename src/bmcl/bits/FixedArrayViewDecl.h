@@ -26,23 +26,23 @@ public:
 
     FixedArrayView(const std::array<T, S>& lst);
 
-    static FixedArrayView<T, S> fromStaticArray(const T(&data)[S]);
-    static FixedArrayView<T, S> fromRawData(const T* data);
+    constexpr static FixedArrayView<T, S> fromStaticArray(const T(&data)[S]);
+    constexpr static FixedArrayView<T, S> fromRawData(const T* data);
 
-    iterator begin() const;
-    iterator end() const;
+    constexpr iterator begin() const;
+    constexpr iterator end() const;
 
-    reverse_iterator rbegin() const;
-    reverse_iterator rend() const;
+    constexpr reverse_iterator rbegin() const;
+    constexpr reverse_iterator rend() const;
 
-    const T* data() const;
-    std::size_t size() const;
-    bool isEmpty() const;
+    constexpr const T* data() const;
+    constexpr std::size_t size() const;
+    constexpr bool isEmpty() const;
 
     const T& operator[](std::size_t index) const;
 
 private:
-    FixedArrayView(const T* data);
+    constexpr FixedArrayView(const T* data);
 
     const T* _data;
 };

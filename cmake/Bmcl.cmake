@@ -155,7 +155,7 @@ endfunction()
 
 function(bmcl_add_executable target)
     add_executable(${target} ${ARGN})
-    bmcl_setup_flags(${target} ${ARGN}) 
+    bmcl_setup_flags(${target} ${ARGN})
     bmcl_install_targets(${target})
     bmcl_setup_output_directories(${target})
 endfunction()

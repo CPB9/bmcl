@@ -79,7 +79,7 @@ Option<std::size_t> StringView::findFirstOf(StringView chars, std::size_t from) 
     for (char c : chars) {
         bits.set(c);
     }
-    return iteratorToIndex(std::find_if(begin() + from, end(), [&bits](char c){
+    return iteratorToIndex(std::find_if(begin() + from, end(), [&bits](char c) {
         return bits.test(c);
     }));
 }
@@ -87,7 +87,7 @@ Option<std::size_t> StringView::findFirstOf(StringView chars, std::size_t from) 
 Option<std::size_t> StringView::findFirstNotOf(char c, std::size_t from) const
 {
     BMCL_ASSERT(from <= size());
-    return iteratorToIndex(std::find_if(begin() + from, end(), [c](char s){
+    return iteratorToIndex(std::find_if(begin() + from, end(), [c](char s) {
         return s != c;
     }));
 }
@@ -99,7 +99,7 @@ Option<std::size_t> StringView::findFirstNotOf(StringView chars, std::size_t fro
     for (char c : chars) {
         bits.set(c);
     }
-    return iteratorToIndex(std::find_if(begin() + from, end(), [&bits](char c){
+    return iteratorToIndex(std::find_if(begin() + from, end(), [&bits](char c) {
         return !bits.test(c);
     }));
 }

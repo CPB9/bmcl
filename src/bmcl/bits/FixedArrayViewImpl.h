@@ -23,61 +23,61 @@ inline FixedArrayView<T, S>::FixedArrayView(const std::array<T, S>& lst)
 }
 
 template <typename T, size_t S>
-inline FixedArrayView<T, S>::FixedArrayView(const T* data)
+constexpr inline FixedArrayView<T, S>::FixedArrayView(const T* data)
     : _data(data)
 {
 }
 
 template <typename T, size_t S>
-inline FixedArrayView<T, S> FixedArrayView<T, S>::fromRawData(const T* data)
+constexpr inline FixedArrayView<T, S> FixedArrayView<T, S>::fromRawData(const T* data)
 {
     return FixedArrayView<T, S>(data);
 }
 
 template <typename T, size_t S>
-inline FixedArrayView<T, S> FixedArrayView<T, S>::fromStaticArray(const T(&data)[S])
+constexpr inline FixedArrayView<T, S> FixedArrayView<T, S>::fromStaticArray(const T(&data)[S])
 {
     return FixedArrayView<T, S>(data);
 }
 
 template <typename T, size_t S>
-inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::begin() const
+constexpr inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::begin() const
 {
     return _data;
 }
 
 template <typename T, size_t S>
-inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::end() const
+constexpr inline typename FixedArrayView<T, S>::iterator FixedArrayView<T, S>::end() const
 {
     return _data + S;
 }
 
 template <typename T, size_t S>
-inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rbegin() const
+constexpr inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rbegin() const
 {
     return reverse_iterator(rend());
 }
 
 template <typename T, size_t S>
-inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rend() const
+constexpr inline typename FixedArrayView<T, S>::reverse_iterator FixedArrayView<T, S>::rend() const
 {
     return reverse_iterator(rbegin());
 }
 
 template <typename T, size_t S>
-inline const T* FixedArrayView<T, S>::data() const
+constexpr inline const T* FixedArrayView<T, S>::data() const
 {
     return _data;
 }
 
 template <typename T, size_t S>
-inline std::size_t FixedArrayView<T, S>::size() const
+constexpr inline std::size_t FixedArrayView<T, S>::size() const
 {
     return S;
 }
 
 template <typename T, size_t S>
-inline bool FixedArrayView<T, S>::isEmpty() const
+constexpr inline bool FixedArrayView<T, S>::isEmpty() const
 {
     return S == 0;
 }

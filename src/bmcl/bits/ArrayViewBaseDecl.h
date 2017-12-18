@@ -19,6 +19,12 @@
 #include <vector>
 #include <initializer_list>
 
+#if __cplusplus >= 201703L
+# define BMCL_CONSTEXPR_CPP17 constexpr
+#else
+# define BMCL_CONSTEXPR_CPP17
+#endif
+
 namespace bmcl {
 
 template<class B, class T>
@@ -32,34 +38,34 @@ public:
     typedef const T* const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
 
-    ArrayViewBase();
+    constexpr ArrayViewBase();
     template <std::size_t N>
     ArrayViewBase(const std::array<T, N>& lst);
     template <std::size_t N>
     ArrayViewBase(FixedArrayView<T, N> view);
-    ArrayViewBase(const T* data, std::size_t size);
-    ArrayViewBase(const T* start, const T* end);
+    constexpr ArrayViewBase(const T* data, std::size_t size);
+    constexpr ArrayViewBase(const T* start, const T* end);
     ArrayViewBase(const std::vector<T>& vec);
-    ArrayViewBase(std::initializer_list<T> lst);
+    constexpr ArrayViewBase(std::initializer_list<T> lst);
     //template <typename U = T>
     //ArrayViewBase(typename std::enable_if<std::is_same<U, uint8_t>::value, bmcl::Buffer>::type& buf);
     template <typename U = T>
-    ArrayViewBase(typename std::enable_if<std::is_same<U, char>::value, const char*>::type str);
+    BMCL_CONSTEXPR_CPP17 ArrayViewBase(typename std::enable_if<std::is_same<U, char>::value, const char*>::type str);
 
     template <std::size_t N>
-    static B fromStaticArray(const T(&data)[N]);
+    constexpr static B fromStaticArray(const T(&data)[N]);
 
-    static B empty();
+    constexpr static B empty();
 
-    iterator begin() const;
-    iterator end() const;
+    constexpr iterator begin() const;
+    constexpr iterator end() const;
 
-    reverse_iterator rbegin() const;
-    reverse_iterator rend() const;
+    constexpr reverse_iterator rbegin() const;
+    constexpr reverse_iterator rend() const;
 
-    const T* data() const;
-    std::size_t size() const;
-    bool isEmpty() const;
+    constexpr const T* data() const;
+    constexpr std::size_t size() const;
+    constexpr bool isEmpty() const;
 
     // python-style slicing
     // sliceFrom - array[start:]
