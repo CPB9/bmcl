@@ -12,7 +12,7 @@
 
 #include <functional>
 
-#if BMCL_HAVE_QT
+#ifdef BMCL_HAVE_QT
 #include <QTextStream>
 #include <QBuffer>
 #else
@@ -57,7 +57,7 @@ public:
 private:
     LogLevel _allowedLevel;
     LogLevel _level;
-#if BMCL_HAVE_QT
+#ifdef BMCL_HAVE_QT
     QTextStream _stream;
     QString _buffer;
 #else
@@ -68,7 +68,7 @@ private:
 inline Logger::Logger(LogLevel level)
     : _allowedLevel(bmcl::logLevel())
     , _level(level)
-#if BMCL_HAVE_QT
+#ifdef BMCL_HAVE_QT
     , _stream(&_buffer, QIODevice::WriteOnly)
 #endif
 {

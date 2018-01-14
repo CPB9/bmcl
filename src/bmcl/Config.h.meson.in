@@ -1,0 +1,106 @@
+#pragma once
+
+#if defined(__unux) || defined(__unix__)
+    #define BMCL_PLATFORM_UNIX
+    #if defined(__linux) || defined(__linux__)
+        #define BMCL_PLATFORM_LINUX
+    #elif defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+        #define BMCL_PLATFORM_BSD
+        #if defined(__DragonFly__)
+            #define BMCL_PLATFORM_DRAGONFLY
+        #elif defined(__FreeBSD__)
+            #define BMCL_PLATFORM_FREEBSD
+        #elif defined(__OpenBSD__)
+            #define BMCL_PLATFORM_OPENBSD
+        #elif defined(__NetBSD__)
+            #define BMCL_PLATFORM_NETBSD
+        #endif
+    #elif defined(_AIX)
+        #define BMCL_PLATFORM_AIX
+    #elif defined(__hpux)
+        #define BMCL_PLATFORM_HPUX
+    #elif defined(__sun) && defined(__SVR4)
+        #define BMCL_PLATFORM_SOLARIS
+    #elif defined(__QNX__)
+        #define BMCL_PLATFORM_QNX
+    #else
+        #error "unsupported unix target"
+    #endif
+#elif defined(_WIN32)
+    #define BMCL_PLATFORM_WINDOWS
+    #if defined(_MSC_VER)
+        #define BMCL_PLATFORM_MSVC
+    #elif defined(__MINGW32__)
+        #define BMCL_PLATFORM_MINGW
+    #else
+        #error "unsupported windows target"
+    #endif
+#elif defined(__APPLE__)
+    #define BMCL_PLATFORM_APPLE
+#elif defined(__AVR__)
+    #define BMCL_PLATFORM_AVR
+#else
+    #error "unsupported platform"
+#endif
+
+#mesondefine BMCL_NO_ASSERTS
+#mesondefine BMCL_HAVE_QT
+#mesondefine BMCL_BIG_ENDIAN
+#mesondefine BMCL_LITTLE_ENDIAN
+
+#ifdef BMCL_BIG_ENDIAN
+#define BMCL_BYTE_ORDER 4321
+#else
+#define BMCL_BYTE_ORDER 1234
+#endif
+
+#define BMCL_UNUSED(var) (void)var;
+
+#if defined(_MSC_VER)
+#define BMCL_NORETURN __declspec(noreturn)
+#elif defined(__GNUC__)
+#define BMCL_NORETURN __attribute__((__noreturn__))
+#else
+#define BMCL_NORETURN
+#endif
+
+#if defined(__GNUC__) && defined(__SANITIZE_ADDRESS__)
+#define BMCL_ASAN 1
+#elif defined(__clang__)
+#if __has_feature(address_sanitizer)
+#define BMCL_ASAN 1
+#endif
+#else
+#define BMCL_ASAN 0
+#endif
+
+#define BMCL_MIN(a, b) (((a) > (b)) ? (b) : (a))
+#define BMCL_MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+#if defined(_MSC_VER)
+#define BMCL_NOEXCEPT
+#else
+#define BMCL_NOEXCEPT noexcept
+#endif
+
+#ifdef _MSC_VER
+#define BMCL_NOINLINE __declspec(noinline)
+#else
+#define BMCL_NOINLINE __attribute__((noinline))
+#endif
+
+#ifdef _MSC_VER
+# define BMCL_DLL_INLINE inline
+# define BMCL_DECL_DLLEXPORT __declspec(dllexport)
+# define BMCL_DECL_DLLIMPORT __declspec(dllimport)
+#else
+# define BMCL_DLL_INLINE
+# define BMCL_DECL_DLLEXPORT
+# define BMCL_DECL_DLLIMPORT
+#endif
+
+#ifdef BMCL_DLL
+# define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+#else
+# define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+#endif

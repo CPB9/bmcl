@@ -65,7 +65,7 @@ TEST_F(Logging, customLevel)
     expectMsg("criticaldebug");
 }
 
-#if BMCL_HAVE_QT
+#ifdef BMCL_HAVE_QT
 
 #include <QString>
 #include <QByteArray>
