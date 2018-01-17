@@ -1,4 +1,4 @@
 option('use_qt5', type : 'boolean', value : true)
 option('release_asserts', type : 'boolean', value : true)
 option('build_tests', type : 'boolean', value : true)
-option('shared_lib', type : 'boolean', value : true)
+option('shared_lib', type : 'boolean', value : false)
