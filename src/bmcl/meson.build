@@ -18,6 +18,17 @@ else
   conf_data.set('BMCL_HAVE_QT', false)
 endif
 
+conf_data.set('BMCL_DLL', false)
+
+if get_option('shared_lib')
+  libtype = 'shared_library'
+  if target_machine.system() == 'windows'
+    conf_data.set('BMCL_DLL', true)
+  endif
+else
+  libtype = 'static_library'
+endif
+
 config_h = configure_file(input : 'Config.h.meson.in',
   output : 'Config.h',
   configuration : conf_data

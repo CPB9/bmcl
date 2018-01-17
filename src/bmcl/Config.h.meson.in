@@ -47,6 +47,7 @@
 #mesondefine BMCL_HAVE_QT
 #mesondefine BMCL_BIG_ENDIAN
 #mesondefine BMCL_LITTLE_ENDIAN
+#mesondefine BMCL_DLL
 
 #ifdef BMCL_BIG_ENDIAN
 #define BMCL_BYTE_ORDER 4321
@@ -99,8 +100,16 @@
 # define BMCL_DECL_DLLIMPORT
 #endif
 
-#ifdef BMCL_DLL
-# define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+#ifdef BUILDING_BMCL
+# ifdef BMCL_DLL
+#  define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+# else
+#  define BMCL_EXPORT
+# endif
 #else
-# define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+# ifdef BMCL_DLL
+#  define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+# else
+#  define BMCL_EXPORT
+# endif
 #endif

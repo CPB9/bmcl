@@ -69,16 +69,7 @@ headers = [
 
 inc_dir = include_directories('.')
 
-comp_opts = []
-
-if get_option('shared_lib')
-  libtype = 'shared_library'
-  if target_machine.system() == 'windows'
-    comp_opts = ['-DBMCL_DLL']
-  endif
-else
-  libtype = 'static_library'
-endif
+build_opts = ['-DBUILDING_BMCL']
 
 if have_qt5
   deps = [qt5_dep]
@@ -98,7 +89,7 @@ bmcl_lib = build_target('bmcl',
   include_directories: inc_dir,
   dependencies : deps,
   target_type : libtype,
-  cpp_args: comp_opts,
+  cpp_args: build_opts,
 )
 
 bmcl_dep = declare_dependency(link_with: bmcl_lib,
