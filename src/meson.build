@@ -1,3 +1,5 @@
+have_qt5 = false
+
 if get_option('use_qt5')
   qt5 = import('qt5')
   qt5_dep = dependency('qt5', modules: ['Core'])
