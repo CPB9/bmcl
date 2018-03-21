@@ -9,6 +9,7 @@
 #pragma once
 
 #include <bmcl/Config.h>
+#include <cstddef>
 
 namespace bmcl {
 
@@ -198,6 +199,18 @@ template <typename T, typename U>
 inline bool operator!=(const Rc<T>& left, U* right)
 {
     return left.get() != right;
+}
+
+template <typename T>
+inline bool operator==(const Rc<T>& left, std::nullptr_t)
+{
+    return left.get() == nullptr;
+}
+
+template <typename T>
+inline bool operator!=(const Rc<T>& left, std::nullptr_t)
+{
+    return left.get() != nullptr;
 }
 
 template <typename T, typename U>
