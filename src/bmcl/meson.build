@@ -20,10 +20,13 @@ endif
 
 conf_data.set('BMCL_DLL', false)
 
+dep_args = []
+
 if get_option('shared_lib')
   libtype = 'shared_library'
   if target_machine.system() == 'windows'
     conf_data.set('BMCL_DLL', true)
+    dep_args += '-DBMCL_DLL'
   endif
 else
   libtype = 'static_library'

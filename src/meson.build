@@ -97,4 +97,5 @@ bmcl_lib = build_target('bmcl',
 bmcl_dep = declare_dependency(link_with: bmcl_lib,
   include_directories: inc_dir,
   dependencies: deps,
+  compiler_args : dep_args,
 )
