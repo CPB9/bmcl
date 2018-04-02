@@ -28,6 +28,7 @@ src = [
   'bmcl/Sha3.cpp',
   'bmcl/String.cpp',
   'bmcl/StringView.cpp',
+  'bmcl/ThreadSafeRefCountable.cpp',
 ]
 
 headers = [

@@ -12,11 +12,12 @@
 #include "bmcl/Rc.h"
 
 #include <atomic>
+#include <cstdint>
 
 namespace bmcl {
 
 template <typename T>
-class ThreadSafeRefCountable {
+class BMCL_EXPORT ThreadSafeRefCountable {
 public:
     ThreadSafeRefCountable()
         : _rc(0)
@@ -43,4 +44,9 @@ private:
 
     mutable std::atomic<T> _rc;
 };
+
+extern template class ThreadSafeRefCountable<std::uint8_t>;
+extern template class ThreadSafeRefCountable<std::uint16_t>;
+extern template class ThreadSafeRefCountable<std::uint32_t>;
+extern template class ThreadSafeRefCountable<std::uint64_t>;
 }
