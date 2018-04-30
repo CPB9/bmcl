@@ -20,6 +20,7 @@ tests = [
   ['sharedbytes', 'SharedBytes.cpp'],
   ['alignedunion', 'AlignedUnion.cpp'],
   ['variant', 'Variant.cpp'],
+  ['bitarray', 'BitArray.cpp'],
   #  ['colorstream', 'ColorStream.cpp'],
   #  ['reader', 'Reader.cpp'],
   #  ['writer', 'Writer.cpp'],

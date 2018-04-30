@@ -38,6 +38,7 @@ headers = [
   'bmcl/ArrayView.h',
   'bmcl/AlignedUnion.h',
   'bmcl/Assert.h',
+  'bmcl/BitArray.h',
   'bmcl/Buffer.h',
   'bmcl/ColorStream.h',
   'bmcl/Either.h',

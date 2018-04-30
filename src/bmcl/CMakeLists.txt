@@ -8,6 +8,7 @@ bmcl_add_library(bmcl SHARED
     AlignedUnion.h
     Assert.cpp
     Assert.h
+    BitArray.h
     Buffer.cpp
     Buffer.h
     ColorStream.cpp
