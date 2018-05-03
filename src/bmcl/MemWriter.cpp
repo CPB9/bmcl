@@ -9,6 +9,7 @@
 #include "bmcl/Config.h"
 #include "bmcl/Assert.h"
 #include "bmcl/MemWriter.h"
+#include "bmcl/ZigZag.h"
 
 namespace bmcl {
 
@@ -143,9 +144,8 @@ bool MemWriter::writeVarUint(uint64_t value)
     return true;
 }
 
-bool MemWriter::writeVarInt(int64_t value)
+bool MemWriter::writeVarInt(int64_t n)
 {
-    uint64_t n = (uint64_t)value;
-    return writeVarUint((n << 1) ^ (n >> 63));
+    return writeVarUint(zigZagEncode(n));
 }
 }

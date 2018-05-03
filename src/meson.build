@@ -69,6 +69,7 @@ headers = [
   'bmcl/FileUtils.h',
   'bmcl/Utils.h',
   'bmcl/Writer.h',
+  'bmcl/ZigZag.h',
 ]
 
 inc_dir = include_directories('.')

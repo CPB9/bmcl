@@ -11,6 +11,7 @@
 #include "bmcl/MemReader.h"
 #include "bmcl/MemWriter.h"
 #include "bmcl/Result.h"
+#include "bmcl/ZigZag.h"
 
 #include <cstring>
 
@@ -122,7 +123,7 @@ bool MemReader::readVarInt(int64_t* dest)
     if (!readVarUint(&n)) {
         return false;
     }
-    *dest = (n >> 1) ^ -(int64_t)(n & 1);
+    *dest = zigZagDecode(n);
     return true;
 }
 }

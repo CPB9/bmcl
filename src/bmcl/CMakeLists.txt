@@ -54,6 +54,7 @@ bmcl_add_library(bmcl SHARED
     FileUtils.h
     Utils.h
     Writer.h
+    ZigZag.h
 )
 
 if(MINGW)
