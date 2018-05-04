@@ -50,6 +50,8 @@ bmcl_add_library(bmcl SHARED
     ThreadSafeRefCountable.h
     ThreadSafeRefCountable.cpp
     Variant.h
+    Varuint.cpp
+    Varuint.h
     FileUtils.cpp
     FileUtils.h
     Utils.h
