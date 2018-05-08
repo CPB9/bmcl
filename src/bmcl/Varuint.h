@@ -3,6 +3,7 @@
 #include "bmcl/Config.h"
 
 #include <cstdint>
+#include <cstddef>
 
 namespace bmcl {
 
