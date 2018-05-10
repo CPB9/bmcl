@@ -7,6 +7,6 @@
 
 namespace bmcl {
 
-std::size_t varuintEncodedSize(std::uint64_t value);
-std::size_t varintEncodedSize(std::int64_t value);
+BMCL_EXPORT std::size_t varuintEncodedSize(std::uint64_t value);
+BMCL_EXPORT std::size_t varintEncodedSize(std::int64_t value);
 }
