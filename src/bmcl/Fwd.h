@@ -48,8 +48,10 @@ class RefCountable;
 template <std::size_t bits>
 class Sha3;
 
+class ThreadSafeRefCountableBase;
+
 template <typename T>
-class ThreadSafeRefCountable;
+using ThreadSafeRefCountable = ThreadSafeRefCountableBase;
 
 template <typename B>
 class Writer;

@@ -12,41 +12,26 @@
 #include "bmcl/Rc.h"
 
 #include <atomic>
-#include <cstdint>
+#include <cstddef>
 
 namespace bmcl {
 
-template <typename T>
-class BMCL_EXPORT ThreadSafeRefCountable {
+class BMCL_EXPORT ThreadSafeRefCountableBase {
 public:
-    ThreadSafeRefCountable()
-        : _rc(0)
-    {
-    }
-
-    virtual ~ThreadSafeRefCountable()
-    {
-    }
+    ThreadSafeRefCountableBase();
+    virtual ~ThreadSafeRefCountableBase();
 
 private:
-    friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountable<T>* rc)
-    {
-        rc->_rc.fetch_add(1, std::memory_order_relaxed);
-    }
+    friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
+    friend void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
 
-    friend void bmclRcRelease(const bmcl::ThreadSafeRefCountable<T>* rc)
-    {
-        if (rc->_rc.fetch_sub(1, std::memory_order_release) == 1) {
-            std::atomic_thread_fence(std::memory_order_acquire);
-            delete rc;
-        }
-    }
-
-    mutable std::atomic<T> _rc;
+    mutable std::atomic<std::size_t> _rc;
 };
 
-extern template class ThreadSafeRefCountable<std::uint8_t>;
-extern template class ThreadSafeRefCountable<std::uint16_t>;
-extern template class ThreadSafeRefCountable<std::uint32_t>;
-extern template class ThreadSafeRefCountable<std::uint64_t>;
+void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
+void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
+
+//HACK
+template <typename T>
+using ThreadSafeRefCountable = ThreadSafeRefCountableBase;
 }
