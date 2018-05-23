@@ -51,7 +51,7 @@ class Sha3;
 class ThreadSafeRefCountableBase;
 
 template <typename T>
-using ThreadSafeRefCountable = ThreadSafeRefCountableBase;
+class ThreadSafeRefCountable;
 
 template <typename B>
 class Writer;

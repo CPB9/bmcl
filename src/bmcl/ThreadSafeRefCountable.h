@@ -33,5 +33,5 @@ void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
 
 //HACK
 template <typename T>
-using ThreadSafeRefCountable = ThreadSafeRefCountableBase;
+class ThreadSafeRefCountable : public ThreadSafeRefCountableBase {};
 }
