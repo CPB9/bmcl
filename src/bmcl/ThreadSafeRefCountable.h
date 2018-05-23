@@ -10,6 +10,7 @@
 
 #include "bmcl/Config.h"
 #include "bmcl/Rc.h"
+#include "bmcl/Fwd.h"
 
 #include <atomic>
 #include <cstddef>
@@ -28,10 +29,6 @@ private:
     mutable std::atomic<std::size_t> _rc;
 };
 
-void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
-void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
-
-//HACK
-template <typename T>
-class ThreadSafeRefCountable : public ThreadSafeRefCountableBase {};
+BMCL_EXPORT void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
+BMCL_EXPORT void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
 }
