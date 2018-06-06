@@ -11,6 +11,7 @@
 #include "bmcl/Result.h"
 #include "bmcl/Option.h"
 #include "bmcl/Buffer.h"
+#include "bmcl/SharedBytes.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -49,8 +50,8 @@ private:
     std::FILE* _file;
 };
 
-template <typename T>
-Result<T, int> readFile(const char* path)
+template <typename T, typename C>
+Result<T, int> readFile(const char* path, C&& create)
 {
     std::FILE* file = std::fopen(path, "rb");
     if (!file) {
@@ -72,24 +73,34 @@ Result<T, int> readFile(const char* path)
         return errno;
     }
 
-    T buf;
-    buf.resize(size);
+    T buf = create(size);
 
-    if (std::fread(&buf[0], 1, size, file) != std::size_t(size)) {
+    if (std::fread((void*)buf.data(), 1, size, file) != std::size_t(size)) {
         return errno;
     }
 
-    return std::move(buf);
+    return buf;
 }
 
 Result<std::string, int> readFileIntoString(const char* path)
 {
-    return readFile<std::string>(path);
+    return readFile<std::string>(path, [](std::size_t size) {
+        return std::string(size, '\0');
+    });
 }
 
 Result<Buffer, int> readFileIntoBuffer(const char* path)
 {
-    return readFile<Buffer>(path);
+    return readFile<Buffer>(path, [](std::size_t size) {
+        return Buffer(size);
+    });
+}
+
+Result<SharedBytes, int> readFileIntoBytes(const char* path)
+{
+    return readFile<SharedBytes>(path, [](std::size_t size) {
+        return SharedBytes::create(size);
+    });
 }
 
 std::uint64_t applicationPid()

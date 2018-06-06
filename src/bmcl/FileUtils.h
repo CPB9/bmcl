@@ -20,9 +20,11 @@ template <typename T, typename E>
 class Result;
 
 class Buffer;
+class SharedBytes;
 
 BMCL_EXPORT Result<std::string, int> readFileIntoString(const char* path);
 BMCL_EXPORT Result<Buffer, int> readFileIntoBuffer(const char* path);
+BMCL_EXPORT Result<SharedBytes, int> readFileIntoBytes(const char* path);
 
 BMCL_EXPORT const bmcl::Option<std::string>& applicationFilePath();
 BMCL_EXPORT const bmcl::Option<std::string>& applicationDirPath();
