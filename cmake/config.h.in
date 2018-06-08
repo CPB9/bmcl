@@ -43,13 +43,11 @@
     #error "unsupported platform"
 #endif
 
-#cmakedefine BMCL_NO_ASSERTS 1
-
-#cmakedefine BMCL_HAVE_MALLOC 1
-#cmakedefine BMCL_HAVE_QT 1
-
-#cmakedefine BMCL_BIG_ENDIAN 1
-#cmakedefine BMCL_LITTLE_ENDIAN 1
+#cmakedefine BMCL_NO_ASSERTS
+#cmakedefine BMCL_HAVE_QT
+#cmakedefine BMCL_BIG_ENDIAN
+#cmakedefine BMCL_LITTLE_ENDIAN
+#cmakedefine BMCL_DLL
 
 #ifdef BMCL_BIG_ENDIAN
 #define BMCL_BYTE_ORDER 4321
@@ -61,10 +59,13 @@
 
 #if defined(_MSC_VER)
 #define BMCL_NORETURN __declspec(noreturn)
+#define BMCL_UNREACHABLE() __assume(0)
 #elif defined(__GNUC__)
 #define BMCL_NORETURN __attribute__((__noreturn__))
+#define BMCL_UNREACHABLE() __builtin_unreachable()
 #else
 #define BMCL_NORETURN
+#define BMCL_UNREACHABLE()
 #endif
 
 #if defined(__GNUC__) && defined(__SANITIZE_ADDRESS__)
@@ -102,8 +103,16 @@
 # define BMCL_DECL_DLLIMPORT
 #endif
 
-#ifdef BMCL_DLL
-# define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+#ifdef BUILDING_BMCL
+# ifdef BMCL_DLL
+#  define BMCL_EXPORT BMCL_DECL_DLLEXPORT
+# else
+#  define BMCL_EXPORT
+# endif
 #else
-# define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+# ifdef BMCL_DLL
+#  define BMCL_EXPORT BMCL_DECL_DLLIMPORT
+# else
+#  define BMCL_EXPORT
+# endif
 #endif

@@ -59,10 +59,13 @@
 
 #if defined(_MSC_VER)
 #define BMCL_NORETURN __declspec(noreturn)
+#define BMCL_UNREACHABLE() __assume(0)
 #elif defined(__GNUC__)
 #define BMCL_NORETURN __attribute__((__noreturn__))
+#define BMCL_UNREACHABLE() __builtin_unreachable()
 #else
 #define BMCL_NORETURN
+#define BMCL_UNREACHABLE()
 #endif
 
 #if defined(__GNUC__) && defined(__SANITIZE_ADDRESS__)
