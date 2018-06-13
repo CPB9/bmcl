@@ -1,3 +1,7 @@
+if(MSVC OR MINGW)
+    add_definitions(-DBUILDING_BMCL)
+endif()
+
 bmcl_add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
