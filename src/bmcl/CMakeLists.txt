@@ -1,7 +1,3 @@
-if(MSVC OR MINGW)
-    add_definitions(-DBMCL_DLL)
-endif()
-
 bmcl_add_library(bmcl SHARED
     Alloca.h
     ArrayView.h
