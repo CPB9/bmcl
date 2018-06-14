@@ -23,8 +23,8 @@ public:
     virtual ~ThreadSafeRefCountableBase();
 
 private:
-    friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
-    friend void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
+    BMCL_EXPORT friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
+    BMCL_EXPORT friend void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
 
     mutable std::atomic<std::size_t> _rc;
 };
