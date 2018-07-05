@@ -52,6 +52,8 @@ bmcl_add_library(bmcl SHARED
     Variant.h
     Varuint.cpp
     Varuint.h
+    Uuid.h
+    Uuid.cpp
     FileUtils.cpp
     FileUtils.h
     Utils.h

@@ -40,4 +40,5 @@
 #include "bmcl/StringView.h"
 #include "bmcl/ThreadSafeRefCountable.h"
 #include "bmcl/Utils.h"
+#include "bmcl/Uuid.h"
 #include "bmcl/Writer.h"

@@ -29,6 +29,7 @@ src = [
   'bmcl/String.cpp',
   'bmcl/StringView.cpp',
   'bmcl/ThreadSafeRefCountable.cpp',
+  'bmcl/Uuid.cpp',
   'bmcl/Varuint.cpp',
 ]
 
@@ -68,6 +69,7 @@ headers = [
   'bmcl/StringView.h',
   'bmcl/ThreadSafeRefCountable.h',
   'bmcl/Utils.h',
+  'bmcl/Uuid.h',
   'bmcl/Variant.h',
   'bmcl/Varuint.h',
   'bmcl/Writer.h',
@@ -84,17 +86,23 @@ else
   deps = []
 endif
 
+build_deps = []
+
+cc = meson.get_compiler('cpp')
+
 if target_machine.system() == 'windows'
-    cc = meson.get_compiler('cpp')
-    shlwapi_lib = cc.find_library('shlwapi')
-    deps += shlwapi_lib
+    shlwapi_lib = cc.find_library('shlwapi', required : true)
+    build_deps += shlwapi_lib
+elif target_machine.system() == 'linux'
+    uuid_dep = dependency('uuid')
+    build_deps += uuid_dep
 endif
 
 bmcl_lib = build_target('bmcl',
   name_prefix: 'lib',
   sources: src + headers,
   include_directories: inc_dir,
-  dependencies : deps,
+  dependencies : build_deps + deps,
   target_type : libtype,
   cpp_args: build_opts,
 )
