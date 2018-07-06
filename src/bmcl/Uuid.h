@@ -23,6 +23,7 @@ public:
     Uuid& operator=(const Uuid& other) = default;
 
     static Uuid create();
+    static Uuid createNil();
 
     const Data& data() const;
 
@@ -42,6 +43,13 @@ private:
 inline const Uuid::Data& Uuid::data() const
 {
     return _data;
+}
+
+inline Uuid Uuid::createNil()
+{
+    Uuid u;
+    u._data.fill(0);
+    return u;
 }
 
 inline bool Uuid::operator==(const Uuid& other) const
