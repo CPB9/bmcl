@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bmcl/Config.h"
+
 #include <cstdint>
 
 namespace bmcl {

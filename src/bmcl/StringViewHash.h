@@ -8,9 +8,19 @@
 
 #pragma once
 
-namespace bmcl {
+#include "bmcl/Config.h"
+#include "bmcl/Hash.h"
+#include "bmcl/StringView.h"
 
-template <typename T, typename E>
-class Result;
+namespace std {
 
+template<>
+struct hash<bmcl::StringView>
+{
+    // FNV hash
+    std::size_t operator()(bmcl::StringView view) const
+    {
+        return bmcl::fnv1aHash<std::size_t>(view.begin(), view.size());
+    }
+};
 }

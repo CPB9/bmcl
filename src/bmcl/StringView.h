@@ -13,7 +13,6 @@
 #include "bmcl/Fwd.h"
 
 #include <cassert>
-#include <algorithm>
 #include <cstddef>
 #include <cstring>
 #include <string>

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/OptionFwd.h"
+#include "bmcl/Fwd.h"
 
 #include <string>
 #include <cstdint>

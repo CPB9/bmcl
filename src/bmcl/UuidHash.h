@@ -8,9 +8,18 @@
 
 #pragma once
 
-namespace bmcl {
+#include "bmcl/Config.h"
+#include "bmcl/Hash.h"
+#include "bmcl/Uuid.h"
 
-template <typename T>
-class Option;
+namespace std {
 
+template<>
+struct hash<bmcl::Uuid>
+{
+    std::size_t operator()(const bmcl::Uuid& p) const
+    {
+        return bmcl::fnv1aHash<std::size_t>(p.data().data(), p.data().size());
+    }
+};
 }

@@ -10,6 +10,7 @@
 #include "bmcl/FixedArrayView.h"
 #include "bmcl/Option.h"
 
+#include <algorithm>
 #include <bitset>
 #include <climits>
 

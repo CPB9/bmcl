@@ -3,18 +3,23 @@ if(MSVC OR MINGW)
 endif()
 
 bmcl_add_library(bmcl SHARED
+    AlignedUnion.h
     Alloca.h
     ArrayView.h
-    AlignedUnion.h
     Assert.cpp
     Assert.h
     BitArray.h
     Buffer.cpp
     Buffer.h
+    Bytes.h
     ColorStream.cpp
     ColorStream.h
     Either.h
     Endian.h
+    FileUtils.cpp
+    FileUtils.h
+    IpAddress.cpp
+    IpAddress.h
     Logging.cpp
     Logging.h
     MemReader.cpp
@@ -22,41 +27,34 @@ bmcl_add_library(bmcl SHARED
     MemWriter.cpp
     MemWriter.h
     NonNullUniquePtr.h
-    IpAddress.h
-    IpAddress.cpp
     Option.h
-    OptionFwd.h
     OptionPtr.h
     Panic.cpp
     Panic.h
     PtrUtils.h
     Rc.h
-    RefCountable.h
+    RcHash.h
     Reader.h
+    RefCountable.h
     Result.h
-    ResultFwd.h
-    RingArray.cpp
-    RingArray.h
-    RingBucket.cpp
-    RingBucket.h
     RingBuffer.cpp
     RingBuffer.h
     Sha3.cpp
     Sha3.h
-    String.h
     String.cpp
+    String.h
     StringView.cpp
     StringView.h
-    ThreadSafeRefCountable.h
+    StringViewHash.h
     ThreadSafeRefCountable.cpp
+    ThreadSafeRefCountable.h
+    Utils.h
+    Uuid.cpp
+    Uuid.h
+    UuidHash.h
     Variant.h
     Varuint.cpp
     Varuint.h
-    Uuid.h
-    Uuid.cpp
-    FileUtils.cpp
-    FileUtils.h
-    Utils.h
     Writer.h
     ZigZag.h
 )

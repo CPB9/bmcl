@@ -9,6 +9,7 @@
 #pragma once
 
 #include <bmcl/Config.h>
+
 #include <cstddef>
 
 namespace bmcl {
