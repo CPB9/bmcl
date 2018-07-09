@@ -30,23 +30,29 @@ Uuid Uuid::create()
     GUID data;
     CoCreateGuid(&data);
 
-    u._data[0] = (data.Data1 >> 24) & 0xff;
-    u._data[1] = (data.Data1 >> 16) & 0xff;
-    u._data[2] = (data.Data1 >>  8) & 0xff;
-    u._data[3] = (data.Data1      ) & 0xff;
-    u._data[4] = (data.Data2 >>  8) & 0xff;
-    u._data[5] = (data.Data2      ) & 0xff;
-    u._data[6] = (data.Data3 >>  8) & 0xff;
-    u._data[7] = (data.Data3      ) & 0xff;
+    u._data =
+    {
+        (unsigned char)((data.Data1 >> 24) & 0xFF),
+        (unsigned char)((data.Data1 >> 16) & 0xFF),
+        (unsigned char)((data.Data1 >> 8) & 0xFF),
+        (unsigned char)((data.Data1) & 0xff),
 
-    u._data[8]  = data.Data4[0]
-    u._data[9]  = data.Data4[1]
-    u._data[10] = data.Data4[2]
-    u._data[11] = data.Data4[3]
-    u._data[12] = data.Data4[4]
-    u._data[13] = data.Data4[5]
-    u._data[14] = data.Data4[6]
-    u._data[15] = data.Data4[7]
+        (unsigned char)((data.Data2 >> 8) & 0xFF),
+        (unsigned char)((data.Data2) & 0xff),
+
+        (unsigned char)((data.Data3 >> 8) & 0xFF),
+        (unsigned char)((data.Data3) & 0xFF),
+
+        (unsigned char)data.Data4[0],
+        (unsigned char)data.Data4[1],
+        (unsigned char)data.Data4[2],
+        (unsigned char)data.Data4[3],
+        (unsigned char)data.Data4[4],
+        (unsigned char)data.Data4[5],
+        (unsigned char)data.Data4[6],
+        (unsigned char)data.Data4[7]
+    };
+
 #elif defined(BMCL_PLATFORM_APPLE)
     CFUUID native = CFUUIDCreate(NULL);
     CFUUIDBytes data = CFUUIDGetUUIDBytes(native);
