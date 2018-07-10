@@ -10,7 +10,7 @@ macro(add_bench target)
         RUNTIME_OUTPUT_DIRECTORY ${BENCH_DIR}
         FOLDER "tests"
     )
-    bmcl_setup_flags(bmcl-bench-${target})
+    bmcl_setup_flags(bmcl-bench-${target} ${ARGN})
 
     target_include_directories(bmcl-bench-${target}
         PRIVATE

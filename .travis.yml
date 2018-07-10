@@ -1,14 +1,13 @@
-language: c
-compiler: clang
+language: cpp
+sudo: false
+compiler:
+  - gcc
+  - clang
 dist: trusty
 env:
   global:
-      - CXX=clang++
       - secure: "WO7Bs89KG+TemRpZqkRBtGGf3CRKXJpBFpZXyE8xwakE2EtEdCd4/ljaBMjMa0pR1t7mp8sR8UOczkBdyxNft7CKBEuhByWI1F4zhZenWFSBP/JRdzglL8HIShmvJJeMnUhYLQt2GhbyMwYoKQJKTGTUGDC9fH6qQsc2n2Ajr+I="
-  matrix:
-      - SANITIZER_FLAGS="-DSANITIZE_ADDRESS=1"
-      - SANITIZER_FLAGS=""
-script: ls && mkdir -p build && cd build && cmake $SANITIZER_FLAGS ../ && make && ctest --output-on-failure
+script: ls && mkdir -p build && cd build && cmake -GNinja ../ && ninja && ctest --output-on-failure
 
 addons:
   coverity_scan:
@@ -20,4 +19,12 @@ addons:
     build_command_prepend: mkdir build && cd build && cmake ..
     build_command: make
     branch_pattern: coverity_scan
+  apt:
+    packages:
+      - cmake
+      - ninja-build
+      - gcc
+      - g++
+      - clang
+      - uuid-dev
 
