@@ -5,8 +5,6 @@ tests = [
   ['buffer', 'Buffer.cpp'],
   ['memreader', 'MemReader.cpp'],
   ['memwriter', 'MemWriter.cpp'],
-  ['ringarray', 'RingArray.cpp'],
-  ['ringbucket', 'RingBucket.cpp'],
   ['ringbuf', 'RingBuffer.cpp'],
   ['option', 'Option.cpp'],
   ['either', 'Either.cpp'],

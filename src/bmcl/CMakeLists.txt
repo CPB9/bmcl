@@ -67,6 +67,11 @@ if (MSVC)
     target_link_libraries(bmcl Shlwapi)
 endif()
 
+if (UNIX)
+    target_link_libraries(bmcl uuid)
+endif()
+
+
 if (BMCL_HAVE_QT)
     target_link_libraries(bmcl Qt5::Core)
 endif()
