@@ -14,6 +14,8 @@ bmcl_add_library(bmcl SHARED
     Bytes.h
     ColorStream.cpp
     ColorStream.h
+    DoubleEq.cpp
+    DoubleEq.h
     Either.h
     Endian.h
     FileUtils.cpp
