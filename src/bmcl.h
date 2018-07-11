@@ -26,6 +26,7 @@
 #include "bmcl/Hash.h"
 #include "bmcl/IpAddress.h"
 #include "bmcl/Logging.h"
+#include "bmcl/Math.h"
 #include "bmcl/MemReader.h"
 #include "bmcl/MemWriter.h"
 #include "bmcl/NonNullUniquePtr.h"
