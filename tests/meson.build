@@ -19,6 +19,7 @@ tests = [
   ['alignedunion', 'AlignedUnion.cpp'],
   ['variant', 'Variant.cpp'],
   ['bitarray', 'BitArray.cpp'],
+  ['uuid', 'Uuid.cpp'],
   #  ['colorstream', 'ColorStream.cpp'],
   #  ['reader', 'Reader.cpp'],
   #  ['writer', 'Writer.cpp'],

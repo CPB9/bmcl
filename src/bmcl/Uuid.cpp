@@ -7,6 +7,14 @@
  */
 
 #include "bmcl/Uuid.h"
+#include "bmcl/StringView.h"
+#include "bmcl/Result.h"
+
+#ifdef BMCL_HAVE_QT
+# include <QString>
+# include <QByteArray>
+# include <QLatin1String>
+#endif
 
 namespace bmcl {
 
@@ -72,4 +80,174 @@ Uuid Uuid::create()
 
     return u;
 }
+
+template <typename C, typename T>
+Result<Uuid, void> Uuid::uuidFromString(T view)
+{
+    if (view.size() == 38) {
+        if (view[0] != '{' || view[37] != '}') {
+            return Result<Uuid, void>();
+        }
+        view = view.slice(1, 37);
+        assert(view.size() == 36);
+    } else if (view.size() != 36) {
+        return Result<Uuid, void>();
+    }
+    Uuid u;
+    std::initializer_list<uint8_t> dashes = {8, 13, 18, 23};
+    assert(dashes.size() == 4);
+    for (uint8_t dashIndex : dashes) {
+        if (view[dashIndex] != '-') {
+            return Result<Uuid, void>();
+        }
+    }
+                                          //4           2      2       2       6
+    std::initializer_list<uint8_t> chars = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
+    assert(chars.size() == 16);
+
+    for (std::size_t i = 0; i < chars.size(); i++) {
+        uint8_t charIndex = chars.begin()[i];
+        int leftChar = C(view[charIndex]);
+        if (leftChar >= '0' && leftChar <= '9') {
+            leftChar = leftChar - '0';
+        } else if (leftChar >= 'a' && leftChar <= 'f') {
+            leftChar = leftChar - 'a' + 10;
+        } else if (leftChar >= 'A' && leftChar <= 'F') {
+            leftChar = leftChar - 'A' + 10;
+        } else {
+            return Result<Uuid, void>();
+        }
+        int rightChar = C(view[charIndex + 1]);
+        if (rightChar >= '0' && rightChar <= '9') {
+            rightChar = rightChar - '0';
+        } else if (rightChar >= 'a' && rightChar <= 'f') {
+            rightChar = rightChar - 'a' + 10;
+        } else if (rightChar >= 'A' && rightChar <= 'F') {
+            rightChar = rightChar - 'A' + 10;
+        } else {
+            return Result<Uuid, void>();
+        }
+        u._data[i] = (leftChar << 4) | rightChar;
+    }
+
+    return u;
+}
+
+#ifdef BMCL_HAVE_QT
+
+struct QCharToIntConverter {
+    QCharToIntConverter(QChar c)
+        : data(c.unicode())
+    {
+    }
+
+    operator int() const
+    {
+        return data;
+    }
+
+    ushort data;
+};
+
+Result<Uuid, void> Uuid::createFromString(const QString& str)
+{
+    return uuidFromString<QCharToIntConverter>(ArrayView<QChar>(str.data(), str.size()));
+}
+
+Result<Uuid, void> Uuid::createFromString(const QStringRef& str)
+{
+    return uuidFromString<QCharToIntConverter>(ArrayView<QChar>(str.data(), str.size()));
+}
+
+Result<Uuid, void> Uuid::createFromString(const QByteArray& str)
+{
+    return uuidFromString<int>(StringView(str.data(), str.size()));
+}
+
+Result<Uuid, void> Uuid::createFromString(const QLatin1String& str)
+{
+    return uuidFromString<int>(StringView(str.data(), str.size()));
+}
+
+#endif
+
+Result<Uuid, void> Uuid::createFromString(bmcl::StringView view)
+{
+    return uuidFromString<int>(view);
+}
+
+static const char* hexChars = "0123456789abcdef";
+
+template <typename T>
+inline void appendHex(uint8_t n, T* dest)
+{
+    dest->push_back(hexChars[(n & 0xf0) >> 4]);
+    dest->push_back(hexChars[n & 0x0f]);
+}
+
+template <typename T>
+void uuidToString(const Uuid::Data& data, T* dest)
+{
+    dest->reserve(dest->size() + 16 * 2 + 4);
+    appendHex(data[0], dest);
+    appendHex(data[1], dest);
+    appendHex(data[2], dest);
+    appendHex(data[3], dest);
+    dest->push_back('-');
+    appendHex(data[4], dest);
+    appendHex(data[5], dest);
+    dest->push_back('-');
+    appendHex(data[6], dest);
+    appendHex(data[7], dest);
+    dest->push_back('-');
+    appendHex(data[8], dest);
+    appendHex(data[9], dest);
+    dest->push_back('-');
+    appendHex(data[10], dest);
+    appendHex(data[11], dest);
+    appendHex(data[12], dest);
+    appendHex(data[13], dest);
+    appendHex(data[14], dest);
+    appendHex(data[15], dest);
+}
+
+std::string Uuid::toStdString() const
+{
+    std::string dest;
+    uuidToString(_data, &dest);
+    return dest;
+}
+
+void Uuid::toStdString(std::string* dest) const
+{
+    uuidToString(_data, dest);
+}
+
+#ifdef BMCL_HAVE_QT
+
+QString Uuid::toQString() const
+{
+    QString dest;
+    uuidToString(_data, &dest);
+    return dest;
+}
+
+void Uuid::toQString(QString* dest) const
+{
+    uuidToString(_data, dest);
+}
+
+QByteArray Uuid::toQByteArray() const
+{
+    QByteArray dest;
+    uuidToString(_data, &dest);
+    return dest;
+}
+
+void Uuid::toQByteArray(QByteArray* dest) const
+{
+    uuidToString(_data, dest);
+}
+
+#endif
 }

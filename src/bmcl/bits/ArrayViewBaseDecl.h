@@ -33,6 +33,7 @@ using enableIfBase = typename std::enable_if<std::is_base_of<B, T>::value, B>::t
 template <typename T, typename B>
 class ArrayViewBase {
 public:
+    typedef T value_type;
     typedef std::size_t size_type;
     typedef const T* iterator;
     typedef const T* const_iterator;

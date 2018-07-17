@@ -11,9 +11,21 @@
 #include "bmcl/Config.h"
 
 #include <array>
+#include <string>
 #include <cstdint>
 
+#ifdef BMCL_HAVE_QT
+class QString;
+class QStringRef;
+class QByteArray;
+class QLatin1String;
+#endif
+
 namespace bmcl {
+
+class StringView;
+template <typename T, typename R>
+class Result;
 
 class BMCL_EXPORT Uuid {
 public:
@@ -24,8 +36,26 @@ public:
 
     static Uuid create();
     static Uuid createNil();
+    static Result<Uuid, void> createFromString(bmcl::StringView view);
+
+#ifdef BMCL_HAVE_QT
+    static Result<Uuid, void> createFromString(const QString& str);
+    static Result<Uuid, void> createFromString(const QStringRef& str);
+    static Result<Uuid, void> createFromString(const QByteArray& str);
+    static Result<Uuid, void> createFromString(const QLatin1String& str);
+#endif
 
     const Data& data() const;
+
+    std::string toStdString() const;
+    void toStdString(std::string* dest) const;
+
+#ifdef BMCL_HAVE_QT
+    QString toQString() const;
+    void toQString(QString* dest) const;
+    QByteArray toQByteArray() const;
+    void toQByteArray(QByteArray* dest) const;
+#endif
 
     bool operator==(const Uuid& other) const;
     bool operator!=(const Uuid& other) const;
@@ -35,6 +65,9 @@ public:
     bool operator>=(const Uuid& other) const;
 
 private:
+    template <typename C, typename T>
+    static Result<Uuid, void> uuidFromString(T view);
+
     Uuid() = default;
 
     Data _data;
