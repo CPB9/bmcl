@@ -53,6 +53,11 @@ public:
 #endif
 
     const Data& data() const;
+    std::uint32_t part1() const;
+    std::uint16_t part2() const;
+    std::uint16_t part3() const;
+    std::uint64_t part4() const;
+    bool isNil() const;
 
     std::string toStdString() const;
     void toStdString(std::string* dest) const;

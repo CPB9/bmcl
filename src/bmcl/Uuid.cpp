@@ -102,22 +102,29 @@ Uuid Uuid::create()
     return u;
 }
 
+
 template <typename C, typename T>
 Result<Uuid, void> Uuid::uuidFromString(T view)
 {
-    bmcl::Bytes chars;
-    bmcl::Bytes dashes;
+    static const uint8_t charIndexes_BracesDashes[16] = {1, 3, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 29, 31, 33, 35};
+    static const uint8_t charIndexes_noBracesDahes[16] = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
+    static const uint8_t charIndexes_noBracesNoDahes[16] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
+    static const uint8_t dashIndexes_bracesDashes[4] = {9, 14, 19, 24};
+    static const uint8_t dashIndexes_noBracesDashes[4] = {8, 13, 18, 23};
+
+    Bytes chars;
+    Bytes dashes;
     if (view.size() == 36) {
-        chars = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
-        dashes = {8, 13, 18, 23};
+        chars = Bytes::fromStaticArray(charIndexes_noBracesDahes);
+        dashes = Bytes::fromStaticArray(dashIndexes_noBracesDashes);
     } else if (view.size() == 38) {
         if (view[0] != '{' || view[37] != '}') {
             return Result<Uuid, void>();
         }
-        chars = {1, 3, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 29, 31, 33, 35};
-        dashes = {9, 14, 19, 24};
+        chars = Bytes::fromStaticArray(charIndexes_BracesDashes);
+        dashes = Bytes::fromStaticArray(dashIndexes_bracesDashes);
     } else if (view.size() == 32) {
-        chars = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
+        chars = Bytes::fromStaticArray(charIndexes_noBracesNoDahes);
     } else {
         return Result<Uuid, void>();
     }
@@ -246,6 +253,45 @@ std::string Uuid::toStdString() const
 void Uuid::toStdString(std::string* dest) const
 {
     uuidToString(_data, dest);
+}
+
+std::uint32_t Uuid::part1() const
+{
+    return (std::uint32_t(_data[0]) << 24) |
+           (std::uint32_t(_data[1]) << 16) |
+           (std::uint32_t(_data[2]) <<  8) |
+           (std::uint32_t(_data[3])      );
+}
+
+std::uint16_t Uuid::part2() const
+{
+    return (std::uint16_t(_data[4]) << 8) |
+           (std::uint16_t(_data[5])     );
+}
+
+std::uint16_t Uuid::part3() const
+{
+    return (std::uint16_t(_data[6]) << 8) |
+           (std::uint16_t(_data[7])     );
+}
+
+std::uint64_t Uuid::part4() const
+{
+    return (std::uint64_t(_data[8])  << 56) |
+           (std::uint64_t(_data[9])  << 48) |
+           (std::uint64_t(_data[10]) << 40) |
+           (std::uint64_t(_data[11]) << 32) |
+           (std::uint64_t(_data[12]) << 24) |
+           (std::uint64_t(_data[13]) << 16) |
+           (std::uint64_t(_data[14]) <<  8) |
+           (std::uint64_t(_data[15])      );
+}
+
+bool Uuid::isNil() const
+{
+    return std::all_of(_data.begin(), _data.end(), [](uint8_t b) {
+        return b == 0;
+    });
 }
 
 #ifdef BMCL_HAVE_QT

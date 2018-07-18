@@ -11,6 +11,16 @@
 
 using namespace bmcl;
 
+TEST(Uuid, nil)
+{
+    Uuid::Data expected = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    Uuid u = Uuid::createNil();
+
+    ASSERT_EQ(expected, u.data());
+    EXPECT_TRUE(u.isNil());
+}
+
 TEST(Uuid, fromValues)
 {
     std::uint32_t d1 = 0x4d2f9a30;
@@ -22,7 +32,11 @@ TEST(Uuid, fromValues)
 
     Uuid u(d1, d2, d3, d4);
 
-    EXPECT_EQ(expected, u.data());
+    ASSERT_EQ(expected, u.data());
+    EXPECT_EQ(d1, u.part1());
+    EXPECT_EQ(d2, u.part2());
+    EXPECT_EQ(d3, u.part3());
+    EXPECT_EQ(d4, u.part4());
 }
 
 TEST(Uuid, fromStringNormal)
