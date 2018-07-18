@@ -39,7 +39,7 @@ TEST(Uuid, fromValues)
     EXPECT_EQ(d4, u.part4());
 }
 
-TEST(Uuid, fromStringNormal)
+TEST(Uuid, fromStringNoBracesDashes)
 {
     bmcl::StringView uuid = "01234567-89ab-cdef-0123-456789ABCDEF";
     Uuid::Data expected = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
@@ -48,7 +48,7 @@ TEST(Uuid, fromStringNormal)
     EXPECT_EQ(expected, rv.unwrap().data());
 }
 
-TEST(Uuid, fromStringBraces)
+TEST(Uuid, fromStringBracesDahes)
 {
     bmcl::StringView uuid = "{01234667-89ab-cdef-0123-456789ABCDEF}";
     Uuid::Data expected = {0x01, 0x23, 0x46, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
@@ -57,10 +57,19 @@ TEST(Uuid, fromStringBraces)
     EXPECT_EQ(expected, rv.unwrap().data());
 }
 
-TEST(Uuid, fromStringWithoutDashed)
+TEST(Uuid, fromStringNoBracesNoDashes)
 {
     bmcl::StringView uuid = "a123456789abcdef0123456789ABCDEF";
     Uuid::Data expected = {0xa1, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+    auto rv = Uuid::createFromString(uuid);
+    ASSERT_TRUE(rv.isOk());
+    EXPECT_EQ(expected, rv.unwrap().data());
+}
+
+TEST(Uuid, fromStringBracesNoDashes)
+{
+    bmcl::StringView uuid = "{0123456789abcdef0153456789ABCDEF}";
+    Uuid::Data expected = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x53, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
     auto rv = Uuid::createFromString(uuid);
     ASSERT_TRUE(rv.isOk());
     EXPECT_EQ(expected, rv.unwrap().data());

@@ -106,10 +106,11 @@ Uuid Uuid::create()
 template <typename C, typename T>
 Result<Uuid, void> Uuid::uuidFromString(T view)
 {
-    static const uint8_t charIndexes_BracesDashes[16] = {1, 3, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 29, 31, 33, 35};
-    static const uint8_t charIndexes_noBracesDahes[16] = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
-    static const uint8_t charIndexes_noBracesNoDahes[16] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
-    static const uint8_t dashIndexes_bracesDashes[4] = {9, 14, 19, 24};
+    static const uint8_t charIndexes_BracesDashes[16]    = {1, 3, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 29, 31, 33, 35};
+    static const uint8_t charIndexes_bracesNoDahes[16]   = {1, 3, 5, 7,  9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31};
+    static const uint8_t charIndexes_noBracesDahes[16]   = {0, 2, 4, 6,  9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
+    static const uint8_t charIndexes_noBracesNoDahes[16] = {0, 2, 4, 6,  8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
+    static const uint8_t dashIndexes_bracesDashes[4]   = {9, 14, 19, 24};
     static const uint8_t dashIndexes_noBracesDashes[4] = {8, 13, 18, 23};
 
     Bytes chars;
@@ -125,6 +126,11 @@ Result<Uuid, void> Uuid::uuidFromString(T view)
         dashes = Bytes::fromStaticArray(dashIndexes_bracesDashes);
     } else if (view.size() == 32) {
         chars = Bytes::fromStaticArray(charIndexes_noBracesNoDahes);
+    } else if (view.size() == 34) {
+        if (view[0] != '{' || view[33] != '}') {
+            return Result<Uuid, void>();
+        }
+        chars = Bytes::fromStaticArray(charIndexes_bracesNoDahes);
     } else {
         return Result<Uuid, void>();
     }
