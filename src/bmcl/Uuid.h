@@ -52,6 +52,9 @@ public:
     static Result<Uuid, void> createFromString(const QLatin1String& str);
 #endif
 
+    template <typename T>
+    static Uuid createFromStringOrNil(const T& str);
+
     const Data& data() const;
     std::uint32_t part1() const;
     std::uint16_t part2() const;
@@ -126,5 +129,11 @@ inline bool Uuid::operator>(const Uuid& other) const
 inline bool Uuid::operator>=(const Uuid& other) const
 {
     return _data >= other._data;
+}
+
+template <typename T>
+Uuid Uuid::createFromStringOrNil(const T& str)
+{
+    return createFromString(str).unwrapOr(Uuid::createNil());
 }
 }

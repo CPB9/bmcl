@@ -89,6 +89,13 @@ TEST(Uuid, fromStringInvalidFormat)
     ASSERT_FALSE(rv.isOk());
 }
 
+TEST(Uuid, fromStringOrNilInvalid)
+{
+    bmcl::StringView uuid = "a1234";
+    auto rv = Uuid::createFromStringOrNil(uuid);
+    ASSERT_TRUE(rv.isNil());
+}
+
 TEST(Uuid, fromToString)
 {
     Uuid u = Uuid::create();

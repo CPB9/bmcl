@@ -34,6 +34,16 @@ public:
     T& unwrap();
     T&& take();
 
+    template <class R>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+    BMCL_DLL_INLINE T unwrapOr(R&& value) const;
+#else
+    BMCL_DLL_INLINE T unwrapOr(R&& value) const&;
+
+    template <class R>
+    BMCL_DLL_INLINE T unwrapOr(R&& value) && ;
+#endif
+
     template <typename U = E>
     const enableIfNotVoid<U>& unwrapErr() const;
     template <typename U = E>
@@ -138,6 +148,32 @@ inline T&& Result<T, E>::take()
 {
     return Either<T, E>::takeFirst();
 }
+
+template <typename T, typename E>
+template <typename R>
+#if defined(_MSC_VER) && (_MSC_VER < 1900)
+BMCL_DLL_INLINE T Result<T, E>::unwrapOr(R&& value) const
+#else
+BMCL_DLL_INLINE T Result<T, E>::unwrapOr(R&& value) const&
+#endif
+{
+    if (isOk()) {
+        return unwrap();
+    }
+    return std::forward<R>(value);
+}
+
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+template <typename T, typename E>
+template <typename R>
+BMCL_DLL_INLINE T Result<T, E>::unwrapOr(R&& value) &&
+{
+    if (isOk()) {
+        return take();
+    }
+    return std::forward<R>(value);
+}
+#endif
 
 template <typename T, typename E>
 template <typename U>
