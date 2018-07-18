@@ -4,6 +4,7 @@
 
 #ifdef BMCL_HAVE_QT
 # include <QString>
+# include <QUuid>
 #endif
 
 #include "BmclTest.h"
@@ -19,10 +20,19 @@ TEST(Uuid, fromStringNormal)
     EXPECT_EQ(expected, rv.unwrap().data());
 }
 
-TEST(Uuid, fromStringMicrosoft)
+TEST(Uuid, fromStringBraces)
 {
     bmcl::StringView uuid = "{01234667-89ab-cdef-0123-456789ABCDEF}";
     Uuid::Data expected = {0x01, 0x23, 0x46, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+    auto rv = Uuid::createFromString(uuid);
+    ASSERT_TRUE(rv.isOk());
+    EXPECT_EQ(expected, rv.unwrap().data());
+}
+
+TEST(Uuid, fromStringWithoutDashed)
+{
+    bmcl::StringView uuid = "a123456789abcdef0123456789ABCDEF";
+    Uuid::Data expected = {0xa1, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
     auto rv = Uuid::createFromString(uuid);
     ASSERT_TRUE(rv.isOk());
     EXPECT_EQ(expected, rv.unwrap().data());
@@ -65,5 +75,15 @@ TEST(Uuid, fromToQString)
     ASSERT_TRUE(rv.isOk());
     EXPECT_EQ(u, rv.unwrap());
 }
+
+TEST(Uuid, fromToQUuid)
+{
+    QUuid from = QUuid::createUuid();
+    Uuid u(from);
+    QUuid to = u.toQUuid();
+
+    EXPECT_EQ(from, to);
+}
+
 
 #endif

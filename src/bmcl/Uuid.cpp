@@ -14,6 +14,7 @@
 # include <QString>
 # include <QByteArray>
 # include <QLatin1String>
+# include <QUuid>
 #endif
 
 namespace bmcl {
@@ -84,26 +85,30 @@ Uuid Uuid::create()
 template <typename C, typename T>
 Result<Uuid, void> Uuid::uuidFromString(T view)
 {
-    if (view.size() == 38) {
+    bmcl::Bytes chars;
+    bmcl::Bytes dashes;
+    if (view.size() == 36) {
+        chars = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
+        dashes = {8, 13, 18, 23};
+    } else if (view.size() == 38) {
         if (view[0] != '{' || view[37] != '}') {
             return Result<Uuid, void>();
         }
-        view = view.slice(1, 37);
-        assert(view.size() == 36);
-    } else if (view.size() != 36) {
+        chars = {1, 3, 5, 7, 10, 12, 15, 17, 20, 22, 25, 27, 29, 31, 33, 35};
+        dashes = {9, 14, 19, 24};
+    } else if (view.size() == 32) {
+        chars = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30};
+    } else {
         return Result<Uuid, void>();
     }
+    assert(chars.size() == 16);
+
     Uuid u;
-    std::initializer_list<uint8_t> dashes = {8, 13, 18, 23};
-    assert(dashes.size() == 4);
     for (uint8_t dashIndex : dashes) {
         if (view[dashIndex] != '-') {
             return Result<Uuid, void>();
         }
     }
-                                          //4           2      2       2       6
-    std::initializer_list<uint8_t> chars = {0, 2, 4, 6, 9, 11, 14, 16, 19, 21, 24, 26, 28, 30, 32, 34};
-    assert(chars.size() == 16);
 
     for (std::size_t i = 0; i < chars.size(); i++) {
         uint8_t charIndex = chars.begin()[i];
@@ -225,6 +230,11 @@ void Uuid::toStdString(std::string* dest) const
 
 #ifdef BMCL_HAVE_QT
 
+Uuid::Uuid(const QUuid& quuid)
+{
+    _data = createFromString(quuid.toByteArray(QUuid::WithoutBraces)).unwrap()._data;
+}
+
 QString Uuid::toQString() const
 {
     QString dest;
@@ -247,6 +257,23 @@ QByteArray Uuid::toQByteArray() const
 void Uuid::toQByteArray(QByteArray* dest) const
 {
     uuidToString(_data, dest);
+}
+
+QUuid Uuid::toQUuid() const
+{
+    return QUuid(
+        (uint(_data[0]) << 24) | (uint(_data[1]) << 16) | (uint(_data[2]) << 8) | uint(_data[3]),
+        (ushort(_data[4]) << 8) | ushort(_data[5]),
+        (ushort(_data[6]) << 8) | ushort(_data[7]),
+        _data[8],
+        _data[9],
+        _data[10],
+        _data[11],
+        _data[12],
+        _data[13],
+        _data[14],
+        _data[15]
+    );
 }
 
 #endif

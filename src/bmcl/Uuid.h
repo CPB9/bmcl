@@ -19,6 +19,7 @@ class QString;
 class QStringRef;
 class QByteArray;
 class QLatin1String;
+class QUuid;
 #endif
 
 namespace bmcl {
@@ -30,6 +31,10 @@ class Result;
 class BMCL_EXPORT Uuid {
 public:
     using Data = std::array<std::uint8_t, 16>;
+
+#ifdef BMCL_HAVE_QT
+    explicit Uuid(const QUuid& quuid);
+#endif
 
     Uuid(const Uuid& other) = default;
     Uuid& operator=(const Uuid& other) = default;
@@ -55,6 +60,7 @@ public:
     void toQString(QString* dest) const;
     QByteArray toQByteArray() const;
     void toQByteArray(QByteArray* dest) const;
+    QUuid toQUuid() const;
 #endif
 
     bool operator==(const Uuid& other) const;
