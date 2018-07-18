@@ -32,6 +32,8 @@ class BMCL_EXPORT Uuid {
 public:
     using Data = std::array<std::uint8_t, 16>;
 
+    Uuid(std::uint32_t d1, std::uint16_t d2, std::uint16_t d3, std::uint64_t d4);
+
 #ifdef BMCL_HAVE_QT
     explicit Uuid(const QUuid& quuid);
 #endif

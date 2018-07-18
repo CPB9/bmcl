@@ -11,6 +11,20 @@
 
 using namespace bmcl;
 
+TEST(Uuid, fromValues)
+{
+    std::uint32_t d1 = 0x4d2f9a30;
+    std::uint16_t d2 = 0x8c74;
+    std::uint16_t d3 = 0x9012;
+    std::uint64_t d4 = 0x9ed9f03d34df7a58;
+
+    Uuid::Data expected = {0x4d, 0x2f, 0x9a, 0x30, 0x8c, 0x74, 0x90, 0x12, 0x9e, 0xd9, 0xf0, 0x3d, 0x34, 0xdf, 0x7a, 0x58};
+
+    Uuid u(d1, d2, d3, d4);
+
+    EXPECT_EQ(expected, u.data());
+}
+
 TEST(Uuid, fromStringNormal)
 {
     bmcl::StringView uuid = "01234567-89ab-cdef-0123-456789ABCDEF";

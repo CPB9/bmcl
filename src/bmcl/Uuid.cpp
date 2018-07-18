@@ -29,6 +29,26 @@ namespace bmcl {
     #error "Unsupported platform"
 #endif
 
+Uuid::Uuid(std::uint32_t d1, std::uint16_t d2, std::uint16_t d3, std::uint64_t d4)
+{
+    _data[0]  = (d1 >> 24) & 0xff;
+    _data[1]  = (d1 >> 16) & 0xff;
+    _data[2]  = (d1 >>  8) & 0xff;
+    _data[3]  = (d1      ) & 0xff;
+    _data[4]  = (d2 >>  8) & 0xff;
+    _data[5]  = (d2      ) & 0xff;
+    _data[6]  = (d3 >>  8) & 0xff;
+    _data[7]  = (d3      ) & 0xff;
+    _data[8]  = (d4 >> 56) & 0xff;
+    _data[9]  = (d4 >> 48) & 0xff;
+    _data[10] = (d4 >> 40) & 0xff;
+    _data[11] = (d4 >> 32) & 0xff;
+    _data[12] = (d4 >> 24) & 0xff;
+    _data[13] = (d4 >> 16) & 0xff;
+    _data[14] = (d4 >>  8) & 0xff;
+    _data[15] = (d4      ) & 0xff;
+}
+
 Uuid Uuid::create()
 {
     Uuid u;
