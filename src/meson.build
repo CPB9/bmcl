@@ -17,6 +17,7 @@ src = [
   'bmcl/Assert.cpp',
   'bmcl/Buffer.cpp',
   'bmcl/ColorStream.cpp',
+  'bmcl/CString.cpp',
   'bmcl/DoubleEq.cpp',
   'bmcl/FileUtils.cpp',
   'bmcl/IpAddress.cpp',

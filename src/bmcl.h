@@ -19,6 +19,7 @@
 #include "bmcl/Buffer.h"
 #include "bmcl/Bytes.h"
 #include "bmcl/ColorStream.h"
+#include "bmcl/CString.h"
 #include "bmcl/DoubleEq.h"
 #include "bmcl/Either.h"
 #include "bmcl/Endian.h"
