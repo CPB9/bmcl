@@ -17,6 +17,8 @@
 # include <QUuid>
 #endif
 
+#include <algorithm>
+
 namespace bmcl {
 
 #if defined(BMCL_PLATFORM_UNIX)
