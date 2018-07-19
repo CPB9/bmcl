@@ -304,7 +304,12 @@ bool Uuid::isNil() const
 
 Uuid::Uuid(const QUuid& quuid)
 {
+#if QT_VERSION > 0x051000
     _data = createFromString(quuid.toByteArray(QUuid::WithoutBraces)).unwrap()._data;
+#else
+    QByteArray tmp = quuid.toByteArray();
+    _data = createFromString(StringView(tmp.data() + 1, tmp.size() - 2)).unwrap()._data;
+#endif
 }
 
 QString Uuid::toQString() const
