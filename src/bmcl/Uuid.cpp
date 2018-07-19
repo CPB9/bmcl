@@ -117,15 +117,15 @@ Result<Uuid, void> Uuid::uuidFromString(T view)
 
     Bytes chars;
     Bytes dashes;
-    if (view.size() == 36) {
-        chars = Bytes::fromStaticArray(charIndexes_noBracesDahes);
-        dashes = Bytes::fromStaticArray(dashIndexes_noBracesDashes);
-    } else if (view.size() == 38) {
+    if (view.size() == 38) {
         if (view[0] != '{' || view[37] != '}') {
             return Result<Uuid, void>();
         }
         chars = Bytes::fromStaticArray(charIndexes_BracesDashes);
         dashes = Bytes::fromStaticArray(dashIndexes_bracesDashes);
+    } else if (view.size() == 36) {
+        chars = Bytes::fromStaticArray(charIndexes_noBracesDahes);
+        dashes = Bytes::fromStaticArray(dashIndexes_noBracesDashes);
     } else if (view.size() == 32) {
         chars = Bytes::fromStaticArray(charIndexes_noBracesNoDahes);
     } else if (view.size() == 34) {
@@ -228,7 +228,8 @@ inline void appendHex(uint8_t n, T* dest)
 template <typename T>
 void uuidToString(const Uuid::Data& data, T* dest)
 {
-    dest->reserve(dest->size() + 16 * 2 + 4);
+    dest->reserve(dest->size() + 1 + 16 * 2 + 4 + 1);
+    dest->push_back('{');
     appendHex(data[0], dest);
     appendHex(data[1], dest);
     appendHex(data[2], dest);
@@ -249,6 +250,7 @@ void uuidToString(const Uuid::Data& data, T* dest)
     appendHex(data[13], dest);
     appendHex(data[14], dest);
     appendHex(data[15], dest);
+    dest->push_back('}');
 }
 
 std::string Uuid::toStdString() const
