@@ -1,27 +1,27 @@
 gtest = subproject('gtest')
 
 tests = [
-  ['environment', 'Environment.cpp'],
+  ['alignedunion', 'AlignedUnion.cpp'],
+  ['arrayview', 'ArrayView.cpp'],
+  ['bitarray', 'BitArray.cpp'],
   ['buffer', 'Buffer.cpp'],
+  ['cstring', 'CString.cpp'],
+  ['either', 'Either.cpp'],
+  ['environment', 'Environment.cpp'],
+  ['logging', 'Logging.cpp'],
   ['memreader', 'MemReader.cpp'],
   ['memwriter', 'MemWriter.cpp'],
-  ['ringbuf', 'RingBuffer.cpp'],
   ['option', 'Option.cpp'],
-  ['either', 'Either.cpp'],
   ['result', 'Result.cpp'],
-  ['logging', 'Logging.cpp'],
-  ['utils', 'Utils.cpp'],
-  ['arrayview', 'ArrayView.cpp'],
-  ['stringview', 'StringView.cpp'],
-  ['string', 'String.cpp'],
+  ['ringbuf', 'RingBuffer.cpp'],
   ['sha3', 'Sha3.cpp'],
   ['sharedbytes', 'SharedBytes.cpp'],
-  ['alignedunion', 'AlignedUnion.cpp'],
-  ['variant', 'Variant.cpp'],
-  ['bitarray', 'BitArray.cpp'],
+  ['string', 'String.cpp'],
+  ['stringview', 'StringView.cpp'],
+  ['utils', 'Utils.cpp'],
   ['uuid', 'Uuid.cpp'],
-  ['cstring', 'CString.cpp'],
-  #  ['colorstream', 'ColorStream.cpp'],
+  ['variant', 'Variant.cpp'],
+
   #  ['reader', 'Reader.cpp'],
   #  ['writer', 'Writer.cpp'],
   #  ['panic', 'Panic.cpp'],
@@ -37,3 +37,8 @@ foreach t : tests
   )
   test(t[0], exe)
 endforeach
+
+executable('colorstream_test',
+  sources : 'ColorStream.cpp',
+  dependencies : bmcl_dep,
+)
