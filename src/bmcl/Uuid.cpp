@@ -306,14 +306,25 @@ bool Uuid::isNil() const
 
 #ifdef BMCL_HAVE_QT
 
-Uuid::Uuid(const QUuid& quuid)
+Uuid::Uuid(const QUuid& q)
 {
-#if QT_VERSION > 0x051000
-    _data = createFromString(quuid.toByteArray(QUuid::WithoutBraces)).unwrap()._data;
-#else
-    QByteArray tmp = quuid.toByteArray();
-    _data = createFromString(StringView(tmp.data() + 1, tmp.size() - 2)).unwrap()._data;
-#endif
+    _data[0]  = (q.data1 >> 24) & 0xff;
+    _data[1]  = (q.data1 >> 16) & 0xff;
+    _data[2]  = (q.data1 >>  8) & 0xff;
+    _data[3]  = (q.data1      ) & 0xff;
+    _data[4]  = (q.data2 >>  8) & 0xff;
+    _data[5]  = (q.data2      ) & 0xff;
+    _data[6]  = (q.data3 >>  8) & 0xff;
+    _data[7]  = (q.data3      ) & 0xff;
+
+    _data[8]  = q.data4[0];
+    _data[9]  = q.data4[1];
+    _data[10] = q.data4[2];
+    _data[11] = q.data4[3];
+    _data[12] = q.data4[4];
+    _data[13] = q.data4[5];
+    _data[14] = q.data4[6];
+    _data[15] = q.data4[7];
 }
 
 QString Uuid::toQString() const
