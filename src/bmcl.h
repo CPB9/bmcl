@@ -47,6 +47,7 @@
 #include "bmcl/String.h"
 #include "bmcl/StringView.h"
 #include "bmcl/StringViewHash.h"
+#include "bmcl/TimeUtils.h"
 #include "bmcl/ThreadSafeRefCountable.h"
 #include "bmcl/Utils.h"
 #include "bmcl/Uuid.h"
