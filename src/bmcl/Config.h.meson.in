@@ -116,3 +116,21 @@
 #  define BMCL_EXPORT
 # endif
 #endif
+
+#if __cplusplus >= 201103L
+# define BMCL_CONSTEXPR_CPP11 constexpr
+#else
+# define BMCL_CONSTEXPR_CPP11
+#endif
+
+#if __cplusplus >= 201402L
+# define BMCL_CONSTEXPR_CPP14 constexpr
+#else
+# define BMCL_CONSTEXPR_CPP14
+#endif
+
+#if __cplusplus >= 201703L
+# define BMCL_CONSTEXPR_CPP17 constexpr
+#else
+# define BMCL_CONSTEXPR_CPP17
+#endif

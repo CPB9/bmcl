@@ -19,12 +19,6 @@
 #include <vector>
 #include <initializer_list>
 
-#if __cplusplus >= 201703L
-# define BMCL_CONSTEXPR_CPP17 constexpr
-#else
-# define BMCL_CONSTEXPR_CPP17
-#endif
-
 namespace bmcl {
 
 template<class B, class T>
