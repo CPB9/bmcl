@@ -1,5 +1,6 @@
 *.kdev4
 .kdev_include_paths
 build*
-subprojects/packagecache
-subprojects/googletest-release-1.8.0
+
+subprojects/*
+!subprojects/*.wrap

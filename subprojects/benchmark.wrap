@@ -1,0 +1,4 @@
+[wrap-git]
+directory = benchmark
+url = https://github.com/CPB9/benchmark.git
+revision = f6165bc36f6db5a6195a79e2dffc67ba4440ab04
