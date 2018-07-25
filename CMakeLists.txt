@@ -37,11 +37,6 @@ endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/bmcl/Config.h)
 
-get_directory_property(HAS_PARENT_SCOPE PARENT_DIRECTORY)
-if(NOT HAS_PARENT_SCOPE)
-    add_subdirectory(thirdparty)
-endif()
-
 if(TEST_COVERAGE)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/test-coverage.sh.in ${CMAKE_BINARY_DIR}/test-coverage.sh)
     execute_process(COMMAND chmod +x ${CMAKE_BINARY_DIR}/test-coverage.sh)
@@ -55,6 +50,5 @@ add_subdirectory(src/bmcl)
 if(NOT HAS_PARENT_SCOPE)
     bmcl_add_dep_gtest(thirdparty/gtest)
     add_subdirectory(tests)
-    add_subdirectory(bench)
 endif()
 
