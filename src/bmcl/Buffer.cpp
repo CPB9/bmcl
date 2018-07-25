@@ -13,7 +13,7 @@
 #include <cstring>
 #include <utility>
 
-#define GROWTH_FACTOR 2
+#define GROWTH_FACTOR 1.5
 
 namespace bmcl {
 
@@ -174,7 +174,7 @@ void Buffer::shrink()
 void Buffer::write(const void* data, std::size_t size)
 {
     if ((_capacity - _size) < size) {
-        realloc(BMCL_MAX(_capacity + size, _size * 1.5));
+        realloc(BMCL_MAX(_capacity + size, _size * GROWTH_FACTOR));
     }
     std::memcpy(_ptr + _size, data, size);
     _size += size;
