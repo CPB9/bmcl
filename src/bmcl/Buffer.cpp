@@ -13,7 +13,7 @@
 #include <cstring>
 #include <utility>
 
-#define GROWTH_FACTOR 1.5
+#define GROWTH_FACTOR 2
 
 namespace bmcl {
 
@@ -25,7 +25,7 @@ Buffer::Buffer()
 }
 
 Buffer::Buffer(std::size_t size)
-    : _size(size)
+    : _size(0)
     , _capacity(size)
 {
     _ptr = (uint8_t*)std::malloc(size);
@@ -121,7 +121,7 @@ void Buffer::realloc(std::size_t capacity)
             _ptr = 0;
         } else {
             _ptr = (uint8_t*)std::realloc(_ptr, capacity);
-            BMCL_ASSERT(_ptr != nullptr);
+            BMCL_ASSERT(_ptr);
         }
     } else {
         _ptr = (uint8_t*)std::malloc(capacity);

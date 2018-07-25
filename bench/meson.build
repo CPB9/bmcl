@@ -2,10 +2,7 @@ bench_mod = subproject('benchmark')
 
 benches = [
   ['sha3', 'Sha3.cpp'],
-
-  #  ['reader', 'Reader.cpp'],
-  #  ['writer', 'Writer.cpp'],
-  #  ['panic', 'Panic.cpp'],
+  ['buffer', 'Buffer.cpp'],
 ]
 
 deps = [bench_mod.get_variable('benchmark_dep'), bench_mod.get_variable('benchmark_main_dep'), bmcl_dep]

@@ -71,7 +71,7 @@ TEST_F(BufferTest, initEmpty)
 TEST_F(BufferTest, initSize)
 {
     init(125);
-    expectSize(125);
+    expectSize(0);
     expectCapacity(125);
 }
 
