@@ -39,7 +39,7 @@ enum class ColorAttr {
     BgWhite = 47,
 };
 
-class ColorStreamPrivate;
+struct ColorStreamPrivate;
 
 class BMCL_EXPORT ColorStream {
 public:
