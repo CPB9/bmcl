@@ -34,6 +34,8 @@ public:
     Buffer(Buffer&& other);
     ~Buffer();
 
+    static Buffer createWithUnitializedData(std::size_t size);
+
     inline std::size_t size() const;
     inline std::size_t capacity() const;
     inline bool isEmpty() const;
@@ -74,6 +76,8 @@ public:
     inline operator Bytes() const;
 
 private:
+    Buffer(void* ptr, std::size_t size, std::size_t capacity);
+
     void extend(std::size_t additionalSize);
     void dealloc();
     void copyFrom(const Buffer& other);

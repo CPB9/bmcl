@@ -92,7 +92,7 @@ Result<std::string, int> readFileIntoString(const char* path)
 Result<Buffer, int> readFileIntoBuffer(const char* path)
 {
     return readFile<Buffer>(path, [](std::size_t size) {
-        return Buffer(size);
+        return Buffer::createWithUnitializedData(size);
     });
 }
 

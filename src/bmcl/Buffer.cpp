@@ -25,26 +25,38 @@ Buffer::Buffer()
 }
 
 Buffer::Buffer(std::size_t size)
-    : _size(0)
+    : _ptr((uint8_t*)std::malloc(size))
+    , _size(0)
     , _capacity(size)
 {
-    _ptr = (uint8_t*)std::malloc(size);
 }
 
 Buffer::Buffer(const void* data, std::size_t size)
-    : _size(size)
+    : _ptr((uint8_t*)std::malloc(size))
+    , _size(size)
     , _capacity(size)
 {
-    _ptr = (uint8_t*)std::malloc(size);
     std::memcpy(_ptr, data, size);
 }
 
 Buffer::Buffer(bmcl::Bytes data)
-    : _size(data.size())
+    : _ptr((uint8_t*)std::malloc(data.size()))
+    , _size(data.size())
     , _capacity(data.size())
 {
-    _ptr = (uint8_t*)std::malloc(data.size());
     std::memcpy(_ptr, data.data(), data.size());
+}
+
+Buffer::Buffer(void* ptr, std::size_t size, std::size_t capacity)
+    : _ptr((uint8_t*)ptr)
+    , _size(size)
+    , _capacity(capacity)
+{
+}
+
+Buffer Buffer::createWithUnitializedData(std::size_t size)
+{
+    return Buffer(std::malloc(size), size, size);
 }
 
 MemWriter Buffer::dataWriter()
