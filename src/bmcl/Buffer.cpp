@@ -8,6 +8,7 @@
 
 #include "bmcl/Buffer.h"
 #include "bmcl/MemWriter.h"
+#include "bmcl/ZigZag.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -286,8 +287,6 @@ void Buffer::writeVarUint(uint64_t value)
 
 void Buffer::writeVarInt(int64_t value)
 {
-    //zigzag
-    uint64_t n = (uint64_t)value;
-    return writeVarUint((n << 1) ^ (n >> 63));
+    return writeVarUint(zigZagEncode(value));
 }
 }
