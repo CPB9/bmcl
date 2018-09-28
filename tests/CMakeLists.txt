@@ -38,6 +38,7 @@ add_unit_test(stringview StringView.cpp)
 add_unit_test(utils Utils.cpp)
 add_unit_test(uuid Uuid.cpp)
 add_unit_test(variant Variant.cpp)
+add_unit_test(misc Misc.cpp)
 
 add_unit_test(colorstream ColorStream.cpp)
 

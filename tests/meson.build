@@ -21,6 +21,7 @@ tests = [
   ['utils', 'Utils.cpp'],
   ['uuid', 'Uuid.cpp'],
   ['variant', 'Variant.cpp'],
+  ['misc', 'Misc.cpp'],
 
   #  ['reader', 'Reader.cpp'],
   #  ['writer', 'Writer.cpp'],
