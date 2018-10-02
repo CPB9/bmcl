@@ -12,4 +12,10 @@ inline Rc<T> makeRc(A&&... args)
 {
     return new T(std::forward<A>(args)...);
 }
+
+template <typename T>
+inline Rc<T> wrapRc(T* ptr)
+{
+    return ptr;
+}
 }
