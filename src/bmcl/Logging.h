@@ -55,7 +55,6 @@ public:
     Logger& operator<<(const char* value);
 
 private:
-    LogLevel _allowedLevel;
     LogLevel _level;
 #ifdef BMCL_HAVE_QT
     QTextStream _stream;
@@ -66,8 +65,7 @@ private:
 };
 
 inline Logger::Logger(LogLevel level)
-    : _allowedLevel(bmcl::logLevel())
-    , _level(level)
+    : _level(level)
 #ifdef BMCL_HAVE_QT
     , _stream(&_buffer, QIODevice::WriteOnly)
 #endif
@@ -77,13 +75,12 @@ inline Logger::Logger(LogLevel level)
 template <typename T>
 Logger& Logger::operator<<(const T& value)
 {
-    if ((int)_level <= (int)_allowedLevel) {
+    if ((int)_level <= (int)bmcl::logLevel()) {
         _stream << value;
     }
     return *this;
 }
 
 template<>
-BMCL_EXPORT Logger& Logger::operator<<(const std::string & value);
-
+BMCL_EXPORT Logger& Logger::operator<<(const std::string& value);
 };

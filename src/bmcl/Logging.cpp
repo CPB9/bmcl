@@ -16,20 +16,23 @@
 
 namespace bmcl {
 
-static LogLevel currentLogLevel = LogLevel::Debug;
+static LogLevel _currentLogLevel = LogLevel::Debug;
 
 void setLogLevel(LogLevel level)
 {
-    currentLogLevel = level;
+    _currentLogLevel = level;
 }
 
 LogLevel logLevel()
 {
-    return currentLogLevel;
+    return _currentLogLevel;
 }
 
 static void coutHandler(LogLevel level, const char* msg)
 {
+    if ((int)level > (int)_currentLogLevel) {
+        return;
+    }
     if (level == LogLevel::None) {
         return;
     }
@@ -105,8 +108,7 @@ Logger::~Logger()
 
 Logger& Logger::operator<<(const char* msg)
 {
-    if ((int)_level <= (int)_allowedLevel)
-    {
+    if ((int)_level <= (int)_currentLogLevel) {
 #ifdef BMCL_HAVE_QT
         _stream << QString::fromUtf8(msg);
 #else
@@ -117,9 +119,9 @@ Logger& Logger::operator<<(const char* msg)
 }
 
 template<>
-Logger& Logger::operator<<(const std::string & value)
+Logger& Logger::operator<<(const std::string& value)
 {
-    if ((int)_level <= (int)_allowedLevel) {
+    if ((int)_level <= (int)_currentLogLevel) {
 #ifdef BMCL_HAVE_QT
         _stream << QString::fromStdString(value);
 #else
