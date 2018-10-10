@@ -35,6 +35,7 @@
 #include "bmcl/NonNullUniquePtr.h"
 #include "bmcl/Option.h"
 #include "bmcl/OptionPtr.h"
+#include "bmcl/OptionUtils.h"
 #include "bmcl/Panic.h"
 #include "bmcl/PtrUtils.h"
 #include "bmcl/Rc.h"
