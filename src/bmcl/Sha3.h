@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <array>
 
 namespace bmcl {
 
@@ -23,6 +24,9 @@ BMCL_EXPORT void keccakf(uint64_t* state);
 template <std::size_t bits>
 class BMCL_EXPORT Sha3 {
 public:
+    using HashView = FixedArrayView<uint8_t, bits / 8>;
+    using HashContainer = std::array<uint8_t, bits / 8>;
+
     /* the double size of the hash output in
      * words (e.g. 16 for Keccak 512) */
     static constexpr unsigned capacityWords =  2 * bits / (8 * sizeof(std::uint64_t));
@@ -34,22 +38,22 @@ public:
     void reset();
     void update(const void* src, std::size_t len);
     void update(Bytes data);
-    FixedArrayView<uint8_t, bits / 8> finalize();
+    HashView finalize();
 
-    static Buffer calcInOneStep(const void* src, std::size_t len);
-    static Buffer calcInOneStep(Bytes data);
+    static HashContainer calcInOneStep(const void* src, std::size_t len);
+    static HashContainer calcInOneStep(Bytes data);
 
 private:
-    uint64_t _saved;             /* the portion of the input message that we
-                                  * didn't consume yet */
+    uint64_t _saved;            /* the portion of the input message that we
+                                 * didn't consume yet */
     union {                     /* Keccak's state */
         std::uint64_t _s64[keccakSpongeWords];
         std::uint8_t _s8[keccakSpongeBytes];
     };
-    unsigned _byteIndex;         /* 0..7--the next byte after the set one
-                                  * (starts from 0; 0--none are buffered) */
-    unsigned _wordIndex;         /* 0..24--the next word to integrate input
-                                  * (starts from 0) */
+    unsigned _byteIndex;        /* 0..7--the next byte after the set one
+                                 * (starts from 0; 0--none are buffered) */
+    unsigned _wordIndex;        /* 0..24--the next word to integrate input
+                                 * (starts from 0) */
 };
 
 extern template class Sha3<224>;

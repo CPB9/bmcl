@@ -29,7 +29,6 @@
 #include "bmcl/Sha3.h"
 #include "bmcl/ArrayView.h"
 #include "bmcl/FixedArrayView.h"
-#include "bmcl/Buffer.h"
 
 #include <cstdio>
 #include <cstdint>
@@ -250,7 +249,7 @@ void Sha3<bits>::update(const void* src, std::size_t len)
  */
 
 template <std::size_t bits>
-FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
+typename Sha3<bits>::HashView Sha3<bits>::finalize()
 {
     /* Append 2-bit suffix 01, per SHA-3 spec. Instead of 1 for padding we
      * use 1<<2 below. The 0x02 below corresponds to the suffix 01.
@@ -283,20 +282,23 @@ FixedArrayView<uint8_t, bits / 8> Sha3<bits>::finalize()
     }
 #endif
 
-    return FixedArrayView<uint8_t, bits / 8>::fromRawData(_s8);
+    return HashView::fromRawData(_s8);
 }
 
 template <std::size_t bits>
-Buffer Sha3<bits>::calcInOneStep(const void* src, std::size_t len)
+typename Sha3<bits>::HashContainer Sha3<bits>::calcInOneStep(const void* src, std::size_t len)
 {
+    HashContainer rv;
     Sha3<bits> state;
     state.update(src, len);
     auto hash = state.finalize();
-    return Buffer(hash.data(), hash.size());
+    (void)hash;
+    std::memcpy(rv.data(), hash.data(), bits / 8);
+    return rv;
 }
 
 template <std::size_t bits>
-Buffer Sha3<bits>::calcInOneStep(Bytes data)
+typename Sha3<bits>::HashContainer Sha3<bits>::calcInOneStep(Bytes data)
 {
     return calcInOneStep(data.data(), data.size());
 }

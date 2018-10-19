@@ -228,6 +228,6 @@ TYPED_TEST(Sha3Test, ByteByByte)
 TEST(Sha3OneStepTest, Sha3_512_1600bit)
 {
     Sha3_512_1600bit testData;
-    Buffer hash = Sha3<512>::calcInOneStep(testData.data);
+    auto hash = Sha3<512>::calcInOneStep(testData.data);
     EXPECT_EQ(testData.hash, Bytes(hash));
 }
