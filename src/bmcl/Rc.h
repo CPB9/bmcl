@@ -32,6 +32,8 @@ public:
     T* get() const;
     T* detach();
 
+    bool isNull() const;
+
     void swap(Rc& other);
 
     Rc& operator=(Rc&& other);
@@ -42,7 +44,6 @@ public:
 
     T& operator*() const;
     T* operator->() const;
-    operator bool() const;
 
 private:
     T* _ptr;
@@ -173,9 +174,9 @@ inline T* Rc<T>::operator->() const
 }
 
 template <typename T>
-inline Rc<T>::operator bool() const
+inline bool Rc<T>::isNull() const
 {
-    return _ptr != 0;
+    return _ptr == 0;
 }
 
 template <typename T, typename U>
