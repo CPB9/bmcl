@@ -72,4 +72,28 @@ inline std::unique_ptr<T> makeUnique(A&&... args)
 {
     return std::unique_ptr<T>(new T(std::forward<A>(args)...));
 }
+
+template <typename T>
+bool allNull(T&& value)
+{
+    return value.isNull();
+}
+
+template <typename T, typename... A>
+bool allNull(T&& head, A&&... tail)
+{
+    return head.isNull() && allNull(std::forward<A>(tail)...);
+}
+
+template <typename T>
+bool anyNull(T&& value)
+{
+    return value.isNull();
+}
+
+template <typename T, typename... A>
+bool anyNull(T&& head, A&&... tail)
+{
+    return head.isNull() || anyNull(std::forward<A>(tail)...);
+}
 }
