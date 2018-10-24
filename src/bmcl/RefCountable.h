@@ -25,7 +25,7 @@ public:
     {
     }
 
-private:
+protected:
     friend void bmclRcAddRef(const bmcl::RefCountable<T>* rc)
     {
         rc->_rc++;
@@ -39,6 +39,7 @@ private:
         }
     }
 
+private:
     mutable T _rc;
 };
 }

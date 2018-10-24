@@ -22,10 +22,11 @@ public:
     ThreadSafeRefCountableBase();
     virtual ~ThreadSafeRefCountableBase();
 
-private:
+protected:
     BMCL_EXPORT friend void bmclRcAddRef(const bmcl::ThreadSafeRefCountableBase* rc);
     BMCL_EXPORT friend void bmclRcRelease(const bmcl::ThreadSafeRefCountableBase* rc);
 
+private:
     mutable std::atomic<std::size_t> _rc;
 };
 
