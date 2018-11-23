@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 CPB9 team. See the COPYRIGHT file at the top-level directory.
+ * Copyright (c) 2014 CPB9 team. See the COPYRIGHT file at the top-level directory.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,12 @@
 
 #pragma once
 
-#include <cstddef>
-
 #include "bmcl/Config.h"
 #include "bmcl/DefaultOption.h"
+#include "bmcl/Rc.h"
 
 namespace bmcl {
 
 template <typename T>
-using OptionPtr = DefaultOption<T*, std::nullptr_t, nullptr>;
+using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
 }

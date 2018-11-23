@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 
 namespace bmcl {
 
@@ -27,14 +28,23 @@ class Either;
 template <typename T, std::size_t S>
 class FixedArrayView;
 
+template <typename T, typename D, D defaultValue>
+class DefaultOption;
+
 template <typename T>
 class Option;
 
 template <typename T>
-class OptionPtr;
+using OptionPtr = DefaultOption<T*, std::nullptr_t, nullptr>;
 
 template <typename T>
 class Rc;
+
+template <typename T>
+using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
+
+template <typename T>
+using OptionSize = DefaultOption<std::size_t, std::size_t, std::numeric_limits<std::size_t>::max()>;
 
 template <typename B>
 class Reader;
