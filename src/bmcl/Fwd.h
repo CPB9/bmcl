@@ -43,7 +43,6 @@ class Rc;
 template <typename T>
 using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
 
-template <typename T>
 using OptionSize = DefaultOption<std::size_t, std::size_t, std::numeric_limits<std::size_t>::max()>;
 
 template <typename B>

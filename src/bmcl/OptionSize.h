@@ -16,7 +16,6 @@
 
 namespace bmcl {
 
-template <typename T>
 using OptionSize = DefaultOption<std::size_t, std::size_t, std::numeric_limits<std::size_t>::max()>;
 }
 
