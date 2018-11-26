@@ -43,7 +43,7 @@ class Rc;
 template <typename T>
 using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
 
-using OptionSize = DefaultOption<std::size_t, std::size_t, std::numeric_limits<std::size_t>::max()>;
+using OptionSize = DefaultOption<std::size_t, std::size_t, static_cast<size_t>(-1)>;
 
 template <typename B>
 class Reader;
