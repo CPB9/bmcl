@@ -15,7 +15,21 @@
 
 namespace bmcl {
 
-template <typename T, typename D, D defaultValue>
+template <typename D, D def>
+struct DefaultOptionDescriptor {
+    static constexpr D defaultValue()
+    {
+        return def;
+    }
+
+    template <typename T>
+    static constexpr bool isDefault(const T& value)
+    {
+        return value == def;
+    }
+};
+
+template <typename T, typename D>
 class DefaultOption {
 public:
     DefaultOption();
@@ -28,9 +42,9 @@ public:
     DefaultOption(DefaultOption&& other);
 
     template <typename C>
-    DefaultOption(const DefaultOption<C, D, defaultValue>& other);
+    DefaultOption(const DefaultOption<C, D>& other);
     template <typename C>
-    DefaultOption(DefaultOption<C, D, defaultValue>&& other);
+    DefaultOption(DefaultOption<C, D>&& other);
 
     template <typename... A>
     DefaultOption(InPlaceType, A&&... args);
@@ -48,7 +62,7 @@ public:
     T unwrapOr(R&& value) const&;
 
     template <typename R>
-    T&& unwrapOr(R&& value) &&;
+    T unwrapOr(R&& value) &&;
 
     void clear();
 
@@ -72,107 +86,107 @@ private:
     T _value;
 };
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption()
-    : _value(defaultValue)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption()
+    : _value(D::defaultValue())
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption(NoneType)
-    : _value(defaultValue)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption(NoneType)
+    : _value(D::defaultValue())
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::~DefaultOption()
+template <typename T, typename D>
+DefaultOption<T, D>::~DefaultOption()
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption(const T& value)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption(const T& value)
     : _value(value)
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption(T&& value)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption(T&& value)
     : _value(std::move(value))
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption(const DefaultOption& other)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption(const DefaultOption& other)
     : _value(other._value)
 {
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>::DefaultOption(DefaultOption&& other)
+template <typename T, typename D>
+DefaultOption<T, D>::DefaultOption(DefaultOption&& other)
     : _value(std::move(other._value))
 {
-    other._value = defaultValue;
+    other._value = D::defaultValue();
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 template <typename C>
-DefaultOption<T, D, defaultValue>::DefaultOption(const DefaultOption<C, D, defaultValue>& other)
+DefaultOption<T, D>::DefaultOption(const DefaultOption<C, D>& other)
     : _value(other.data())
 {
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 template <typename C>
-DefaultOption<T, D, defaultValue>::DefaultOption(DefaultOption<C, D, defaultValue>&& other)
+DefaultOption<T, D>::DefaultOption(DefaultOption<C, D>&& other)
     : _value(std::move(other._value))
 {
     other.clear();
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 template <typename... A>
-DefaultOption<T, D, defaultValue>::DefaultOption(InPlaceType, A&&... args)
+DefaultOption<T, D>::DefaultOption(InPlaceType, A&&... args)
     : _value(std::forward<A>(args)...)
 {
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 template <typename... A>
-void DefaultOption<T, D, defaultValue>::emplace(A&&... args)
+void DefaultOption<T, D>::emplace(A&&... args)
 {
     _value.~T();
     new (&_value) T(std::forward<A>(args)...);
 }
 
-template <typename T, typename D, D defaultValue>
-bool DefaultOption<T, D, defaultValue>::isSome() const
+template <typename T, typename D>
+bool DefaultOption<T, D>::isSome() const
 {
-    return _value != defaultValue;
+    return !D::isDefault(_value);
 }
 
-template <typename T, typename D, D defaultValue>
-bool DefaultOption<T, D, defaultValue>::isNone() const
+template <typename T, typename D>
+bool DefaultOption<T, D>::isNone() const
 {
-    return _value == defaultValue;
+    return D::isDefault(_value);
 }
 
-template <typename T, typename D, D defaultValue>
-const T& DefaultOption<T, D, defaultValue>::unwrap() const
-{
-    assert(isSome());
-    return _value;
-}
-
-template <typename T, typename D, D defaultValue>
-T& DefaultOption<T, D, defaultValue>::unwrap()
+template <typename T, typename D>
+const T& DefaultOption<T, D>::unwrap() const
 {
     assert(isSome());
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
+T& DefaultOption<T, D>::unwrap()
+{
+    assert(isSome());
+    return _value;
+}
+
+template <typename T, typename D>
 template <typename R>
-T DefaultOption<T, D, defaultValue>::unwrapOr(R&& value) const&
+T DefaultOption<T, D>::unwrapOr(R&& value) const&
 {
     if (isSome()) {
         return unwrap();
@@ -180,9 +194,9 @@ T DefaultOption<T, D, defaultValue>::unwrapOr(R&& value) const&
     return std::forward<R>(value);
 }
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 template <typename R>
-T&& DefaultOption<T, D, defaultValue>::unwrapOr(R&& value) &&
+T DefaultOption<T, D>::unwrapOr(R&& value) &&
 {
     if (isSome()) {
         return std::move(_value);
@@ -190,129 +204,129 @@ T&& DefaultOption<T, D, defaultValue>::unwrapOr(R&& value) &&
     return std::forward<R>(value);
 }
 
-template <typename T, typename D, D defaultValue>
-void DefaultOption<T, D, defaultValue>::clear()
+template <typename T, typename D>
+void DefaultOption<T, D>::clear()
 {
-    _value = defaultValue;
+    _value = D::defaultValue();
 }
 
-template <typename T, typename D, D defaultValue>
-T DefaultOption<T, D, defaultValue>::take()
+template <typename T, typename D>
+T DefaultOption<T, D>::take()
 {
     assert(isSome());
     T val = _value;
-    _value = defaultValue;
+    _value = D::defaultValue();
     return val;
 }
 
-template <typename T, typename D, D defaultValue>
-const T& DefaultOption<T, D, defaultValue>::data() const
+template <typename T, typename D>
+const T& DefaultOption<T, D>::data() const
 {
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
-T& DefaultOption<T, D, defaultValue>::data()
+template <typename T, typename D>
+T& DefaultOption<T, D>::data()
 {
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>& DefaultOption<T, D, defaultValue>::operator=(const DefaultOption& other)
+template <typename T, typename D>
+DefaultOption<T, D>& DefaultOption<T, D>::operator=(const DefaultOption& other)
 {
     _value = other._value;
     return *this;
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>& DefaultOption<T, D, defaultValue>::operator=(DefaultOption&& other)
+template <typename T, typename D>
+DefaultOption<T, D>& DefaultOption<T, D>::operator=(DefaultOption&& other)
 {
     _value = std::move(other._value);
-    other._value = defaultValue;
+    other._value = D::defaultValue();
     return *this;
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>& DefaultOption<T, D, defaultValue>::operator=(const T& value)
+template <typename T, typename D>
+DefaultOption<T, D>& DefaultOption<T, D>::operator=(const T& value)
 {
     _value = value;
     return *this;
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>& DefaultOption<T, D, defaultValue>::operator=(T&& value)
+template <typename T, typename D>
+DefaultOption<T, D>& DefaultOption<T, D>::operator=(T&& value)
 {
     _value = std::move(value);
     return *this;
 }
 
-template <typename T, typename D, D defaultValue>
-DefaultOption<T, D, defaultValue>& DefaultOption<T, D, defaultValue>::operator=(NoneType)
+template <typename T, typename D>
+DefaultOption<T, D>& DefaultOption<T, D>::operator=(NoneType)
 {
-    _value = defaultValue;
+    _value = D::defaultValue();
     return *this;
 }
 
-template <typename T, typename D, D defaultValue>
-const T& DefaultOption<T, D, defaultValue>::operator->() const
+template <typename T, typename D>
+const T& DefaultOption<T, D>::operator->() const
 {
     assert(isSome());
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
-T& DefaultOption<T, D, defaultValue>::operator->()
+template <typename T, typename D>
+T& DefaultOption<T, D>::operator->()
 {
     assert(isSome());
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
-const T& DefaultOption<T, D, defaultValue>::operator*() const
+template <typename T, typename D>
+const T& DefaultOption<T, D>::operator*() const
 {
     assert(isSome());
     return _value;
 }
 
-template <typename T, typename D, D defaultValue>
-T& DefaultOption<T, D, defaultValue>::operator*()
+template <typename T, typename D>
+T& DefaultOption<T, D>::operator*()
 {
     assert(isSome());
     return _value;
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator==(const DefaultOption<T, D, def>& left, const DefaultOption<U, D, def>& right)
+template <typename T, typename U, typename D>
+bool operator==(const DefaultOption<T, D>& left, const DefaultOption<U, D>& right)
 {
     return left.data() == right.data();
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator==(const DefaultOption<T, D, def>& left, const U& right)
+template <typename T, typename U, typename D>
+bool operator==(const DefaultOption<T, D>& left, const U& right)
 {
     return left.data() == right;
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator==(const T& left, const DefaultOption<U, D, def>& right)
+template <typename T, typename U, typename D>
+bool operator==(const T& left, const DefaultOption<U, D>& right)
 {
     return left == right.data();
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator!=(const DefaultOption<T, D, def>& left, const DefaultOption<U, D, def>& right)
+template <typename T, typename U, typename D>
+bool operator!=(const DefaultOption<T, D>& left, const DefaultOption<U, D>& right)
 {
     return left.data() != right.data();
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator!=(const DefaultOption<T, D, def>& left, const U& right)
+template <typename T, typename U, typename D>
+bool operator!=(const DefaultOption<T, D>& left, const U& right)
 {
     return left.data() != right;
 }
 
-template <typename T, typename U, typename D, D def>
-bool operator!=(const T& left, const DefaultOption<U, D, def>& right)
+template <typename T, typename U, typename D>
+bool operator!=(const T& left, const DefaultOption<U, D>& right)
 {
     return left != right.data();
 }

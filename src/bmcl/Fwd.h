@@ -28,22 +28,30 @@ class Either;
 template <typename T, std::size_t S>
 class FixedArrayView;
 
-template <typename T, typename D, D defaultValue>
+template <typename T, typename D>
 class DefaultOption;
+
+template <typename D, D def>
+struct DefaultOptionDescriptor;
 
 template <typename T>
 class Option;
 
+using OptionPtrDescriptor = DefaultOptionDescriptor<std::nullptr_t, nullptr>;
+
 template <typename T>
-using OptionPtr = DefaultOption<T*, std::nullptr_t, nullptr>;
+using OptionPtr = DefaultOption<T*, OptionPtrDescriptor>;
 
 template <typename T>
 class Rc;
 
-template <typename T>
-using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
+using OptionRcDescriptor = DefaultOptionDescriptor<std::nullptr_t, nullptr>;
 
-using OptionSize = DefaultOption<std::size_t, std::size_t, static_cast<size_t>(-1)>;
+template <typename T>
+using OptionRc = DefaultOption<Rc<T>, OptionRcDescriptor>;
+
+using OptionSizeDescriptor = DefaultOptionDescriptor<std::size_t, std::size_t(-1)>;
+using OptionSize = DefaultOption<std::size_t, OptionSizeDescriptor>;
 
 template <typename B>
 class Reader;

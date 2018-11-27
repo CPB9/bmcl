@@ -16,6 +16,7 @@
 
 namespace bmcl {
 
-using OptionSize = DefaultOption<std::size_t, std::size_t, std::numeric_limits<std::size_t>::max()>;
+using OptionSizeDescriptor = DefaultOptionDescriptor<std::size_t, std::size_t(-1)>;
+using OptionSize = DefaultOption<std::size_t, OptionSizeDescriptor>;
 }
 

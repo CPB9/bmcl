@@ -14,6 +14,8 @@
 
 namespace bmcl {
 
+using OptionRcDescriptor = DefaultOptionDescriptor<std::nullptr_t, nullptr>;
+
 template <typename T>
-using OptionRc = DefaultOption<Rc<T>, std::nullptr_t, nullptr>;
+using OptionRc = DefaultOption<Rc<T>, OptionRcDescriptor>;
 }

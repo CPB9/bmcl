@@ -15,6 +15,8 @@
 
 namespace bmcl {
 
+using OptionPtrDescriptor = DefaultOptionDescriptor<std::nullptr_t, nullptr>;
+
 template <typename T>
-using OptionPtr = DefaultOption<T*, std::nullptr_t, nullptr>;
+using OptionPtr = DefaultOption<T*, OptionPtrDescriptor>;
 }
