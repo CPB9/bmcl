@@ -36,6 +36,9 @@ public:
     const uint8_t* data() const;
     std::size_t size() const;
 
+    bool isNull() const;
+    bool isEmpty() const;
+
     SharedBytes(const SharedBytes& other);
     SharedBytes(SharedBytes&& other);
 
@@ -81,7 +84,7 @@ inline SharedBytes::SharedBytes(SharedBytesData* cont)
 inline SharedBytes::SharedBytes(const SharedBytes& other)
     : _cont(other._cont)
 {
-    if (_cont != nullptr) {
+    if (_cont) {
         other._cont->incRef();
     }
 }
@@ -151,12 +154,18 @@ inline bmcl::Bytes SharedBytes::view() const
 
 inline uint8_t* SharedBytes::data()
 {
-    return (uint8_t*)_cont + dataOffset;
+    if (_cont) {
+        return (uint8_t*)_cont + dataOffset;
+    }
+    return nullptr;
 }
 
 inline const uint8_t* SharedBytes::data() const
 {
-    return (const uint8_t*)_cont + dataOffset;
+    if (_cont) {
+        return (const uint8_t*)_cont + dataOffset;
+    }
+    return nullptr;
 }
 
 inline std::size_t SharedBytes::size() const
@@ -165,6 +174,19 @@ inline std::size_t SharedBytes::size() const
         return _cont->size;
     }
     return 0;
+}
+
+inline bool SharedBytes::isNull() const
+{
+    return _cont == nullptr;
+}
+
+inline bool SharedBytes::isEmpty() const
+{
+    if (_cont) {
+        return _cont->size == 0;
+    }
+    return true;
 }
 
 inline SharedBytes& SharedBytes::operator=(const SharedBytes& other)
