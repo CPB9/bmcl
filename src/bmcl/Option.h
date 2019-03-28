@@ -133,7 +133,7 @@ template <typename T>
 inline Option<T>::Option(T&& value)
     : _isSome(true)
 {
-    new (asValue()) T(std::forward<T>(value));
+    new (asValue()) T(std::move(value));
 }
 
 template <typename T>
@@ -302,21 +302,21 @@ template <typename... A>
 void Option<T>::emplace(A&&... args)
 {
     if (_isSome) {
-        *asValue() = T(std::forward<A>(args)...);
+        asValue()->~T();
     } else {
         _isSome = true;
-        new (asValue()) T(std::forward<A>(args)...);
     }
+    new (asValue()) T(std::forward<A>(args)...);
 }
 
 template <typename T>
 Option<T>& Option<T>::operator=(T&& value)
 {
     if (_isSome) {
-        *asValue() = std::forward<T>(value);
+        *asValue() = std::move(value);
     } else {
         _isSome = true;
-        new (asValue()) T(std::forward<T>(value));
+        new (asValue()) T(std::move(value));
     }
     return *this;
 }
