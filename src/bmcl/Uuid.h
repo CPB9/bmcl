@@ -39,7 +39,7 @@ public:
     const char* data() const;
     const char* c_str() const;
 
-    constexpr std::size_t size() const { return reprSize; }
+    static constexpr std::size_t size() { return reprSize; }
 
 private:
     std::array<char, reprSize + 1> _data;
