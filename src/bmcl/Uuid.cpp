@@ -31,6 +31,58 @@ namespace bmcl {
     #error "Unsupported platform"
 #endif
 
+static const char* hexChars = "0123456789abcdef";
+
+inline void appendHex(uint8_t n, char* dest)
+{
+    dest[0] = hexChars[(n & 0xf0) >> 4];
+    dest[1] = hexChars[n & 0x0f];
+}
+
+UuidStringRepr::UuidStringRepr(const Uuid& uuid)
+{
+    const Uuid::Data data = uuid.data();
+
+    _data[0] = '{';
+    appendHex(data[0], &_data[1]);
+    appendHex(data[1], &_data[3]);
+    appendHex(data[2], &_data[5]);
+    appendHex(data[3], &_data[7]);
+    _data[9] = '-';
+    appendHex(data[4], &_data[10]);
+    appendHex(data[5], &_data[12]);
+    _data[14] = '-';
+    appendHex(data[6], &_data[15]);
+    appendHex(data[7], &_data[17]);
+    _data[19] = '-';
+    appendHex(data[8], &_data[20]);
+    appendHex(data[9], &_data[22]);
+    _data[24] = '-';
+    appendHex(data[10], &_data[25]);
+    appendHex(data[11], &_data[27]);
+    appendHex(data[12], &_data[29]);
+    appendHex(data[13], &_data[31]);
+    appendHex(data[14], &_data[33]);
+    appendHex(data[15], &_data[35]);
+    _data[37] = '}';
+    _data[38] = '\0';
+}
+
+bmcl::StringView UuidStringRepr::view() const
+{
+    return bmcl::StringView(_data.data(), size());
+}
+
+const char* UuidStringRepr::data() const
+{
+    return _data.data();
+}
+
+const char* UuidStringRepr::c_str() const
+{
+    return _data.data();
+}
+
 Uuid::Uuid(std::uint32_t d1, std::uint16_t d2, std::uint16_t d3, std::uint64_t d4)
 {
     _data[0]  = (d1 >> 24) & 0xff;
@@ -216,53 +268,21 @@ Result<Uuid, void> Uuid::createFromString(bmcl::StringView view)
     return uuidFromString<int>(view);
 }
 
-static const char* hexChars = "0123456789abcdef";
-
-template <typename T>
-inline void appendHex(uint8_t n, T* dest)
-{
-    dest->push_back(hexChars[(n & 0xf0) >> 4]);
-    dest->push_back(hexChars[n & 0x0f]);
-}
-
-template <typename T>
-void uuidToString(const Uuid::Data& data, T* dest)
-{
-    dest->reserve(dest->size() + 1 + 16 * 2 + 4 + 1);
-    dest->push_back('{');
-    appendHex(data[0], dest);
-    appendHex(data[1], dest);
-    appendHex(data[2], dest);
-    appendHex(data[3], dest);
-    dest->push_back('-');
-    appendHex(data[4], dest);
-    appendHex(data[5], dest);
-    dest->push_back('-');
-    appendHex(data[6], dest);
-    appendHex(data[7], dest);
-    dest->push_back('-');
-    appendHex(data[8], dest);
-    appendHex(data[9], dest);
-    dest->push_back('-');
-    appendHex(data[10], dest);
-    appendHex(data[11], dest);
-    appendHex(data[12], dest);
-    appendHex(data[13], dest);
-    appendHex(data[14], dest);
-    appendHex(data[15], dest);
-    dest->push_back('}');
-}
-
 std::string Uuid::toStdString() const
 {
-    std::string dest;
-    uuidToString(_data, &dest);
-    return dest;
+    UuidStringRepr repr(*this);
+    return repr.view().toStdString();
 }
 
 void Uuid::toStdString(std::string* dest) const
 {
-    uuidToString(_data, dest);
+    UuidStringRepr repr(*this);
+    dest->append(repr.data(), repr.size());
+}
+
+UuidStringRepr Uuid::toStringRepr() const
+{
+    return UuidStringRepr(*this);
 }
 
 std::uint32_t Uuid::part1() const
@@ -329,26 +349,26 @@ Uuid::Uuid(const QUuid& q)
 
 QString Uuid::toQString() const
 {
-    QString dest;
-    uuidToString(_data, &dest);
-    return dest;
+    UuidStringRepr repr(*this);
+    return QString::fromLatin1(repr.data(), repr.size());
 }
 
 void Uuid::toQString(QString* dest) const
 {
-    uuidToString(_data, dest);
+    UuidStringRepr repr(*this);
+    dest->append(repr.data());
 }
 
 QByteArray Uuid::toQByteArray() const
 {
-    QByteArray dest;
-    uuidToString(_data, &dest);
-    return dest;
+    UuidStringRepr repr(*this);
+    return QByteArray::fromRawData(repr.data(), repr.size());
 }
 
 void Uuid::toQByteArray(QByteArray* dest) const
 {
-    uuidToString(_data, dest);
+    UuidStringRepr repr(*this);
+    dest->append(repr.data(), repr.size());
 }
 
 QUuid Uuid::toQUuid() const

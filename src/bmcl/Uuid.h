@@ -27,6 +27,24 @@ namespace bmcl {
 class StringView;
 template <typename T, typename R>
 class Result;
+class Uuid;
+
+class BMCL_EXPORT UuidStringRepr {
+public:
+    static constexpr std::size_t reprSize = 1 + 16 * 2 + 4 + 1;
+
+    UuidStringRepr(const Uuid& uuid);
+
+    bmcl::StringView view() const;
+    const char* data() const;
+    const char* c_str() const;
+
+    constexpr std::size_t size() const { return reprSize; }
+
+private:
+    std::array<char, reprSize + 1> _data;
+};
+
 
 class BMCL_EXPORT Uuid {
 public:
@@ -64,6 +82,7 @@ public:
 
     std::string toStdString() const;
     void toStdString(std::string* dest) const;
+    UuidStringRepr toStringRepr() const;
 
 #ifdef BMCL_HAVE_QT
     QString toQString() const;
