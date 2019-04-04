@@ -108,7 +108,7 @@ void SharedBytes::swap(SharedBytes& other)
     other._cont = temp;
 }
 
-inline bmcl::Bytes SharedBytes::view() const
+bmcl::Bytes SharedBytes::view() const
 {
     return bmcl::Bytes(data(), size());
 }
