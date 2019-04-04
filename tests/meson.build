@@ -11,6 +11,7 @@ tests = [
   ['logging', 'Logging.cpp'],
   ['memreader', 'MemReader.cpp'],
   ['memwriter', 'MemWriter.cpp'],
+  ['mmapopener', 'MmapOpener.cpp'],
   ['option', 'Option.cpp'],
   ['result', 'Result.cpp'],
   ['ringbuf', 'RingBuffer.cpp'],

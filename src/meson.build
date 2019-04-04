@@ -2,7 +2,7 @@ have_qt5 = false
 
 if get_option('use_qt5')
   qt5 = import('qt5')
-  qt5_dep = dependency('qt5', modules: ['Core'])
+  qt5_dep = dependency('qt5', modules: ['Core'], required : false)
   if qt5_dep.found()
     have_qt5 = true
   else
@@ -24,6 +24,7 @@ src = [
   'bmcl/Logging.cpp',
   'bmcl/MemReader.cpp',
   'bmcl/MemWriter.cpp',
+  'bmcl/MmapOpener.cpp',
   'bmcl/Panic.cpp',
   'bmcl/RingBuffer.cpp',
   'bmcl/Sha3.cpp',

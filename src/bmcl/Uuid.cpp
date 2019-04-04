@@ -24,7 +24,7 @@ namespace bmcl {
 #if defined(BMCL_PLATFORM_UNIX)
     #include <uuid/uuid.h>
 #elif defined(BMCL_PLATFORM_WINDOWS)
-    #include <Combaseapi.h>
+    #include <combaseapi.h>
 #elif defined(BMCL_PLATFORM_APPLE)
     #include <CoreFoundation/CFUUID.h>
 #else

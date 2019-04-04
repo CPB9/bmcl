@@ -31,6 +31,8 @@ bmcl_add_library(bmcl SHARED
     MemReader.h
     MemWriter.cpp
     MemWriter.h
+    MmapOpener.cpp
+    MmapOpener.h
     NonNullUniquePtr.h
     Option.h
     OptionPtr.h

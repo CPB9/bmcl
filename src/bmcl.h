@@ -33,6 +33,7 @@
 #include "bmcl/Math.h"
 #include "bmcl/MemReader.h"
 #include "bmcl/MemWriter.h"
+#include "bmcl/MmapOpener.h"
 #include "bmcl/Option.h"
 #include "bmcl/OptionPtr.h"
 #include "bmcl/OptionRc.h"
