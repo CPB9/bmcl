@@ -11,6 +11,7 @@ bmcl_add_library(bmcl SHARED
     BitArray.h
     Buffer.cpp
     Buffer.h
+    Bytes.cpp
     Bytes.h
     ColorStream.cpp
     ColorStream.h

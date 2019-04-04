@@ -31,10 +31,9 @@ namespace bmcl {
     #error "Unsupported platform"
 #endif
 
-static const char* hexChars = "0123456789abcdef";
-
 inline void appendHex(uint8_t n, char* dest)
 {
+    const char* hexChars = "0123456789abcdef";
     dest[0] = hexChars[(n & 0xf0) >> 4];
     dest[1] = hexChars[n & 0x0f];
 }
@@ -71,16 +70,6 @@ UuidStringRepr::UuidStringRepr(const Uuid& uuid)
 bmcl::StringView UuidStringRepr::view() const
 {
     return bmcl::StringView(_data.data(), size());
-}
-
-const char* UuidStringRepr::data() const
-{
-    return _data.data();
-}
-
-const char* UuidStringRepr::c_str() const
-{
-    return _data.data();
 }
 
 Uuid::Uuid(std::uint32_t d1, std::uint16_t d2, std::uint16_t d3, std::uint64_t d4)
@@ -278,11 +267,6 @@ void Uuid::toStdString(std::string* dest) const
 {
     UuidStringRepr repr(*this);
     dest->append(repr.data(), repr.size());
-}
-
-UuidStringRepr Uuid::toStringRepr() const
-{
-    return UuidStringRepr(*this);
 }
 
 std::uint32_t Uuid::part1() const

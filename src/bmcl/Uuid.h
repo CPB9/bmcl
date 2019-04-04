@@ -39,12 +39,26 @@ public:
     const char* data() const;
     const char* c_str() const;
 
-    static constexpr std::size_t size() { return reprSize; }
+    static constexpr std::size_t size();
 
 private:
     std::array<char, reprSize + 1> _data;
 };
 
+inline const char* UuidStringRepr::data() const
+{
+    return _data.data();
+}
+
+inline const char* UuidStringRepr::c_str() const
+{
+    return _data.data();
+}
+
+constexpr std::size_t UuidStringRepr::size()
+{
+    return reprSize;
+}
 
 class BMCL_EXPORT Uuid {
 public:
@@ -118,6 +132,11 @@ inline Uuid Uuid::createNil()
     Uuid u;
     u._data.fill(0);
     return u;
+}
+
+inline UuidStringRepr Uuid::toStringRepr() const
+{
+    return UuidStringRepr(*this);
 }
 
 inline bool Uuid::operator==(const Uuid& other) const

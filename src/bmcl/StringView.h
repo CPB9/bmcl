@@ -41,15 +41,15 @@ public:
     inline bool startsWith(StringView prefix) const;
     inline bool endsWith(StringView postfix) const;
 
-    Option<std::size_t> findFirstOf(char c, std::size_t from = 0) const;
-    Option<std::size_t> findFirstOf(StringView chars, std::size_t from = 0) const;
-    Option<std::size_t> findFirstNotOf(char c, std::size_t from = 0) const;
-    Option<std::size_t> findFirstNotOf(StringView chars, std::size_t from = 0) const;
+    OptionSize findFirstOf(char c, std::size_t from = 0) const;
+    OptionSize findFirstOf(StringView chars, std::size_t from = 0) const;
+    OptionSize findFirstNotOf(char c, std::size_t from = 0) const;
+    OptionSize findFirstNotOf(StringView chars, std::size_t from = 0) const;
 
-    Option<std::size_t> findLastOf(char c, std::size_t offset = 0) const;
-    Option<std::size_t> findLastOf(StringView chars, std::size_t offset = 0) const;
-    Option<std::size_t> findLastNotOf(char c, std::size_t offset = 0) const;
-    Option<std::size_t> findLastNotOf(StringView chars, std::size_t offset = 0) const;
+    OptionSize findLastOf(char c, std::size_t offset = 0) const;
+    OptionSize findLastOf(StringView chars, std::size_t offset = 0) const;
+    OptionSize findLastNotOf(char c, std::size_t offset = 0) const;
+    OptionSize findLastNotOf(StringView chars, std::size_t offset = 0) const;
 
     StringView ltrim(char c) const;
     StringView rtrim(char c) const;
@@ -62,8 +62,8 @@ public:
 private:
     template <typename C>
     std::string map(C&& convert) const;
-    Option<std::size_t> iteratorToIndex(iterator) const;
-    Option<std::size_t> iteratorToIndex(reverse_iterator) const;
+    OptionSize iteratorToIndex(iterator) const;
+    OptionSize iteratorToIndex(reverse_iterator) const;
 };
 
 constexpr inline StringView::StringView()

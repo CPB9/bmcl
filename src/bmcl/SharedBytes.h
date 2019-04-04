@@ -9,18 +9,17 @@
 #pragma once
 
 #include "bmcl/Config.h"
-#include "bmcl/Bytes.h"
+#include "bmcl/Fwd.h"
 
 #include <atomic>
-#include <cstdlib>
 #include <cstddef>
-#include <cassert>
-#include <cstring>
 
 namespace bmcl {
 
-class SharedBytes {
+class BMCL_EXPORT SharedBytes {
 public:
+    struct SharedBytesData;
+
     SharedBytes();
     ~SharedBytes();
 
@@ -46,15 +45,6 @@ public:
     SharedBytes& operator=(SharedBytes&& other);
 
 private:
-    struct SharedBytesData {
-        void incRef();
-        void decRef();
-
-        std::atomic<std::size_t> rc;
-        std::size_t size;
-    };
-
-    static constexpr std::size_t dataOffset = sizeof(SharedBytesData);
 
     SharedBytes(SharedBytesData* cont);
 
@@ -63,141 +53,13 @@ private:
     SharedBytesData* _cont;
 };
 
-inline void SharedBytes::SharedBytesData::incRef()
-{
-    rc.fetch_add(1, std::memory_order_relaxed);
-}
-
-inline void SharedBytes::SharedBytesData::decRef()
-{
-    if (rc.fetch_sub(1, std::memory_order_release) == 1) {
-        std::atomic_thread_fence(std::memory_order_acquire);
-        std::free(this);
-    }
-}
-
-inline SharedBytes::SharedBytes(SharedBytesData* cont)
-    : _cont(cont)
-{
-}
-
-inline SharedBytes::SharedBytes(const SharedBytes& other)
-    : _cont(other._cont)
-{
-    if (_cont) {
-        other._cont->incRef();
-    }
-}
-
-inline SharedBytes::SharedBytes(SharedBytes&& other)
-    : _cont(other._cont)
-{
-    other._cont = nullptr;
-}
-
 inline SharedBytes::SharedBytes()
     : _cont(nullptr)
 {
 }
 
-inline SharedBytes::~SharedBytes()
-{
-    if (_cont) {
-        _cont->decRef();
-    }
-}
-
-inline SharedBytes SharedBytes::create(bmcl::Bytes view)
-{
-    return create(view.data(), view.size());
-}
-
-inline SharedBytes::SharedBytesData* SharedBytes::allocContainer(std::size_t size)
-{
-    std::size_t totalSize = dataOffset + size;
-    void* allocated = std::malloc(totalSize);
-    SharedBytesData* cont = (SharedBytesData*)allocated;
-    cont->rc.store(1, std::memory_order_relaxed);
-    cont->size = size;
-    return cont;
-}
-
-inline SharedBytes SharedBytes::create(const uint8_t* data, std::size_t size)
-{
-    SharedBytesData* cont = allocContainer(size);
-    std::memcpy((uint8_t*)cont + dataOffset, data, size);
-    return SharedBytes(cont);
-}
-
-inline SharedBytes SharedBytes::create(std::size_t size)
-{
-    SharedBytesData* cont = allocContainer(size);
-    return SharedBytes(cont);
-}
-
-inline SharedBytes SharedBytes::clone() const
-{
-    return SharedBytes::create(data(), size());
-}
-
-inline void SharedBytes::swap(SharedBytes& other)
-{
-    SharedBytesData* temp = _cont;
-    _cont = other._cont;
-    other._cont = temp;
-}
-
-inline bmcl::Bytes SharedBytes::view() const
-{
-    return bmcl::Bytes(data(), size());
-}
-
-inline uint8_t* SharedBytes::data()
-{
-    if (_cont) {
-        return (uint8_t*)_cont + dataOffset;
-    }
-    return nullptr;
-}
-
-inline const uint8_t* SharedBytes::data() const
-{
-    if (_cont) {
-        return (const uint8_t*)_cont + dataOffset;
-    }
-    return nullptr;
-}
-
-inline std::size_t SharedBytes::size() const
-{
-    if (_cont) {
-        return _cont->size;
-    }
-    return 0;
-}
-
 inline bool SharedBytes::isNull() const
 {
     return _cont == nullptr;
-}
-
-inline bool SharedBytes::isEmpty() const
-{
-    if (_cont) {
-        return _cont->size == 0;
-    }
-    return true;
-}
-
-inline SharedBytes& SharedBytes::operator=(const SharedBytes& other)
-{
-    SharedBytes(other).swap(*this);
-    return *this;
-}
-
-inline SharedBytes& SharedBytes::operator=(SharedBytes&& other)
-{
-    SharedBytes(std::move(other)).swap(*this);
-    return *this;
 }
 }

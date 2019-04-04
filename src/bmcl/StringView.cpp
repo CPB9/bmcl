@@ -8,7 +8,7 @@
 
 #include "bmcl/StringView.h"
 #include "bmcl/FixedArrayView.h"
-#include "bmcl/Option.h"
+#include "bmcl/OptionSize.h"
 
 #include <algorithm>
 #include <bitset>
@@ -51,7 +51,7 @@ std::string StringView::toUpper() const
     return map(asciiToUpper);
 }
 
-inline Option<std::size_t> StringView::iteratorToIndex(iterator it) const
+inline OptionSize StringView::iteratorToIndex(iterator it) const
 {
     if (it == end()) {
         return None;
@@ -59,7 +59,7 @@ inline Option<std::size_t> StringView::iteratorToIndex(iterator it) const
     return it - begin();
 }
 
-inline Option<std::size_t> StringView::iteratorToIndex(reverse_iterator it) const
+inline OptionSize StringView::iteratorToIndex(reverse_iterator it) const
 {
     if (it == rend()) {
         return None;
@@ -67,13 +67,13 @@ inline Option<std::size_t> StringView::iteratorToIndex(reverse_iterator it) cons
     return it.base() - begin() - 1;
 }
 
-Option<std::size_t> StringView::findFirstOf(char c, std::size_t from) const
+OptionSize StringView::findFirstOf(char c, std::size_t from) const
 {
     BMCL_ASSERT(from <= size());
     return iteratorToIndex(std::find(begin() + from, end(), c));
 }
 
-Option<std::size_t> StringView::findFirstOf(StringView chars, std::size_t from) const
+OptionSize StringView::findFirstOf(StringView chars, std::size_t from) const
 {
     BMCL_ASSERT(from <= size());
     std::bitset<1 << CHAR_BIT> bits;
@@ -85,7 +85,7 @@ Option<std::size_t> StringView::findFirstOf(StringView chars, std::size_t from) 
     }));
 }
 
-Option<std::size_t> StringView::findFirstNotOf(char c, std::size_t from) const
+OptionSize StringView::findFirstNotOf(char c, std::size_t from) const
 {
     BMCL_ASSERT(from <= size());
     return iteratorToIndex(std::find_if(begin() + from, end(), [c](char s) {
@@ -93,7 +93,7 @@ Option<std::size_t> StringView::findFirstNotOf(char c, std::size_t from) const
     }));
 }
 
-Option<std::size_t> StringView::findFirstNotOf(StringView chars, std::size_t from) const
+OptionSize StringView::findFirstNotOf(StringView chars, std::size_t from) const
 {
     BMCL_ASSERT(from <= size());
     std::bitset<1 << CHAR_BIT> bits;
@@ -105,13 +105,13 @@ Option<std::size_t> StringView::findFirstNotOf(StringView chars, std::size_t fro
     }));
 }
 
-Option<std::size_t> StringView::findLastOf(char c, std::size_t offset) const
+OptionSize StringView::findLastOf(char c, std::size_t offset) const
 {
     BMCL_ASSERT(offset <= size());
     return iteratorToIndex(std::find(rbegin() + offset, rend(), c));
 }
 
-Option<std::size_t> StringView::findLastOf(StringView chars, std::size_t offset) const
+OptionSize StringView::findLastOf(StringView chars, std::size_t offset) const
 {
     BMCL_ASSERT(offset <= size());
     std::bitset<1 << CHAR_BIT> bits;
@@ -123,7 +123,7 @@ Option<std::size_t> StringView::findLastOf(StringView chars, std::size_t offset)
     }));
 }
 
-Option<std::size_t> StringView::findLastNotOf(char c, std::size_t offset) const
+OptionSize StringView::findLastNotOf(char c, std::size_t offset) const
 {
     BMCL_ASSERT(offset <= size());
     return iteratorToIndex(std::find_if(rbegin() + offset, rend(), [c](char s) {
@@ -131,7 +131,7 @@ Option<std::size_t> StringView::findLastNotOf(char c, std::size_t offset) const
     }));
 }
 
-Option<std::size_t> StringView::findLastNotOf(StringView chars, std::size_t offset) const
+OptionSize StringView::findLastNotOf(StringView chars, std::size_t offset) const
 {
     BMCL_ASSERT(offset <= size());
     std::bitset<1 << CHAR_BIT> bits;

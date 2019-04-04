@@ -27,6 +27,7 @@ src = [
   'bmcl/Panic.cpp',
   'bmcl/RingBuffer.cpp',
   'bmcl/Sha3.cpp',
+  'bmcl/SharedBytes.cpp',
   'bmcl/String.cpp',
   'bmcl/StringView.cpp',
   'bmcl/ThreadSafeRefCountable.cpp',
