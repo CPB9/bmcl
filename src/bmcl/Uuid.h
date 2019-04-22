@@ -65,6 +65,7 @@ public:
     using Data = std::array<std::uint8_t, 16>;
 
     Uuid(std::uint32_t d1, std::uint16_t d2, std::uint16_t d3, std::uint64_t d4);
+    Uuid(const Data& data);
 
 #ifdef BMCL_HAVE_QT
     explicit Uuid(const QUuid& quuid);
@@ -121,6 +122,11 @@ private:
 
     Data _data;
 };
+
+inline Uuid::Uuid(const Data& data)
+    : _data(data)
+{
+}
 
 inline const Uuid::Data& Uuid::data() const
 {
