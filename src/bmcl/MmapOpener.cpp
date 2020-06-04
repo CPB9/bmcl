@@ -8,6 +8,9 @@
 
 #include "bmcl/MmapOpener.h"
 #include "bmcl/Bytes.h"
+#ifdef _WIN32
+#include <xstring>
+#endif
 
 namespace bmcl {
 
