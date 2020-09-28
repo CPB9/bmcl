@@ -8,7 +8,7 @@
 
 #include "bmcl/MmapOpener.h"
 #include "bmcl/Bytes.h"
-#ifdef _WIN32
+#if defined(BMCL_PLATFORM_MSVC)
 #include <xstring>
 #endif
 
