@@ -12,7 +12,7 @@
 #include "bmcl/bits/ArrayViewBaseDecl.h"
 #include "bmcl/Assert.h"
 
-#include <cstring>
+#include <string>
 
 namespace bmcl {
 

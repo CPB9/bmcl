@@ -122,19 +122,19 @@
 
 #if defined(BMCL_PLATFORM_APPLE)
 
-#define be16dec(ptr) OSReadBigInt16(ptr, 0)
-#define be32dec(ptr) OSReadBigInt32(ptr, 0)
-#define be64dec(ptr) OSReadBigInt64(ptr, 0)
-#define le16dec(ptr) OSReadLittleInt16(ptr, 0)
-#define le32dec(ptr) OSReadLittleInt32(ptr, 0)
-#define le64dec(ptr) OSReadLittleInt64(ptr, 0)
+static inline uint16_t be16dec(const void *ptr) { return OSReadBigInt16(ptr, 0); }
+static inline uint32_t be32dec(const void *ptr) { return OSReadBigInt32(ptr, 0); }
+static inline uint64_t be64dec(const void *ptr) { return OSReadBigInt64(ptr, 0); }
+static inline uint16_t le16dec(const void *ptr) { return OSReadLittleInt16(ptr, 0); }
+static inline uint32_t le32dec(const void *ptr) { return OSReadLittleInt32(ptr, 0); }
+static inline uint64_t le64dec(const void *ptr) { return OSReadLittleInt64(ptr, 0); }
 
-#define be16enc(ptr, value) OSWriteBigInt16(ptr, 0, value)
-#define be32enc(ptr, value) OSWriteBigInt32(ptr, 0, value)
-#define be64enc(ptr, value) OSWriteBigInt64(ptr, 0, value)
-#define le16enc(ptr, value) OSWriteLittleInt16(ptr, 0, value)
-#define le32enc(ptr, value) OSWriteLittleInt32(ptr, 0, value)
-#define le64enc(ptr, value) OSWriteLittleInt64(ptr, 0, value)
+static inline void be16enc(void *ptr, uint16_t value) { OSWriteBigInt16(ptr, 0, value); }
+static inline void be32enc(void *ptr, uint32_t value) { OSWriteBigInt32(ptr, 0, value); }
+static inline void be64enc(void *ptr, uint64_t value) { OSWriteBigInt64(ptr, 0, value); }
+static inline void le16enc(void *ptr, uint16_t value) { OSWriteLittleInt16(ptr, 0, value); }
+static inline void le32enc(void *ptr, uint32_t value) { OSWriteLittleInt32(ptr, 0, value); }
+static inline void le64enc(void *ptr, uint64_t value) { OSWriteLittleInt64(ptr, 0, value); }
 
 #elif !defined(BMCL_PLATFORM_FREEBSD) && !defined(BMCL_PLATFORM_NETBSD)
 

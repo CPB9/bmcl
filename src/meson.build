@@ -19,7 +19,7 @@ src = [
   'bmcl/ColorStream.cpp',
   'bmcl/CString.cpp',
   'bmcl/DoubleEq.cpp',
-  'bmcl/FileUtils.cpp',
+  #'bmcl/FileUtils.cpp',
   'bmcl/IpAddress.cpp',
   'bmcl/Logging.cpp',
   'bmcl/MemReader.cpp',
