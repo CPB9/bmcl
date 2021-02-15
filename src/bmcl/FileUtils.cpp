@@ -28,6 +28,10 @@
 # include <unistd.h>
 # include <limits.h>
 # include <libgen.h>
+#elif defined(BMCL_PLATFORM_APPLE)
+#include <unistd.h>
+#include <libgen.h>
+#include <mach-o/dyld.h>
 #else
     #error "unsupported platform"
 #endif
@@ -109,6 +113,8 @@ std::uint64_t applicationPid()
     return GetCurrentProcessId();
 #elif defined(BMCL_PLATFORM_UNIX)
     return getpid();
+#elif defined(BMCL_PLATFORM_APPLE)
+    return getpid();
 #endif
 }
 
@@ -159,6 +165,18 @@ static void initApplicationFilePath()
     }
     path[pathLen] = '\0';
     appPath.emplace(path);
+    char* dirPath = dirname(path);
+    appDirPath.emplace(dirPath);
+#elif defined(BMCL_PLATFORM_APPLE)
+    char path[PATH_MAX + 1];
+    unsigned int len = PATH_MAX;
+    if(_NSGetExecutablePath(path, &len) < 0)
+        return;
+    char* realPath = realpath(path, 0);
+    if(realPath == NULL)
+        return;
+    appPath.emplace(realPath);
+    free(realPath);
     char* dirPath = dirname(path);
     appDirPath.emplace(dirPath);
 #endif

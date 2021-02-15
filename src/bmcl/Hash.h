@@ -31,6 +31,15 @@ struct FnvHashParams<std::uint64_t>
     static constexpr std::uint64_t offsetBias = 14695981039346656037u;
 };
 
+ #if defined(BMCL_PLATFORM_APPLE)
+template<>
+struct FnvHashParams<std::size_t>
+{
+    static constexpr std::size_t prime = 1099511628211u;
+    static constexpr std::size_t offsetBias = 14695981039346656037u;
+};
+#endif
+
 template <typename R, typename T>
 constexpr R fnv1aHash(const T* data, std::size_t size, R value = FnvHashParams<R>::offsetBias)
 {

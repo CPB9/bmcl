@@ -120,7 +120,7 @@ Uuid Uuid::create()
     u._data[14] = data.Data4[6];
     u._data[15] = data.Data4[7];
 #elif defined(BMCL_PLATFORM_APPLE)
-    CFUUID native = CFUUIDCreate(NULL);
+    CFUUIDRef native = CFUUIDCreate(NULL);
     CFUUIDBytes data = CFUUIDGetUUIDBytes(native);
     CFRelease(native);
 

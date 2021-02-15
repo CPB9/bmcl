@@ -56,6 +56,9 @@ if target_machine.system() == 'windows'
 elif target_machine.system() == 'linux'
     uuid_dep = dependency('uuid')
     build_deps += uuid_dep
+elif target_machine.system() == 'darwin'
+    uuid_dep = dependency('CoreFoundation')
+    build_deps += uuid_dep
 endif
 
 bmcl_lib = build_target('bmcl',
