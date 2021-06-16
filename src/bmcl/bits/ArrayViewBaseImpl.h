@@ -12,7 +12,11 @@
 #include "bmcl/bits/ArrayViewBaseDecl.h"
 #include "bmcl/Assert.h"
 
+#if defined(BMCL_PLATFORM_APPLE)
 #include <string>
+#else
+#include <cstring>
+#endif
 
 namespace bmcl {
 
